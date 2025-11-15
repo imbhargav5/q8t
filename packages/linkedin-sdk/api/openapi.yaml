@@ -1,0 +1,234 @@
+openapi: 3.0.3
+info:
+  title: LinkedIn API
+  version: "2.0"
+  description: LinkedIn API v2 for profile, posts, and connections management
+
+servers:
+  - url: https://api.linkedin.com/v2
+
+paths:
+  /me:
+    get:
+      operationId: getProfile
+      summary: Get user profile
+      description: Retrieves the profile of the authenticated user
+      responses:
+        "200":
+          description: User profile data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+
+  /ugcPosts:
+    post:
+      operationId: createPost
+      summary: Create a post
+      description: Creates a new User Generated Content post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePostRequest"
+      responses:
+        "201":
+          description: Created post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponse"
+
+  /connections:
+    get:
+      operationId: getConnections
+      summary: Get user connections
+      description: Retrieves the connections of the authenticated user
+      parameters:
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - name: count
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: List of connections
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConnectionsResponse"
+
+components:
+  schemas:
+    Profile:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+      properties:
+        id:
+          type: string
+        firstName:
+          $ref: "#/components/schemas/LocalizedString"
+        lastName:
+          $ref: "#/components/schemas/LocalizedString"
+        profilePicture:
+          $ref: "#/components/schemas/ProfilePicture"
+        headline:
+          $ref: "#/components/schemas/LocalizedString"
+
+    LocalizedString:
+      type: object
+      required:
+        - localized
+        - preferredLocale
+      properties:
+        localized:
+          type: object
+          properties:
+            en_US:
+              type: string
+        preferredLocale:
+          $ref: "#/components/schemas/Locale"
+
+    Locale:
+      type: object
+      required:
+        - country
+        - language
+      properties:
+        country:
+          type: string
+        language:
+          type: string
+
+    ProfilePicture:
+      type: object
+      properties:
+        displayImage:
+          type: string
+
+    CreatePostRequest:
+      type: object
+      required:
+        - author
+        - lifecycleState
+        - specificContent
+        - visibility
+      properties:
+        author:
+          type: string
+        lifecycleState:
+          type: string
+          enum:
+            - PUBLISHED
+            - DRAFT
+        specificContent:
+          $ref: "#/components/schemas/SpecificContent"
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+
+    SpecificContent:
+      type: object
+      properties:
+        "com.linkedin.ugc.ShareContent":
+          $ref: "#/components/schemas/ShareContent"
+
+    ShareContent:
+      type: object
+      required:
+        - shareCommentary
+        - shareMediaCategory
+      properties:
+        shareCommentary:
+          $ref: "#/components/schemas/ShareCommentary"
+        shareMediaCategory:
+          type: string
+          enum:
+            - NONE
+            - ARTICLE
+            - IMAGE
+            - VIDEO
+
+    ShareCommentary:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          maxLength: 3000
+
+    Visibility:
+      type: object
+      properties:
+        "com.linkedin.ugc.MemberNetworkVisibility":
+          type: string
+          enum:
+            - PUBLIC
+            - CONNECTIONS
+
+    PostResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        author:
+          type: string
+        lifecycleState:
+          type: string
+        created:
+          $ref: "#/components/schemas/AuditStamp"
+
+    AuditStamp:
+      type: object
+      properties:
+        actor:
+          type: string
+        time:
+          type: integer
+
+    ConnectionsResponse:
+      type: object
+      required:
+        - elements
+      properties:
+        elements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Connection"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    Connection:
+      type: object
+      required:
+        - to
+        - created
+      properties:
+        to:
+          type: string
+        created:
+          type: integer
+
+    Paging:
+      type: object
+      properties:
+        start:
+          type: integer
+        count:
+          type: integer
+        total:
+          type: integer

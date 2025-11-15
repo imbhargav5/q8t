@@ -1,0 +1,494 @@
+openapi: 3.0.3
+info:
+  title: Discord API
+  version: "10"
+  description: Discord REST API endpoints
+servers:
+  - url: https://discord.com/api/v10
+paths:
+  /users/@me:
+    get:
+      operationId: getCurrentUser
+      summary: Get Current User
+      description: Returns the user object of the requester's account
+      responses:
+        "200":
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /guilds/{guild.id}:
+    get:
+      operationId: getGuild
+      summary: Get Guild
+      description: Returns the guild object for the given id
+      parameters:
+        - name: guild.id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Guild object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Guild"
+
+  /channels/{channel.id}/messages:
+    get:
+      operationId: getChannelMessages
+      summary: Get Channel Messages
+      description: Returns the messages for a channel
+      parameters:
+        - name: channel.id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: around
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Array of message objects
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageList"
+
+    post:
+      operationId: createMessage
+      summary: Create Message
+      description: Post a message to a guild text or DM channel
+      parameters:
+        - name: channel.id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMessageRequest"
+      responses:
+        "200":
+          description: Message object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - username
+        - discriminator
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        discriminator:
+          type: string
+        global_name:
+          type: string
+        avatar:
+          type: string
+        bot:
+          type: boolean
+        system:
+          type: boolean
+        mfa_enabled:
+          type: boolean
+        banner:
+          type: string
+        accent_color:
+          type: integer
+        locale:
+          type: string
+        verified:
+          type: boolean
+        email:
+          type: string
+        flags:
+          type: integer
+        premium_type:
+          type: integer
+        public_flags:
+          type: integer
+
+    Guild:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+        icon_hash:
+          type: string
+        splash:
+          type: string
+        discovery_splash:
+          type: string
+        owner:
+          type: boolean
+        owner_id:
+          type: string
+        permissions:
+          type: string
+        region:
+          type: string
+        afk_channel_id:
+          type: string
+        afk_timeout:
+          type: integer
+        widget_enabled:
+          type: boolean
+        widget_channel_id:
+          type: string
+        verification_level:
+          type: integer
+        default_message_notifications:
+          type: integer
+        explicit_content_filter:
+          type: integer
+        mfa_level:
+          type: integer
+        application_id:
+          type: string
+        system_channel_id:
+          type: string
+        system_channel_flags:
+          type: integer
+        rules_channel_id:
+          type: string
+        max_presences:
+          type: integer
+        max_members:
+          type: integer
+        vanity_url_code:
+          type: string
+        description:
+          type: string
+        banner:
+          type: string
+        premium_tier:
+          type: integer
+        premium_subscription_count:
+          type: integer
+        preferred_locale:
+          type: string
+        public_updates_channel_id:
+          type: string
+        max_video_channel_users:
+          type: integer
+        approximate_member_count:
+          type: integer
+        approximate_presence_count:
+          type: integer
+        nsfw_level:
+          type: integer
+        premium_progress_bar_enabled:
+          type: boolean
+
+    Message:
+      type: object
+      required:
+        - id
+        - channel_id
+        - author
+        - content
+        - timestamp
+        - tts
+        - mention_everyone
+        - mentions
+        - mention_roles
+        - attachments
+        - embeds
+        - pinned
+        - type
+      properties:
+        id:
+          type: string
+        channel_id:
+          type: string
+        author:
+          $ref: "#/components/schemas/User"
+        content:
+          type: string
+        timestamp:
+          type: string
+        edited_timestamp:
+          type: string
+        tts:
+          type: boolean
+        mention_everyone:
+          type: boolean
+        mentions:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        mention_roles:
+          type: array
+          items:
+            type: string
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Attachment"
+        embeds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Embed"
+        reactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reaction"
+        nonce:
+          type: string
+        pinned:
+          type: boolean
+        webhook_id:
+          type: string
+        type:
+          type: integer
+        flags:
+          type: integer
+        referenced_message:
+          $ref: "#/components/schemas/Message"
+
+    MessageList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Message"
+
+    CreateMessageRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          maxLength: 2000
+        nonce:
+          type: string
+        tts:
+          type: boolean
+        embeds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Embed"
+        message_reference:
+          $ref: "#/components/schemas/MessageReference"
+        flags:
+          type: integer
+
+    Attachment:
+      type: object
+      required:
+        - id
+        - filename
+        - size
+        - url
+        - proxy_url
+      properties:
+        id:
+          type: string
+        filename:
+          type: string
+        description:
+          type: string
+        content_type:
+          type: string
+        size:
+          type: integer
+        url:
+          type: string
+        proxy_url:
+          type: string
+        height:
+          type: integer
+        width:
+          type: integer
+        ephemeral:
+          type: boolean
+
+    Embed:
+      type: object
+      properties:
+        title:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        timestamp:
+          type: string
+        color:
+          type: integer
+        footer:
+          $ref: "#/components/schemas/EmbedFooter"
+        image:
+          $ref: "#/components/schemas/EmbedImage"
+        thumbnail:
+          $ref: "#/components/schemas/EmbedThumbnail"
+        video:
+          $ref: "#/components/schemas/EmbedVideo"
+        provider:
+          $ref: "#/components/schemas/EmbedProvider"
+        author:
+          $ref: "#/components/schemas/EmbedAuthor"
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/EmbedField"
+
+    EmbedFooter:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+        icon_url:
+          type: string
+        proxy_icon_url:
+          type: string
+
+    EmbedImage:
+      type: object
+      properties:
+        url:
+          type: string
+        proxy_url:
+          type: string
+        height:
+          type: integer
+        width:
+          type: integer
+
+    EmbedThumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        proxy_url:
+          type: string
+        height:
+          type: integer
+        width:
+          type: integer
+
+    EmbedVideo:
+      type: object
+      properties:
+        url:
+          type: string
+        proxy_url:
+          type: string
+        height:
+          type: integer
+        width:
+          type: integer
+
+    EmbedProvider:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+
+    EmbedAuthor:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        icon_url:
+          type: string
+        proxy_icon_url:
+          type: string
+
+    EmbedField:
+      type: object
+      required:
+        - name
+        - value
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        inline:
+          type: boolean
+
+    Reaction:
+      type: object
+      required:
+        - count
+        - me
+        - emoji
+      properties:
+        count:
+          type: integer
+        me:
+          type: boolean
+        emoji:
+          $ref: "#/components/schemas/Emoji"
+
+    Emoji:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        animated:
+          type: boolean
+
+    MessageReference:
+      type: object
+      properties:
+        message_id:
+          type: string
+        channel_id:
+          type: string
+        guild_id:
+          type: string
+        fail_if_not_exists:
+          type: boolean
