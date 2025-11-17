@@ -1,0 +1,279 @@
+openapi: "3.0.3"
+info:
+  title: Instagram Graph API
+  version: "18.0"
+  description: Instagram Graph API for accessing Instagram Professional account data
+servers:
+  - url: https://graph.facebook.com/v18.0
+paths:
+  /{user_id}/media:
+    get:
+      operationId: getUserMedia
+      summary: Get user media
+      description: Returns a list of media objects for a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The Instagram user ID or 'me'
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated list of fields to return
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Maximum number of media to return
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaListResponse"
+    post:
+      operationId: createMedia
+      summary: Create media container
+      description: Creates a media container for publishing
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The Instagram user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMediaRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateMediaResponse"
+  /{media_id}:
+    get:
+      operationId: getMedia
+      summary: Get single media
+      description: Returns details of a single media object
+      parameters:
+        - name: media_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The media ID
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated list of fields to return
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Media"
+  /{user_id}/insights:
+    get:
+      operationId: getUserInsights
+      summary: Get user insights
+      description: Returns insights for a user's Instagram Professional account
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The Instagram user ID
+        - name: metric
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of metrics (e.g., impressions,reach,follower_count)
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Period for time-based metrics (day, week, days_28, month, lifetime)
+        - name: since
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Unix timestamp for start of date range
+        - name: until
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Unix timestamp for end of date range
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InsightsResponse"
+  /{media_id}/insights:
+    get:
+      operationId: getMediaInsights
+      summary: Get media insights
+      description: Returns insights for a specific media object
+      parameters:
+        - name: media_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The media ID
+        - name: metric
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of metrics (e.g., impressions,reach,engagement)
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InsightsResponse"
+components:
+  schemas:
+    Media:
+      type: object
+      properties:
+        id:
+          type: string
+        caption:
+          type: string
+        media_type:
+          type: string
+          enum:
+            - IMAGE
+            - VIDEO
+            - CAROUSEL_ALBUM
+        media_url:
+          type: string
+        permalink:
+          type: string
+        thumbnail_url:
+          type: string
+        timestamp:
+          type: string
+        username:
+          type: string
+        like_count:
+          type: integer
+        comments_count:
+          type: integer
+      required:
+        - id
+    MediaListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Media"
+        paging:
+          $ref: "#/components/schemas/Paging"
+      required:
+        - data
+    Paging:
+      type: object
+      properties:
+        cursors:
+          type: object
+          properties:
+            before:
+              type: string
+            after:
+              type: string
+        next:
+          type: string
+        previous:
+          type: string
+    CreateMediaRequest:
+      type: object
+      properties:
+        image_url:
+          type: string
+        video_url:
+          type: string
+        caption:
+          type: string
+        location_id:
+          type: string
+        user_tags:
+          type: array
+          items:
+            type: object
+            properties:
+              username:
+                type: string
+              x:
+                type: number
+              y:
+                type: number
+        is_carousel_item:
+          type: boolean
+        media_type:
+          type: string
+    CreateMediaResponse:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    InsightsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Insight"
+      required:
+        - data
+    Insight:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        period:
+          type: string
+        values:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: integer
+              end_time:
+                type: string
+        title:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - name

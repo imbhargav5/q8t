@@ -1,0 +1,309 @@
+openapi: 3.0.0
+info:
+  title: Pinterest API
+  version: "5"
+  description: Pinterest API v5 endpoints
+
+servers:
+  - url: https://api.pinterest.com/v5
+
+paths:
+  /user_account:
+    get:
+      operationId: getUserAccount
+      summary: Get user account info
+      responses:
+        "200":
+          description: User account retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserAccount"
+
+  /boards:
+    get:
+      operationId: listBoards
+      summary: List boards
+      parameters:
+        - name: bookmark
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 250
+        - name: privacy
+          in: query
+          schema:
+            type: string
+            enum: ["PUBLIC", "PROTECTED", "SECRET"]
+      responses:
+        "200":
+          description: Boards retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BoardsListResponse"
+
+  /pins:
+    get:
+      operationId: listPins
+      summary: List pins
+      parameters:
+        - name: bookmark
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 250
+        - name: pin_filter
+          in: query
+          schema:
+            type: string
+            enum: ["exclude_native", "exclude_repins", "has_been_promoted"]
+      responses:
+        "200":
+          description: Pins retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PinsListResponse"
+    post:
+      operationId: createPin
+      summary: Create a pin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PinCreate"
+      responses:
+        "201":
+          description: Pin created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pin"
+
+components:
+  schemas:
+    UserAccount:
+      type: object
+      required:
+        - username
+      properties:
+        account_type:
+          type: string
+          enum: ["PINNER", "BUSINESS"]
+        profile_image:
+          type: string
+        website_url:
+          type: string
+        username:
+          type: string
+        about:
+          type: string
+        business_name:
+          type: string
+        board_count:
+          type: integer
+        pin_count:
+          type: integer
+        follower_count:
+          type: integer
+        following_count:
+          type: integer
+        monthly_views:
+          type: integer
+
+    Board:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        owner:
+          $ref: "#/components/schemas/BoardOwner"
+        privacy:
+          type: string
+          enum: ["PUBLIC", "PROTECTED", "SECRET"]
+        media:
+          $ref: "#/components/schemas/BoardMedia"
+        board_pins_modified_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        pin_count:
+          type: integer
+        follower_count:
+          type: integer
+        collaborator_count:
+          type: integer
+
+    BoardOwner:
+      type: object
+      properties:
+        username:
+          type: string
+
+    BoardMedia:
+      type: object
+      properties:
+        image_cover_url:
+          type: string
+        pin_thumbnail_urls:
+          type: array
+          items:
+            type: string
+
+    BoardsListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Board"
+        bookmark:
+          type: string
+
+    Pin:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        link:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        dominant_color:
+          type: string
+        alt_text:
+          type: string
+        board_id:
+          type: string
+        board_section_id:
+          type: string
+        board_owner:
+          $ref: "#/components/schemas/BoardOwner"
+        media:
+          $ref: "#/components/schemas/PinMedia"
+        parent_pin_id:
+          type: string
+        is_owner:
+          type: boolean
+        is_standard:
+          type: boolean
+
+    PinMedia:
+      type: object
+      properties:
+        media_type:
+          type: string
+        images:
+          type: object
+          properties:
+            "150x150":
+              $ref: "#/components/schemas/ImageDetails"
+            "400x300":
+              $ref: "#/components/schemas/ImageDetails"
+            "600x":
+              $ref: "#/components/schemas/ImageDetails"
+            "1200x":
+              $ref: "#/components/schemas/ImageDetails"
+
+    ImageDetails:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+        url:
+          type: string
+
+    PinsListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Pin"
+        bookmark:
+          type: string
+
+    PinCreate:
+      type: object
+      required:
+        - board_id
+        - media_source
+      properties:
+        link:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        dominant_color:
+          type: string
+        alt_text:
+          type: string
+        board_id:
+          type: string
+        board_section_id:
+          type: string
+        media_source:
+          $ref: "#/components/schemas/PinMediaSource"
+        parent_pin_id:
+          type: string
+        note:
+          type: string
+
+    PinMediaSource:
+      type: object
+      required:
+        - source_type
+      properties:
+        source_type:
+          type: string
+          enum: ["image_url", "image_base64", "video_id", "multiple_image_urls", "multiple_image_base64"]
+        url:
+          type: string
+        cover_image_url:
+          type: string
+        media_id:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              content_type:
+                type: string
+              data:
+                type: string
+        is_standard:
+          type: boolean

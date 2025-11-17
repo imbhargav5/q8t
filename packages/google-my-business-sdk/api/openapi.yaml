@@ -1,0 +1,478 @@
+openapi: 3.0.3
+info:
+  title: Google My Business API
+  version: v1
+  description: |
+    API for managing Google My Business accounts, locations, reviews, and local posts.
+    Base URL: https://mybusinessbusinessinformation.googleapis.com/v1
+
+servers:
+  - url: https://mybusinessbusinessinformation.googleapis.com/v1
+
+paths:
+  /accounts:
+    get:
+      operationId: listAccounts
+      summary: List all Google My Business accounts
+      description: Returns a list of accounts the authenticated user has access to
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListAccountsResponse"
+
+  /accounts/{account}/locations:
+    get:
+      operationId: listLocations
+      summary: List locations for an account
+      description: Returns a list of locations for the specified account
+      parameters:
+        - name: account
+          in: path
+          required: true
+          description: The account ID (e.g., "accounts/123456789")
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          required: false
+          description: Maximum number of locations to return
+          schema:
+            type: integer
+        - name: pageToken
+          in: query
+          required: false
+          description: Token for pagination
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListLocationsResponse"
+
+  /accounts/{account}/locations/{location}/reviews:
+    get:
+      operationId: listReviews
+      summary: List reviews for a location
+      description: Returns a list of reviews for the specified location
+      parameters:
+        - name: account
+          in: path
+          required: true
+          description: The account ID
+          schema:
+            type: string
+        - name: location
+          in: path
+          required: true
+          description: The location ID
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          required: false
+          description: Maximum number of reviews to return
+          schema:
+            type: integer
+        - name: pageToken
+          in: query
+          required: false
+          description: Token for pagination
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListReviewsResponse"
+
+  /accounts/{account}/locations/{location}/localPosts:
+    post:
+      operationId: createLocalPost
+      summary: Create a local post
+      description: Creates a new local post for the specified location
+      parameters:
+        - name: account
+          in: path
+          required: true
+          description: The account ID
+          schema:
+            type: string
+        - name: location
+          in: path
+          required: true
+          description: The location ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocalPost"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocalPost"
+
+components:
+  schemas:
+    ListAccountsResponse:
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+        nextPageToken:
+          type: string
+
+    Account:
+      type: object
+      properties:
+        name:
+          type: string
+        accountName:
+          type: string
+        type:
+          type: string
+          enum:
+            - ACCOUNT_TYPE_UNSPECIFIED
+            - PERSONAL
+            - LOCATION_GROUP
+            - USER_GROUP
+            - ORGANIZATION
+        role:
+          type: string
+          enum:
+            - ACCOUNT_ROLE_UNSPECIFIED
+            - PRIMARY_OWNER
+            - OWNER
+            - MANAGER
+            - SITE_MANAGER
+        state:
+          $ref: "#/components/schemas/AccountState"
+        profilePhotoUrl:
+          type: string
+
+    AccountState:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ACCOUNT_STATUS_UNSPECIFIED
+            - VERIFIED
+            - UNVERIFIED
+            - VERIFICATION_REQUESTED
+
+    ListLocationsResponse:
+      type: object
+      properties:
+        locations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Location"
+        nextPageToken:
+          type: string
+        totalSize:
+          type: integer
+
+    Location:
+      type: object
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        phoneNumbers:
+          $ref: "#/components/schemas/PhoneNumbers"
+        categories:
+          $ref: "#/components/schemas/Categories"
+        storefrontAddress:
+          $ref: "#/components/schemas/PostalAddress"
+        websiteUri:
+          type: string
+        regularHours:
+          $ref: "#/components/schemas/BusinessHours"
+        specialHours:
+          $ref: "#/components/schemas/SpecialHours"
+        languageCode:
+          type: string
+        profile:
+          $ref: "#/components/schemas/Profile"
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        latlng:
+          $ref: "#/components/schemas/LatLng"
+
+    PhoneNumbers:
+      type: object
+      properties:
+        primaryPhone:
+          type: string
+        additionalPhones:
+          type: array
+          items:
+            type: string
+
+    Categories:
+      type: object
+      properties:
+        primaryCategory:
+          $ref: "#/components/schemas/Category"
+        additionalCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+
+    PostalAddress:
+      type: object
+      properties:
+        regionCode:
+          type: string
+        languageCode:
+          type: string
+        postalCode:
+          type: string
+        administrativeArea:
+          type: string
+        locality:
+          type: string
+        addressLines:
+          type: array
+          items:
+            type: string
+
+    BusinessHours:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimePeriod"
+
+    TimePeriod:
+      type: object
+      properties:
+        openDay:
+          type: string
+          enum:
+            - DAY_OF_WEEK_UNSPECIFIED
+            - MONDAY
+            - TUESDAY
+            - WEDNESDAY
+            - THURSDAY
+            - FRIDAY
+            - SATURDAY
+            - SUNDAY
+        openTime:
+          $ref: "#/components/schemas/TimeOfDay"
+        closeDay:
+          type: string
+          enum:
+            - DAY_OF_WEEK_UNSPECIFIED
+            - MONDAY
+            - TUESDAY
+            - WEDNESDAY
+            - THURSDAY
+            - FRIDAY
+            - SATURDAY
+            - SUNDAY
+        closeTime:
+          $ref: "#/components/schemas/TimeOfDay"
+
+    TimeOfDay:
+      type: object
+      properties:
+        hours:
+          type: integer
+        minutes:
+          type: integer
+        seconds:
+          type: integer
+        nanos:
+          type: integer
+
+    SpecialHours:
+      type: object
+      properties:
+        specialHourPeriods:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpecialHourPeriod"
+
+    SpecialHourPeriod:
+      type: object
+      properties:
+        startDate:
+          $ref: "#/components/schemas/Date"
+        openTime:
+          $ref: "#/components/schemas/TimeOfDay"
+        endDate:
+          $ref: "#/components/schemas/Date"
+        closeTime:
+          $ref: "#/components/schemas/TimeOfDay"
+        closed:
+          type: boolean
+
+    Date:
+      type: object
+      properties:
+        year:
+          type: integer
+        month:
+          type: integer
+        day:
+          type: integer
+
+    Profile:
+      type: object
+      properties:
+        description:
+          type: string
+
+    Metadata:
+      type: object
+      properties:
+        mapsUri:
+          type: string
+        newReviewUri:
+          type: string
+
+    LatLng:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    ListReviewsResponse:
+      type: object
+      properties:
+        reviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/Review"
+        averageRating:
+          type: number
+        totalReviewCount:
+          type: integer
+        nextPageToken:
+          type: string
+
+    Review:
+      type: object
+      properties:
+        name:
+          type: string
+        reviewId:
+          type: string
+        reviewer:
+          $ref: "#/components/schemas/Reviewer"
+        starRating:
+          type: string
+          enum:
+            - STAR_RATING_UNSPECIFIED
+            - ONE
+            - TWO
+            - THREE
+            - FOUR
+            - FIVE
+        comment:
+          type: string
+        createTime:
+          type: string
+        updateTime:
+          type: string
+        reviewReply:
+          $ref: "#/components/schemas/ReviewReply"
+
+    Reviewer:
+      type: object
+      properties:
+        profilePhotoUrl:
+          type: string
+        displayName:
+          type: string
+        isAnonymous:
+          type: boolean
+
+    ReviewReply:
+      type: object
+      properties:
+        comment:
+          type: string
+        updateTime:
+          type: string
+
+    LocalPost:
+      type: object
+      properties:
+        name:
+          type: string
+        languageCode:
+          type: string
+        summary:
+          type: string
+        callToAction:
+          $ref: "#/components/schemas/CallToAction"
+        createTime:
+          type: string
+        updateTime:
+          type: string
+        state:
+          type: string
+          enum:
+            - LOCAL_POST_STATE_UNSPECIFIED
+            - REJECTED
+            - LIVE
+            - PROCESSING
+        topicType:
+          type: string
+          enum:
+            - LOCAL_POST_TOPIC_TYPE_UNSPECIFIED
+            - STANDARD
+            - EVENT
+            - OFFER
+            - ALERT
+        searchUrl:
+          type: string
+      required:
+        - summary
+        - topicType
+
+    CallToAction:
+      type: object
+      properties:
+        actionType:
+          type: string
+          enum:
+            - ACTION_TYPE_UNSPECIFIED
+            - BOOK
+            - ORDER
+            - SHOP
+            - LEARN_MORE
+            - SIGN_UP
+            - CALL
+        url:
+          type: string

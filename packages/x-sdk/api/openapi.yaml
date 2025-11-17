@@ -1,0 +1,525 @@
+openapi: 3.0.0
+info:
+  title: X (Twitter) API
+  version: "2"
+  description: X API v2 endpoints
+
+servers:
+  - url: https://api.twitter.com/2
+
+paths:
+  /tweets:
+    post:
+      operationId: createTweet
+      summary: Create a tweet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTweetRequest"
+      responses:
+        "201":
+          description: Tweet created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetResponse"
+
+  /tweets/{id}:
+    get:
+      operationId: getTweet
+      summary: Get a tweet by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tweet retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetResponse"
+    delete:
+      operationId: deleteTweet
+      summary: Delete a tweet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tweet deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteTweetResponse"
+
+  /users/me:
+    get:
+      operationId: getMe
+      summary: Get authenticated user
+      parameters:
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /users/by/username/{username}:
+    get:
+      operationId: getUserByUsername
+      summary: Get user by username
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /users/{id}/tweets:
+    get:
+      operationId: getUserTweets
+      summary: Get tweets by user ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tweets retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetsResponse"
+
+  /users/{id}/followers:
+    get:
+      operationId: getFollowers
+      summary: Get followers of a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Followers retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+
+  /users/{id}/following:
+    get:
+      operationId: getFollowing
+      summary: Get users that a user is following
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Following retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+
+  /users/{id}/liked_tweets:
+    get:
+      operationId: getLikedTweets
+      summary: Get tweets liked by a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Liked tweets retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetsResponse"
+
+  /users/{id}/likes:
+    post:
+      operationId: likeTweet
+      summary: Like a tweet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LikeTweetRequest"
+      responses:
+        "200":
+          description: Tweet liked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikeResponse"
+
+  /users/{id}/retweets:
+    post:
+      operationId: retweet
+      summary: Retweet a tweet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RetweetRequest"
+      responses:
+        "200":
+          description: Tweet retweeted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RetweetResponse"
+
+components:
+  schemas:
+    Tweet:
+      type: object
+      required:
+        - id
+        - text
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        author_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        public_metrics:
+          $ref: "#/components/schemas/TweetPublicMetrics"
+        entities:
+          $ref: "#/components/schemas/TweetEntities"
+
+    TweetPublicMetrics:
+      type: object
+      properties:
+        retweet_count:
+          type: integer
+        reply_count:
+          type: integer
+        like_count:
+          type: integer
+        quote_count:
+          type: integer
+
+    TweetEntities:
+      type: object
+      properties:
+        hashtags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Hashtag"
+        mentions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Mention"
+        urls:
+          type: array
+          items:
+            $ref: "#/components/schemas/UrlEntity"
+
+    Hashtag:
+      type: object
+      properties:
+        start:
+          type: integer
+        end:
+          type: integer
+        tag:
+          type: string
+
+    Mention:
+      type: object
+      properties:
+        start:
+          type: integer
+        end:
+          type: integer
+        username:
+          type: string
+
+    UrlEntity:
+      type: object
+      properties:
+        start:
+          type: integer
+        end:
+          type: integer
+        url:
+          type: string
+        expanded_url:
+          type: string
+        display_url:
+          type: string
+
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - username
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        username:
+          type: string
+        description:
+          type: string
+        profile_image_url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        public_metrics:
+          $ref: "#/components/schemas/UserPublicMetrics"
+        verified:
+          type: boolean
+
+    UserPublicMetrics:
+      type: object
+      properties:
+        followers_count:
+          type: integer
+        following_count:
+          type: integer
+        tweet_count:
+          type: integer
+        listed_count:
+          type: integer
+
+    CreateTweetRequest:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          maxLength: 280
+        reply:
+          type: object
+          properties:
+            in_reply_to_tweet_id:
+              type: string
+        quote_tweet_id:
+          type: string
+        poll:
+          type: object
+          properties:
+            options:
+              type: array
+              items:
+                type: string
+            duration_minutes:
+              type: integer
+
+    TweetResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/Tweet"
+
+    TweetsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tweet"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    UserResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/User"
+
+    UsersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    DeleteTweetResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            deleted:
+              type: boolean
+
+    LikeTweetRequest:
+      type: object
+      required:
+        - tweet_id
+      properties:
+        tweet_id:
+          type: string
+
+    LikeResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            liked:
+              type: boolean
+
+    RetweetRequest:
+      type: object
+      required:
+        - tweet_id
+      properties:
+        tweet_id:
+          type: string
+
+    RetweetResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            retweeted:
+              type: boolean
+
+    PaginationMeta:
+      type: object
+      properties:
+        result_count:
+          type: integer
+        next_token:
+          type: string
+        previous_token:
+          type: string
