@@ -111,3 +111,154 @@ export interface PaginationMeta {
   next_token?: string;
   previous_token?: string;
 }
+
+export interface UnlikeResponse {
+  data?: { liked?: boolean };
+}
+
+export interface UnretweetResponse {
+  data?: { retweeted?: boolean };
+}
+
+export interface FollowRequest {
+  target_user_id: string;
+}
+
+export interface FollowResponse {
+  data?: { following?: boolean; pending_follow?: boolean };
+}
+
+export interface UnfollowResponse {
+  data?: { following?: boolean };
+}
+
+export interface BookmarkRequest {
+  tweet_id: string;
+}
+
+export interface BookmarkResponse {
+  data?: { bookmarked?: boolean };
+}
+
+export interface RemoveBookmarkResponse {
+  data?: { bookmarked?: boolean };
+}
+
+export interface BlockRequest {
+  target_user_id: string;
+}
+
+export interface BlockResponse {
+  data?: { blocking?: boolean };
+}
+
+export interface UnblockResponse {
+  data?: { blocking?: boolean };
+}
+
+export interface MuteRequest {
+  target_user_id: string;
+}
+
+export interface MuteResponse {
+  data?: { muting?: boolean };
+}
+
+export interface UnmuteResponse {
+  data?: { muting?: boolean };
+}
+
+export interface List {
+  id: string;
+  name: string;
+  description?: string;
+  private?: boolean;
+  follower_count?: number;
+  member_count?: number;
+  owner_id?: string;
+  created_at?: string;
+}
+
+export interface CreateListRequest {
+  name: string;
+  description?: string;
+  private?: boolean;
+}
+
+export interface UpdateListRequest {
+  name?: string;
+  description?: string;
+  private?: boolean;
+}
+
+export interface ListResponse {
+  data?: List;
+}
+
+export interface ListsResponse {
+  data?: List[];
+  meta?: PaginationMeta;
+}
+
+export interface DeleteListResponse {
+  data?: { deleted?: boolean };
+}
+
+export interface AddListMemberRequest {
+  user_id: string;
+}
+
+export interface AddListMemberResponse {
+  data?: { is_member?: boolean };
+}
+
+export interface RemoveListMemberResponse {
+  data?: { is_member?: boolean };
+}
+
+export interface FollowListRequest {
+  list_id: string;
+}
+
+export interface FollowListResponse {
+  data?: { following?: boolean };
+}
+
+export interface UnfollowListResponse {
+  data?: { following?: boolean };
+}
+
+export interface PinListRequest {
+  list_id: string;
+}
+
+export interface PinListResponse {
+  data?: { pinned?: boolean };
+}
+
+export interface UnpinListResponse {
+  data?: { pinned?: boolean };
+}
+
+export interface Space {
+  id: string;
+  state: "live" | "scheduled" | "ended";
+  title?: string;
+  created_at?: string;
+  started_at?: string;
+  ended_at?: string;
+  host_ids?: string[];
+  speaker_ids?: string[];
+  participant_count?: number;
+  is_ticketed?: boolean;
+  scheduled_start?: string;
+}
+
+export interface SpaceResponse {
+  data?: Space;
+}
+
+export interface SpacesResponse {
+  data?: Space[];
+  meta?: PaginationMeta;
+}

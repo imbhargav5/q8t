@@ -216,6 +216,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UsersResponse"
+    post:
+      operationId: followUser
+      summary: Follow a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FollowRequest"
+      responses:
+        "200":
+          description: User followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowResponse"
 
   /users/{id}/liked_tweets:
     get:
@@ -292,6 +314,830 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RetweetResponse"
+
+  /users/{source_user_id}/likes/{tweet_id}:
+    delete:
+      operationId: unlikeTweet
+      summary: Unlike a tweet
+      parameters:
+        - name: source_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tweet_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tweet unliked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnlikeResponse"
+
+  /users/{source_user_id}/retweets/{tweet_id}:
+    delete:
+      operationId: unretweet
+      summary: Remove a retweet
+      parameters:
+        - name: source_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tweet_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Retweet removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnretweetResponse"
+
+  /users/{source_user_id}/following/{target_user_id}:
+    delete:
+      operationId: unfollowUser
+      summary: Unfollow a user
+      parameters:
+        - name: source_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: target_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnfollowResponse"
+
+  /users/{id}/bookmarks:
+    get:
+      operationId: getBookmarks
+      summary: Get bookmarked tweets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Bookmarks retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetsResponse"
+    post:
+      operationId: bookmarkTweet
+      summary: Bookmark a tweet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookmarkRequest"
+      responses:
+        "200":
+          description: Tweet bookmarked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookmarkResponse"
+
+  /users/{id}/bookmarks/{tweet_id}:
+    delete:
+      operationId: removeBookmark
+      summary: Remove a bookmark
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tweet_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Bookmark removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemoveBookmarkResponse"
+
+  /users/{id}/blocking:
+    get:
+      operationId: getBlockedUsers
+      summary: Get blocked users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Blocked users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+    post:
+      operationId: blockUser
+      summary: Block a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlockRequest"
+      responses:
+        "200":
+          description: User blocked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlockResponse"
+
+  /users/{source_user_id}/blocking/{target_user_id}:
+    delete:
+      operationId: unblockUser
+      summary: Unblock a user
+      parameters:
+        - name: source_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: target_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User unblocked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnblockResponse"
+
+  /users/{id}/muting:
+    get:
+      operationId: getMutedUsers
+      summary: Get muted users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Muted users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+    post:
+      operationId: muteUser
+      summary: Mute a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MuteRequest"
+      responses:
+        "200":
+          description: User muted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MuteResponse"
+
+  /users/{source_user_id}/muting/{target_user_id}:
+    delete:
+      operationId: unmuteUser
+      summary: Unmute a user
+      parameters:
+        - name: source_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: target_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User unmuted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnmuteResponse"
+
+  /users/{id}/mentions:
+    get:
+      operationId: getUserMentions
+      summary: Get tweets mentioning a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mentions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetsResponse"
+
+  /users/{id}/timelines/reverse_chronological:
+    get:
+      operationId: getHomeTimeline
+      summary: Get reverse chronological home timeline
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Timeline retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetsResponse"
+
+  /tweets/search/recent:
+    get:
+      operationId: searchRecentTweets
+      summary: Search for recent tweets
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 100
+        - name: start_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tweets retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetsResponse"
+
+  /lists:
+    post:
+      operationId: createList
+      summary: Create a new list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListRequest"
+      responses:
+        "201":
+          description: List created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+
+  /lists/{id}:
+    get:
+      operationId: getList
+      summary: Get a list by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: list.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+    put:
+      operationId: updateList
+      summary: Update a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateListRequest"
+      responses:
+        "200":
+          description: List updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+    delete:
+      operationId: deleteList
+      summary: Delete a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteListResponse"
+
+  /lists/{id}/tweets:
+    get:
+      operationId: getListTweets
+      summary: Get tweets from a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List tweets retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweetsResponse"
+
+  /lists/{id}/members:
+    get:
+      operationId: getListMembers
+      summary: Get members of a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List members retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+    post:
+      operationId: addListMember
+      summary: Add a member to a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddListMemberRequest"
+      responses:
+        "200":
+          description: Member added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddListMemberResponse"
+
+  /lists/{id}/members/{user_id}:
+    delete:
+      operationId: removeListMember
+      summary: Remove a member from a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Member removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemoveListMemberResponse"
+
+  /users/{id}/followed_lists:
+    get:
+      operationId: getFollowedLists
+      summary: Get lists followed by a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Followed lists retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListsResponse"
+    post:
+      operationId: followList
+      summary: Follow a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FollowListRequest"
+      responses:
+        "200":
+          description: List followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowListResponse"
+
+  /users/{id}/followed_lists/{list_id}:
+    delete:
+      operationId: unfollowList
+      summary: Unfollow a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnfollowListResponse"
+
+  /users/{id}/owned_lists:
+    get:
+      operationId: getOwnedLists
+      summary: Get lists owned by a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Owned lists retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListsResponse"
+
+  /users/{id}/pinned_lists:
+    get:
+      operationId: getPinnedLists
+      summary: Get pinned lists
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Pinned lists retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListsResponse"
+    post:
+      operationId: pinList
+      summary: Pin a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PinListRequest"
+      responses:
+        "200":
+          description: List pinned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PinListResponse"
+
+  /users/{id}/pinned_lists/{list_id}:
+    delete:
+      operationId: unpinList
+      summary: Unpin a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List unpinned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnpinListResponse"
+
+  /spaces:
+    get:
+      operationId: getSpaces
+      summary: Get multiple spaces by IDs
+      parameters:
+        - name: ids
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: space.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Spaces retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpacesResponse"
+
+  /spaces/{id}:
+    get:
+      operationId: getSpace
+      summary: Get a space by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: space.fields
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Space retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpaceResponse"
+
+  /spaces/{id}/buyers:
+    get:
+      operationId: getSpaceBuyers
+      summary: Get buyers of a space
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Space buyers retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+
+  /spaces/search:
+    get:
+      operationId: searchSpaces
+      summary: Search for spaces
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+            enum: [live, scheduled]
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Spaces retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpacesResponse"
 
 components:
   schemas:
@@ -523,3 +1369,330 @@ components:
           type: string
         previous_token:
           type: string
+
+    UnlikeResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            liked:
+              type: boolean
+
+    UnretweetResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            retweeted:
+              type: boolean
+
+    FollowRequest:
+      type: object
+      required:
+        - target_user_id
+      properties:
+        target_user_id:
+          type: string
+
+    FollowResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            following:
+              type: boolean
+            pending_follow:
+              type: boolean
+
+    UnfollowResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            following:
+              type: boolean
+
+    BookmarkRequest:
+      type: object
+      required:
+        - tweet_id
+      properties:
+        tweet_id:
+          type: string
+
+    BookmarkResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            bookmarked:
+              type: boolean
+
+    RemoveBookmarkResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            bookmarked:
+              type: boolean
+
+    BlockRequest:
+      type: object
+      required:
+        - target_user_id
+      properties:
+        target_user_id:
+          type: string
+
+    BlockResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            blocking:
+              type: boolean
+
+    UnblockResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            blocking:
+              type: boolean
+
+    MuteRequest:
+      type: object
+      required:
+        - target_user_id
+      properties:
+        target_user_id:
+          type: string
+
+    MuteResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            muting:
+              type: boolean
+
+    UnmuteResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            muting:
+              type: boolean
+
+    List:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        private:
+          type: boolean
+        follower_count:
+          type: integer
+        member_count:
+          type: integer
+        owner_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    CreateListRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        private:
+          type: boolean
+
+    UpdateListRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        private:
+          type: boolean
+
+    ListResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/List"
+
+    ListsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/List"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    DeleteListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            deleted:
+              type: boolean
+
+    AddListMemberRequest:
+      type: object
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: string
+
+    AddListMemberResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            is_member:
+              type: boolean
+
+    RemoveListMemberResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            is_member:
+              type: boolean
+
+    FollowListRequest:
+      type: object
+      required:
+        - list_id
+      properties:
+        list_id:
+          type: string
+
+    FollowListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            following:
+              type: boolean
+
+    UnfollowListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            following:
+              type: boolean
+
+    PinListRequest:
+      type: object
+      required:
+        - list_id
+      properties:
+        list_id:
+          type: string
+
+    PinListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            pinned:
+              type: boolean
+
+    UnpinListResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            pinned:
+              type: boolean
+
+    Space:
+      type: object
+      required:
+        - id
+        - state
+      properties:
+        id:
+          type: string
+        state:
+          type: string
+          enum: [live, scheduled, ended]
+        title:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+        ended_at:
+          type: string
+          format: date-time
+        host_ids:
+          type: array
+          items:
+            type: string
+        speaker_ids:
+          type: array
+          items:
+            type: string
+        participant_count:
+          type: integer
+        is_ticketed:
+          type: boolean
+        scheduled_start:
+          type: string
+          format: date-time
+
+    SpaceResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/Space"
+
+    SpacesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Space"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
