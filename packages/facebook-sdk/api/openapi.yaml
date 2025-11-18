@@ -2,12 +2,13 @@ openapi: "3.0.3"
 info:
   title: Facebook Graph API
   version: "18.0"
-  description: Facebook Graph API endpoints for pages and user data
+  description: Facebook Graph API endpoints for pages, users, posts, photos, albums, comments, and more
 
 servers:
   - url: https://graph.facebook.com/v18.0
 
 paths:
+  # User endpoints
   /me:
     get:
       operationId: getMe
@@ -25,6 +26,204 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserProfile"
+
+  /{user-id}:
+    get:
+      operationId: getUser
+      summary: Get user by ID
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User profile information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /{user-id}/posts:
+    get:
+      operationId: getUserPosts
+      summary: Get user posts
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostFeed"
+
+  /{user-id}/photos:
+    get:
+      operationId: getUserPhotos
+      summary: Get user photos
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User photos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhotoFeed"
+    post:
+      operationId: createUserPhoto
+      summary: Upload a photo for user
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePhotoRequest"
+      responses:
+        "200":
+          description: Created photo information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePhotoResponse"
+
+  /{user-id}/albums:
+    get:
+      operationId: getUserAlbums
+      summary: Get user albums
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User albums
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbumFeed"
+    post:
+      operationId: createUserAlbum
+      summary: Create an album for user
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAlbumRequest"
+      responses:
+        "200":
+          description: Created album information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateAlbumResponse"
+
+  /{user-id}/friends:
+    get:
+      operationId: getUserFriends
+      summary: Get user friends
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User friends
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendsFeed"
+
+  # Page endpoints
+  /{page-id}:
+    get:
+      operationId: getPage
+      summary: Get page by ID
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Page information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Page"
 
   /{page-id}/feed:
     get:
@@ -76,6 +275,34 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreatePostResponse"
 
+  /{page-id}/posts:
+    get:
+      operationId: getPagePosts
+      summary: Get page posts
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Page posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostFeed"
+
   /{page-id}/insights:
     get:
       operationId: getPageInsights
@@ -103,6 +330,651 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PageInsights"
+
+  /{page-id}/photos:
+    get:
+      operationId: getPagePhotos
+      summary: Get page photos
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Page photos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhotoFeed"
+    post:
+      operationId: createPagePhoto
+      summary: Upload a photo to page
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePhotoRequest"
+      responses:
+        "200":
+          description: Created photo information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePhotoResponse"
+
+  /{page-id}/albums:
+    get:
+      operationId: getPageAlbums
+      summary: Get page albums
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Page albums
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlbumFeed"
+    post:
+      operationId: createPageAlbum
+      summary: Create an album on page
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAlbumRequest"
+      responses:
+        "200":
+          description: Created album information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateAlbumResponse"
+
+  # Post endpoints
+  /{post-id}:
+    get:
+      operationId: getPost
+      summary: Get post by ID
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+    delete:
+      operationId: deletePost
+      summary: Delete a post
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Delete success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+  /{post-id}/comments:
+    get:
+      operationId: getPostComments
+      summary: Get post comments
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: filter
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentFeed"
+    post:
+      operationId: createPostComment
+      summary: Create a comment on post
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+      responses:
+        "200":
+          description: Created comment information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCommentResponse"
+
+  /{post-id}/likes:
+    get:
+      operationId: getPostLikes
+      summary: Get post likes
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Post likes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikesFeed"
+    post:
+      operationId: createPostLike
+      summary: Like a post
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Like success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikeResponse"
+    delete:
+      operationId: deletePostLike
+      summary: Unlike a post
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Unlike success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+  /{post-id}/reactions:
+    get:
+      operationId: getPostReactions
+      summary: Get post reactions
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [LIKE, LOVE, WOW, HAHA, SAD, ANGRY, CARE]
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Post reactions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReactionsFeed"
+
+  /{post-id}/shares:
+    get:
+      operationId: getPostShares
+      summary: Get post shares
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Post shares
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharesFeed"
+
+  /{post-id}/insights:
+    get:
+      operationId: getPostInsights
+      summary: Get post insights
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: metric
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post insights data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostInsights"
+
+  # Photo endpoints
+  /{photo-id}:
+    get:
+      operationId: getPhoto
+      summary: Get photo by ID
+      parameters:
+        - name: photo-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Photo information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+    delete:
+      operationId: deletePhoto
+      summary: Delete a photo
+      parameters:
+        - name: photo-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Delete success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+  /{photo-id}/comments:
+    get:
+      operationId: getPhotoComments
+      summary: Get photo comments
+      parameters:
+        - name: photo-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Photo comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentFeed"
+    post:
+      operationId: createPhotoComment
+      summary: Create a comment on photo
+      parameters:
+        - name: photo-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+      responses:
+        "200":
+          description: Created comment information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCommentResponse"
+
+  /{photo-id}/likes:
+    get:
+      operationId: getPhotoLikes
+      summary: Get photo likes
+      parameters:
+        - name: photo-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Photo likes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikesFeed"
+    post:
+      operationId: createPhotoLike
+      summary: Like a photo
+      parameters:
+        - name: photo-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Like success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikeResponse"
+    delete:
+      operationId: deletePhotoLike
+      summary: Unlike a photo
+      parameters:
+        - name: photo-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Unlike success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+  # Album endpoints
+  /{album-id}:
+    get:
+      operationId: getAlbum
+      summary: Get album by ID
+      parameters:
+        - name: album-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Album information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+    delete:
+      operationId: deleteAlbum
+      summary: Delete an album
+      parameters:
+        - name: album-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Delete success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+  /{album-id}/photos:
+    get:
+      operationId: getAlbumPhotos
+      summary: Get album photos
+      parameters:
+        - name: album-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Album photos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhotoFeed"
+    post:
+      operationId: addPhotoToAlbum
+      summary: Add a photo to album
+      parameters:
+        - name: album-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePhotoRequest"
+      responses:
+        "200":
+          description: Created photo information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePhotoResponse"
+
+  # Comment endpoints
+  /{comment-id}:
+    get:
+      operationId: getComment
+      summary: Get comment by ID
+      parameters:
+        - name: comment-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comment information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+    delete:
+      operationId: deleteComment
+      summary: Delete a comment
+      parameters:
+        - name: comment-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Delete success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
+
+  /{comment-id}/likes:
+    get:
+      operationId: getCommentLikes
+      summary: Get comment likes
+      parameters:
+        - name: comment-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Comment likes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikesFeed"
+    post:
+      operationId: createCommentLike
+      summary: Like a comment
+      parameters:
+        - name: comment-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Like success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikeResponse"
+    delete:
+      operationId: deleteCommentLike
+      summary: Unlike a comment
+      parameters:
+        - name: comment-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Unlike success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResponse"
 
 components:
   schemas:
@@ -240,3 +1112,400 @@ components:
           type: string
         previous:
           type: string
+
+    Page:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        about:
+          type: string
+        category:
+          type: string
+        category_list:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+        cover:
+          type: object
+          properties:
+            cover_id:
+              type: string
+            offset_x:
+              type: integer
+            offset_y:
+              type: integer
+            source:
+              type: string
+        fan_count:
+          type: integer
+        followers_count:
+          type: integer
+        picture:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                url:
+                  type: string
+        website:
+          type: string
+
+    PostFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    Photo:
+      type: object
+      required:
+        - id
+        - created_time
+      properties:
+        id:
+          type: string
+        album:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        created_time:
+          type: string
+        height:
+          type: integer
+        width:
+          type: integer
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              height:
+                type: integer
+              width:
+                type: integer
+              source:
+                type: string
+        link:
+          type: string
+        name:
+          type: string
+        picture:
+          type: string
+
+    PhotoFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Photo"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    CreatePhotoRequest:
+      type: object
+      properties:
+        url:
+          type: string
+        caption:
+          type: string
+        published:
+          type: boolean
+        no_story:
+          type: boolean
+
+    CreatePhotoResponse:
+      type: object
+      required:
+        - id
+        - post_id
+      properties:
+        id:
+          type: string
+        post_id:
+          type: string
+
+    Album:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        cover_photo:
+          type: object
+          properties:
+            id:
+              type: string
+        count:
+          type: integer
+        created_time:
+          type: string
+        updated_time:
+          type: string
+        type:
+          type: string
+        link:
+          type: string
+
+    AlbumFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Album"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    CreateAlbumRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        privacy:
+          type: object
+          properties:
+            value:
+              type: string
+              enum: [EVERYONE, FRIENDS, CUSTOM]
+
+    CreateAlbumResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    Comment:
+      type: object
+      required:
+        - id
+        - created_time
+      properties:
+        id:
+          type: string
+        from:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        message:
+          type: string
+        created_time:
+          type: string
+        like_count:
+          type: integer
+        comment_count:
+          type: integer
+        attachment:
+          type: object
+          properties:
+            media:
+              type: object
+            target:
+              type: object
+            type:
+              type: string
+            url:
+              type: string
+
+    CommentFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+        paging:
+          $ref: "#/components/schemas/Paging"
+        summary:
+          type: object
+          properties:
+            order:
+              type: string
+            total_count:
+              type: integer
+            can_comment:
+              type: boolean
+
+    CreateCommentRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+        attachment_id:
+          type: string
+        attachment_share_url:
+          type: string
+        attachment_url:
+          type: string
+
+    CreateCommentResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    Like:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    LikesFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Like"
+        paging:
+          $ref: "#/components/schemas/Paging"
+        summary:
+          type: object
+          properties:
+            total_count:
+              type: integer
+            can_like:
+              type: boolean
+            has_liked:
+              type: boolean
+
+    LikeResponse:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+
+    Reaction:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [LIKE, LOVE, WOW, HAHA, SAD, ANGRY, CARE]
+
+    ReactionsFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reaction"
+        paging:
+          $ref: "#/components/schemas/Paging"
+        summary:
+          type: object
+          properties:
+            total_count:
+              type: integer
+            viewer_reaction:
+              type: string
+
+    Share:
+      type: object
+      properties:
+        id:
+          type: string
+        from:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        link:
+          type: string
+
+    SharesFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Share"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    PostInsights:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsightMetric"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    FriendsFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserProfile"
+        paging:
+          $ref: "#/components/schemas/Paging"
+        summary:
+          type: object
+          properties:
+            total_count:
+              type: integer
+
+    DeleteResponse:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
