@@ -1,0 +1,541 @@
+openapi: 3.0.0
+info:
+  title: Bluesky API
+  version: "1"
+  description: Bluesky AT Protocol API endpoints
+
+servers:
+  - url: https://bsky.social/xrpc
+
+paths:
+  /com.atproto.server.createSession:
+    post:
+      operationId: createSession
+      summary: Create authentication session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "200":
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+
+  /com.atproto.server.refreshSession:
+    post:
+      operationId: refreshSession
+      summary: Refresh authentication session
+      responses:
+        "200":
+          description: Session refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+
+  /app.bsky.actor.getProfile:
+    get:
+      operationId: getProfile
+      summary: Get actor profile
+      parameters:
+        - name: actor
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileViewDetailed"
+
+  /app.bsky.actor.getProfiles:
+    get:
+      operationId: getProfiles
+      summary: Get multiple actor profiles
+      parameters:
+        - name: actors
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Profiles retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfilesResponse"
+
+  /app.bsky.feed.getTimeline:
+    get:
+      operationId: getTimeline
+      summary: Get authenticated user's timeline
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Timeline retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+
+  /app.bsky.feed.getAuthorFeed:
+    get:
+      operationId: getAuthorFeed
+      summary: Get feed from a specific author
+      parameters:
+        - name: actor
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Author feed retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+
+  /app.bsky.feed.getPostThread:
+    get:
+      operationId: getPostThread
+      summary: Get a post thread
+      parameters:
+        - name: uri
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Thread retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ThreadResponse"
+
+  /com.atproto.repo.createRecord:
+    post:
+      operationId: createRecord
+      summary: Create a record (post, like, follow, etc.)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRecordRequest"
+      responses:
+        "200":
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRecordResponse"
+
+  /com.atproto.repo.deleteRecord:
+    post:
+      operationId: deleteRecord
+      summary: Delete a record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteRecordRequest"
+      responses:
+        "200":
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteRecordResponse"
+
+  /app.bsky.graph.getFollowers:
+    get:
+      operationId: getFollowers
+      summary: Get followers of an actor
+      parameters:
+        - name: actor
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Followers retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowersResponse"
+
+  /app.bsky.graph.getFollows:
+    get:
+      operationId: getFollows
+      summary: Get accounts an actor follows
+      parameters:
+        - name: actor
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Follows retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowsResponse"
+
+  /app.bsky.notification.listNotifications:
+    get:
+      operationId: listNotifications
+      summary: Get notifications for the authenticated user
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notifications retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationsResponse"
+
+components:
+  schemas:
+    CreateSessionRequest:
+      type: object
+      required:
+        - identifier
+        - password
+      properties:
+        identifier:
+          type: string
+        password:
+          type: string
+
+    SessionResponse:
+      type: object
+      required:
+        - did
+        - handle
+        - accessJwt
+        - refreshJwt
+      properties:
+        did:
+          type: string
+        handle:
+          type: string
+        email:
+          type: string
+        accessJwt:
+          type: string
+        refreshJwt:
+          type: string
+
+    ProfileViewDetailed:
+      type: object
+      required:
+        - did
+        - handle
+      properties:
+        did:
+          type: string
+        handle:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        avatar:
+          type: string
+        banner:
+          type: string
+        followersCount:
+          type: integer
+        followsCount:
+          type: integer
+        postsCount:
+          type: integer
+        indexedAt:
+          type: string
+          format: date-time
+
+    ProfilesResponse:
+      type: object
+      properties:
+        profiles:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProfileViewDetailed"
+
+    FeedResponse:
+      type: object
+      properties:
+        feed:
+          type: array
+          items:
+            $ref: "#/components/schemas/FeedViewPost"
+        cursor:
+          type: string
+
+    FeedViewPost:
+      type: object
+      required:
+        - post
+      properties:
+        post:
+          $ref: "#/components/schemas/PostView"
+        reply:
+          $ref: "#/components/schemas/ReplyRef"
+        reason:
+          $ref: "#/components/schemas/ReasonRepost"
+
+    PostView:
+      type: object
+      required:
+        - uri
+        - cid
+        - author
+        - record
+        - indexedAt
+      properties:
+        uri:
+          type: string
+        cid:
+          type: string
+        author:
+          $ref: "#/components/schemas/ProfileViewBasic"
+        record:
+          type: object
+        replyCount:
+          type: integer
+        repostCount:
+          type: integer
+        likeCount:
+          type: integer
+        indexedAt:
+          type: string
+          format: date-time
+
+    ProfileViewBasic:
+      type: object
+      required:
+        - did
+        - handle
+      properties:
+        did:
+          type: string
+        handle:
+          type: string
+        displayName:
+          type: string
+        avatar:
+          type: string
+
+    ReplyRef:
+      type: object
+      properties:
+        root:
+          $ref: "#/components/schemas/PostView"
+        parent:
+          $ref: "#/components/schemas/PostView"
+
+    ReasonRepost:
+      type: object
+      properties:
+        by:
+          $ref: "#/components/schemas/ProfileViewBasic"
+        indexedAt:
+          type: string
+          format: date-time
+
+    ThreadResponse:
+      type: object
+      properties:
+        thread:
+          $ref: "#/components/schemas/ThreadViewPost"
+
+    ThreadViewPost:
+      type: object
+      properties:
+        post:
+          $ref: "#/components/schemas/PostView"
+        parent:
+          $ref: "#/components/schemas/ThreadViewPost"
+        replies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThreadViewPost"
+
+    CreateRecordRequest:
+      type: object
+      required:
+        - repo
+        - collection
+        - record
+      properties:
+        repo:
+          type: string
+        collection:
+          type: string
+        rkey:
+          type: string
+        validate:
+          type: boolean
+        record:
+          type: object
+
+    CreateRecordResponse:
+      type: object
+      required:
+        - uri
+        - cid
+      properties:
+        uri:
+          type: string
+        cid:
+          type: string
+
+    DeleteRecordRequest:
+      type: object
+      required:
+        - repo
+        - collection
+        - rkey
+      properties:
+        repo:
+          type: string
+        collection:
+          type: string
+        rkey:
+          type: string
+
+    DeleteRecordResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+    FollowersResponse:
+      type: object
+      properties:
+        subject:
+          $ref: "#/components/schemas/ProfileViewDetailed"
+        followers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProfileViewBasic"
+        cursor:
+          type: string
+
+    FollowsResponse:
+      type: object
+      properties:
+        subject:
+          $ref: "#/components/schemas/ProfileViewDetailed"
+        follows:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProfileViewBasic"
+        cursor:
+          type: string
+
+    NotificationsResponse:
+      type: object
+      properties:
+        notifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        cursor:
+          type: string
+
+    Notification:
+      type: object
+      required:
+        - uri
+        - cid
+        - author
+        - reason
+        - isRead
+        - indexedAt
+      properties:
+        uri:
+          type: string
+        cid:
+          type: string
+        author:
+          $ref: "#/components/schemas/ProfileViewBasic"
+        reason:
+          type: string
+        reasonSubject:
+          type: string
+        record:
+          type: object
+        isRead:
+          type: boolean
+        indexedAt:
+          type: string
+          format: date-time

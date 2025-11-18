@@ -1,0 +1,242 @@
+openapi: "3.0.3"
+info:
+  title: Facebook Graph API
+  version: "18.0"
+  description: Facebook Graph API endpoints for pages and user data
+
+servers:
+  - url: https://graph.facebook.com/v18.0
+
+paths:
+  /me:
+    get:
+      operationId: getMe
+      summary: Get current user profile
+      parameters:
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User profile information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /{page-id}/feed:
+    get:
+      operationId: getPageFeed
+      summary: Get page feed posts
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Page feed data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageFeed"
+    post:
+      operationId: createPagePost
+      summary: Create a post on page
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePostRequest"
+      responses:
+        "200":
+          description: Created post information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePostResponse"
+
+  /{page-id}/insights:
+    get:
+      operationId: getPageInsights
+      summary: Get page insights and analytics
+      parameters:
+        - name: page-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: metric
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Page insights data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageInsights"
+
+components:
+  schemas:
+    UserProfile:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        picture:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                url:
+                  type: string
+                width:
+                  type: integer
+                height:
+                  type: integer
+
+    PageFeed:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    Post:
+      type: object
+      required:
+        - id
+        - created_time
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        created_time:
+          type: string
+        story:
+          type: string
+        full_picture:
+          type: string
+        permalink_url:
+          type: string
+
+    CreatePostRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+        link:
+          type: string
+        published:
+          type: boolean
+        scheduled_publish_time:
+          type: integer
+
+    CreatePostResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    PageInsights:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsightMetric"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    InsightMetric:
+      type: object
+      required:
+        - id
+        - name
+        - period
+        - values
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        period:
+          type: string
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsightValue"
+        title:
+          type: string
+        description:
+          type: string
+
+    InsightValue:
+      type: object
+      required:
+        - value
+        - end_time
+      properties:
+        value:
+          type: integer
+        end_time:
+          type: string
+
+    Paging:
+      type: object
+      properties:
+        cursors:
+          type: object
+          properties:
+            before:
+              type: string
+            after:
+              type: string
+        next:
+          type: string
+        previous:
+          type: string

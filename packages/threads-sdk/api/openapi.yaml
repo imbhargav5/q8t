@@ -1,0 +1,341 @@
+openapi: 3.0.3
+info:
+  title: Threads API
+  version: "1.0"
+  description: |
+    The Threads API allows you to read and publish content on the Threads platform.
+    Authentication uses Meta's OAuth 2.0 flow.
+
+servers:
+  - url: https://graph.threads.net/v1.0
+
+paths:
+  /me:
+    get:
+      operationId: getMe
+      summary: Get authenticated user profile
+      description: Returns the profile information for the currently authenticated user.
+      parameters:
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated list of fields to return (e.g., id,username,threads_profile_picture_url)
+      responses:
+        "200":
+          description: User profile information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /{user-id}/threads:
+    post:
+      operationId: createThread
+      summary: Create a new thread
+      description: Creates a new thread container for the specified user.
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateThreadRequest"
+      responses:
+        "200":
+          description: Thread container created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ThreadContainer"
+
+    get:
+      operationId: getUserThreads
+      summary: List user's threads
+      description: Returns a list of threads created by the specified user.
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The user ID
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated list of fields to return
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Maximum number of threads to return
+        - name: since
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Unix timestamp or strtotime data value for oldest thread
+        - name: until
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Unix timestamp or strtotime data value for newest thread
+      responses:
+        "200":
+          description: List of threads
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ThreadsList"
+
+  /{thread-id}:
+    get:
+      operationId: getThread
+      summary: Get a specific thread
+      description: Returns information about a specific thread.
+      parameters:
+        - name: thread-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The thread ID
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated list of fields to return
+      responses:
+        "200":
+          description: Thread information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Thread"
+
+components:
+  schemas:
+    UserProfile:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: The user's app-scoped ID
+        username:
+          type: string
+          description: The user's username
+        threads_profile_picture_url:
+          type: string
+          description: URL of the user's profile picture
+        threads_biography:
+          type: string
+          description: The user's biography/description
+
+    CreateThreadRequest:
+      type: object
+      required:
+        - media_type
+      properties:
+        media_type:
+          type: string
+          enum:
+            - TEXT
+            - IMAGE
+            - VIDEO
+            - CAROUSEL
+          description: The type of media for the thread
+        text:
+          type: string
+          maxLength: 500
+          description: The text content of the thread (max 500 characters)
+        image_url:
+          type: string
+          description: URL of the image (required for IMAGE media type)
+        video_url:
+          type: string
+          description: URL of the video (required for VIDEO media type)
+        children:
+          type: array
+          items:
+            type: string
+          description: Array of media container IDs for CAROUSEL type
+        reply_to_id:
+          type: string
+          description: ID of the thread to reply to
+        reply_control:
+          type: string
+          enum:
+            - everyone
+            - accounts_you_follow
+            - mentioned_only
+          description: Who can reply to this thread
+
+    ThreadContainer:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: The thread container ID
+
+    ThreadsList:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Thread"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    Thread:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: The thread ID
+        media_product_type:
+          type: string
+          description: Surface where the media is published (always THREADS)
+        media_type:
+          type: string
+          enum:
+            - TEXT_POST
+            - IMAGE
+            - VIDEO
+            - CAROUSEL_ALBUM
+            - AUDIO
+            - REPOST_FACADE
+          description: The type of media
+        media_url:
+          type: string
+          description: URL of the media (for IMAGE and VIDEO)
+        permalink:
+          type: string
+          description: Permanent link to the thread
+        owner:
+          type: object
+          properties:
+            id:
+              type: string
+          description: Owner information
+        username:
+          type: string
+          description: Username of the thread owner
+        text:
+          type: string
+          description: Text content of the thread
+        timestamp:
+          type: string
+          description: ISO 8601 timestamp of when the thread was created
+        shortcode:
+          type: string
+          description: Shortcode of the thread
+        thumbnail_url:
+          type: string
+          description: URL of the thumbnail (for VIDEO)
+        children:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+          description: Children threads (for CAROUSEL_ALBUM)
+        is_quote_post:
+          type: boolean
+          description: Whether this thread is a quote post
+        alt_text:
+          type: string
+          description: Alt text for the media
+        has_replies:
+          type: boolean
+          description: Whether the thread has replies
+        is_reply:
+          type: boolean
+          description: Whether this thread is a reply
+        is_reply_owned_by_me:
+          type: boolean
+          description: Whether the reply is owned by the authenticated user
+        root_post:
+          type: object
+          properties:
+            id:
+              type: string
+          description: Root post information
+        replied_to:
+          type: object
+          properties:
+            id:
+              type: string
+          description: Thread that this is replying to
+        hide_status:
+          type: string
+          enum:
+            - NOT_HUSHED
+            - UNHUSHED
+            - HIDDEN
+            - COVERED
+            - BLOCKED
+            - RESTRICTED
+          description: Hide status of the thread
+        reply_audience:
+          type: string
+          enum:
+            - EVERYONE
+            - ACCOUNTS_YOU_FOLLOW
+            - MENTIONED_ONLY
+          description: Who can reply to this thread
+
+    Paging:
+      type: object
+      properties:
+        cursors:
+          type: object
+          properties:
+            before:
+              type: string
+            after:
+              type: string
+        next:
+          type: string
+          description: URL for the next page of results
+        previous:
+          type: string
+          description: URL for the previous page of results
+
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://threads.net/oauth/authorize
+          tokenUrl: https://graph.threads.net/oauth/access_token
+          scopes:
+            threads_basic: Read user profile information
+            threads_content_publish: Create and publish threads
+            threads_manage_insights: Access insights data
+            threads_manage_replies: Manage replies to threads
+            threads_read_replies: Read replies to threads

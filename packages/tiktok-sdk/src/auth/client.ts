@@ -1,0 +1,110 @@
+import { TIKTOK_API_BASE_URL } from "./config";
+import { refreshAccessToken } from "./oauth2";
+
+export interface TikTokClientConfig {
+  clientId: string;
+  clientSecret?: string;
+  accessToken: string;
+  refreshToken?: string;
+  onTokenRefresh?: (newTokens: { accessToken: string; refreshToken?: string }) => void;
+}
+
+export interface HttpClient {
+  get<T>(path: string, params?: Record<string, string | number | undefined>): Promise<T>;
+  post<T>(path: string, body?: unknown): Promise<T>;
+  put<T>(path: string, body?: unknown): Promise<T>;
+  delete<T>(path: string): Promise<T>;
+}
+
+export function createTikTokClient(config: TikTokClientConfig): HttpClient {
+  let accessToken = config.accessToken;
+
+  async function makeRequest<T>(
+    method: string,
+    path: string,
+    body?: unknown,
+    params?: Record<string, string | number | undefined>
+  ): Promise<T> {
+    let url = `${TIKTOK_API_BASE_URL}${path}`;
+
+    if (params) {
+      const searchParams = new URLSearchParams();
+      for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined) {
+          searchParams.append(key, String(value));
+        }
+      }
+      const queryString = searchParams.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+    }
+
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    };
+
+    const requestOptions: RequestInit = {
+      method,
+      headers,
+    };
+
+    if (body && (method === "POST" || method === "PUT")) {
+      requestOptions.body = JSON.stringify(body);
+    }
+
+    let response = await fetch(url, requestOptions);
+
+    // Handle token refresh on 401
+    if (response.status === 401 && config.refreshToken) {
+      try {
+        const newTokens = await refreshAccessToken({
+          clientId: config.clientId,
+          clientSecret: config.clientSecret,
+          refreshToken: config.refreshToken,
+        });
+
+        accessToken = newTokens.access_token;
+
+        if (config.onTokenRefresh) {
+          config.onTokenRefresh({
+            accessToken: newTokens.access_token,
+            refreshToken: newTokens.refresh_token,
+          });
+        }
+
+        // Retry the request with new token
+        headers.Authorization = `Bearer ${accessToken}`;
+        response = await fetch(url, requestOptions);
+      } catch {
+        throw new Error("Token refresh failed");
+      }
+    }
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`TikTok API error (${response.status}): ${errorText}`);
+    }
+
+    return response.json();
+  }
+
+  return {
+    get<T>(path: string, params?: Record<string, string | number | undefined>): Promise<T> {
+      return makeRequest<T>("GET", path, undefined, params);
+    },
+
+    post<T>(path: string, body?: unknown): Promise<T> {
+      return makeRequest<T>("POST", path, body);
+    },
+
+    put<T>(path: string, body?: unknown): Promise<T> {
+      return makeRequest<T>("PUT", path, body);
+    },
+
+    delete<T>(path: string): Promise<T> {
+      return makeRequest<T>("DELETE", path);
+    },
+  };
+}

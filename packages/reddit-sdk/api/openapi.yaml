@@ -1,0 +1,502 @@
+openapi: 3.0.0
+info:
+  title: Reddit API
+  version: "1"
+  description: Reddit API endpoints
+
+servers:
+  - url: https://oauth.reddit.com
+
+paths:
+  /api/v1/me:
+    get:
+      operationId: getMe
+      summary: Get authenticated user info
+      responses:
+        "200":
+          description: User info retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /api/v1/me/karma:
+    get:
+      operationId: getMyKarma
+      summary: Get karma breakdown by subreddit
+      responses:
+        "200":
+          description: Karma retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KarmaResponse"
+
+  /r/{subreddit}/hot:
+    get:
+      operationId: getSubredditHot
+      summary: Get hot posts from subreddit
+      parameters:
+        - name: subreddit
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: after
+          in: query
+          schema:
+            type: string
+        - name: before
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /r/{subreddit}/new:
+    get:
+      operationId: getSubredditNew
+      summary: Get new posts from subreddit
+      parameters:
+        - name: subreddit
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: after
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /api/submit:
+    post:
+      operationId: submitPost
+      summary: Submit a new post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitPostRequest"
+      responses:
+        "200":
+          description: Post submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitResponse"
+
+  /api/comment:
+    post:
+      operationId: submitComment
+      summary: Submit a comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentRequest"
+      responses:
+        "200":
+          description: Comment submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentResponse"
+
+  /api/vote:
+    post:
+      operationId: vote
+      summary: Vote on a post or comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VoteRequest"
+      responses:
+        "200":
+          description: Vote registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoteResponse"
+
+  /api/save:
+    post:
+      operationId: saveItem
+      summary: Save a post or comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveRequest"
+      responses:
+        "200":
+          description: Item saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaveResponse"
+
+  /user/{username}/about:
+    get:
+      operationId: getUserAbout
+      summary: Get user profile
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserAboutResponse"
+
+  /r/{subreddit}/about:
+    get:
+      operationId: getSubredditAbout
+      summary: Get subreddit info
+      parameters:
+        - name: subreddit
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Subreddit info retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubredditAboutResponse"
+
+  /api/search_subreddits:
+    post:
+      operationId: searchSubreddits
+      summary: Search for subreddits
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchSubredditsRequest"
+      responses:
+        "200":
+          description: Subreddits found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchSubredditsResponse"
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - name
+        - id
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+        created_utc:
+          type: number
+        link_karma:
+          type: integer
+        comment_karma:
+          type: integer
+        is_gold:
+          type: boolean
+        is_mod:
+          type: boolean
+        has_verified_email:
+          type: boolean
+        icon_img:
+          type: string
+
+    KarmaResponse:
+      type: object
+      properties:
+        kind:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/KarmaBreakdown"
+
+    KarmaBreakdown:
+      type: object
+      properties:
+        sr:
+          type: string
+        comment_karma:
+          type: integer
+        link_karma:
+          type: integer
+
+    ListingResponse:
+      type: object
+      properties:
+        kind:
+          type: string
+        data:
+          $ref: "#/components/schemas/ListingData"
+
+    ListingData:
+      type: object
+      properties:
+        after:
+          type: string
+        before:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostWrapper"
+        dist:
+          type: integer
+
+    PostWrapper:
+      type: object
+      properties:
+        kind:
+          type: string
+        data:
+          $ref: "#/components/schemas/Post"
+
+    Post:
+      type: object
+      required:
+        - id
+        - title
+        - subreddit
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        selftext:
+          type: string
+        author:
+          type: string
+        subreddit:
+          type: string
+        score:
+          type: integer
+        upvote_ratio:
+          type: number
+        num_comments:
+          type: integer
+        created_utc:
+          type: number
+        url:
+          type: string
+        permalink:
+          type: string
+        is_self:
+          type: boolean
+        over_18:
+          type: boolean
+
+    SubmitPostRequest:
+      type: object
+      required:
+        - sr
+        - title
+        - kind
+      properties:
+        sr:
+          type: string
+        title:
+          type: string
+        kind:
+          type: string
+        text:
+          type: string
+        url:
+          type: string
+        nsfw:
+          type: boolean
+        spoiler:
+          type: boolean
+
+    SubmitResponse:
+      type: object
+      properties:
+        json:
+          type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: string
+            data:
+              type: object
+              properties:
+                url:
+                  type: string
+                id:
+                  type: string
+                name:
+                  type: string
+
+    CommentRequest:
+      type: object
+      required:
+        - thing_id
+        - text
+      properties:
+        thing_id:
+          type: string
+        text:
+          type: string
+
+    CommentResponse:
+      type: object
+      properties:
+        json:
+          type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: string
+            data:
+              type: object
+
+    VoteRequest:
+      type: object
+      required:
+        - id
+        - dir
+      properties:
+        id:
+          type: string
+        dir:
+          type: integer
+
+    VoteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+    SaveRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        category:
+          type: string
+
+    SaveResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+    UserAboutResponse:
+      type: object
+      properties:
+        kind:
+          type: string
+        data:
+          $ref: "#/components/schemas/User"
+
+    SubredditAboutResponse:
+      type: object
+      properties:
+        kind:
+          type: string
+        data:
+          $ref: "#/components/schemas/Subreddit"
+
+    Subreddit:
+      type: object
+      required:
+        - display_name
+        - id
+      properties:
+        display_name:
+          type: string
+        id:
+          type: string
+        title:
+          type: string
+        public_description:
+          type: string
+        subscribers:
+          type: integer
+        created_utc:
+          type: number
+        over18:
+          type: boolean
+        icon_img:
+          type: string
+
+    SearchSubredditsRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+        include_over_18:
+          type: boolean
+        include_unadvertisable:
+          type: boolean
+
+    SearchSubredditsResponse:
+      type: object
+      properties:
+        subreddits:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubredditSearchResult"
+
+    SubredditSearchResult:
+      type: object
+      properties:
+        name:
+          type: string
+        subscriber_count:
+          type: integer
+        active_user_count:
+          type: integer
+        icon_img:
+          type: string

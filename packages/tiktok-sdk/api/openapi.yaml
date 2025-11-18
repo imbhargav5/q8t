@@ -1,0 +1,230 @@
+openapi: 3.0.3
+info:
+  title: TikTok API
+  version: "2.0"
+  description: TikTok API for accessing user information and videos
+
+servers:
+  - url: https://open.tiktokapis.com/v2
+
+paths:
+  /user/info/:
+    get:
+      operationId: getUserInfo
+      summary: Get user information
+      description: Retrieve information about the authenticated user
+      parameters:
+        - name: fields
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of fields to return (e.g., open_id,union_id,avatar_url,display_name)
+      responses:
+        "200":
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfoResponse"
+
+  /video/list/:
+    post:
+      operationId: listVideos
+      summary: List user videos
+      description: Get a list of videos for the authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoListRequest"
+      responses:
+        "200":
+          description: Videos retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoListResponse"
+
+  /video/query/:
+    get:
+      operationId: queryVideo
+      summary: Query video information
+      description: Query specific information about videos
+      parameters:
+        - name: fields
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of video fields to return
+        - name: video_ids
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of video IDs to query
+      responses:
+        "200":
+          description: Video information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoQueryResponse"
+
+components:
+  schemas:
+    UserInfoResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/UserData"
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+      required:
+        - data
+        - error
+
+    UserData:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+      required:
+        - user
+
+    User:
+      type: object
+      properties:
+        open_id:
+          type: string
+        union_id:
+          type: string
+        avatar_url:
+          type: string
+        avatar_url_100:
+          type: string
+        avatar_large_url:
+          type: string
+        display_name:
+          type: string
+        bio_description:
+          type: string
+        profile_deep_link:
+          type: string
+        is_verified:
+          type: boolean
+        follower_count:
+          type: integer
+        following_count:
+          type: integer
+        likes_count:
+          type: integer
+        video_count:
+          type: integer
+
+    VideoListRequest:
+      type: object
+      properties:
+        max_count:
+          type: integer
+          minimum: 1
+          maximum: 20
+        cursor:
+          type: integer
+        fields:
+          type: string
+      required:
+        - fields
+
+    VideoListResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/VideoListData"
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+      required:
+        - data
+        - error
+
+    VideoListData:
+      type: object
+      properties:
+        videos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Video"
+        cursor:
+          type: integer
+        has_more:
+          type: boolean
+      required:
+        - videos
+        - has_more
+
+    Video:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        video_description:
+          type: string
+        duration:
+          type: integer
+        cover_image_url:
+          type: string
+        embed_html:
+          type: string
+        embed_link:
+          type: string
+        like_count:
+          type: integer
+        comment_count:
+          type: integer
+        share_count:
+          type: integer
+        view_count:
+          type: integer
+        create_time:
+          type: integer
+        share_url:
+          type: string
+
+    VideoQueryResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/VideoQueryData"
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+      required:
+        - data
+        - error
+
+    VideoQueryData:
+      type: object
+      properties:
+        videos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Video"
+      required:
+        - videos
+
+    ErrorInfo:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        log_id:
+          type: string
+      required:
+        - code
+        - message
+        - log_id
