@@ -136,3 +136,40 @@ export interface SubredditSearchResult {
   active_user_count?: number;
   icon_img?: string;
 }
+
+export interface UnsaveRequest {
+  id: string;
+}
+
+export interface HideRequest {
+  id: string;
+}
+
+export interface UnhideRequest {
+  id: string;
+}
+
+export interface EditUserTextRequest {
+  thing_id: string;
+  text: string;
+}
+
+export interface DeleteRequest {
+  id: string;
+}
+
+export interface ComposeMessageRequest {
+  to: string;
+  subject: string;
+  text: string;
+  from_sr?: string;
+}
+
+export interface MoreChildrenResponse {
+  json?: { errors?: string[]; data?: { things?: Record<string, unknown>[] } };
+}
+
+export interface GenericResponse {
+  success?: boolean;
+  json?: Record<string, unknown>;
+}
