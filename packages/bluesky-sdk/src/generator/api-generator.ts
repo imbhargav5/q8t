@@ -15,6 +15,27 @@ interface EndpointInfo {
 export function generateApi(spec: OpenAPISpec): string {
   const endpoints = extractEndpoints(spec);
 
+  // Deduplicate method names by tracking which names have been used
+  const methodNameCounts = new Map<string, number>();
+  const endpointsWithNames: Array<{endpoint: EndpointInfo; methodName: string}> = [];
+
+  for (const endpoint of endpoints) {
+    const baseName = operationIdToMethodName(endpoint.operationId);
+    const count = methodNameCounts.get(baseName) || 0;
+    methodNameCounts.set(baseName, count + 1);
+
+    // If this is a duplicate, append namespace prefix
+    let finalName = baseName;
+    if (count > 0) {
+      // Extract namespace from operationId (e.g., "app.bsky.actor" from "app.bsky.actor.getProfile")
+      const parts = endpoint.operationId.split('.');
+      const namespace = parts.slice(0, -1).pop() || ''; // Get second-to-last part (e.g., "actor")
+      finalName = namespace + baseName.charAt(0).toUpperCase() + baseName.slice(1);
+    }
+
+    endpointsWithNames.push({ endpoint, methodName: finalName });
+  }
+
   const lines: string[] = [
     "// AUTO-GENERATED FILE - DO NOT EDIT",
     "// Generated from api/openapi.yaml",
@@ -31,8 +52,8 @@ export function generateApi(spec: OpenAPISpec): string {
     "",
   ];
 
-  for (const endpoint of endpoints) {
-    lines.push(generateMethod(endpoint));
+  for (const {endpoint, methodName} of endpointsWithNames) {
+    lines.push(generateMethod(endpoint, methodName));
     lines.push("");
   }
 
@@ -104,7 +125,14 @@ function getTypeName(schema: SchemaObject | RefObject): string {
   return "unknown";
 }
 
-function generateMethod(endpoint: EndpointInfo): string {
+function operationIdToMethodName(operationId: string): string {
+  // Extract the last part after the last dot
+  // e.g., "app.bsky.actor.getProfile" -> "getProfile"
+  const parts = operationId.split('.');
+  return parts[parts.length - 1];
+}
+
+function generateMethod(endpoint: EndpointInfo, methodName: string): string {
   const lines: string[] = [];
 
   if (endpoint.summary) {
@@ -114,7 +142,6 @@ function generateMethod(endpoint: EndpointInfo): string {
   }
 
   const params = generateMethodParams(endpoint);
-  const methodName = endpoint.operationId;
 
   lines.push(`  async ${methodName}(${params}): Promise<${endpoint.responseType}> {`);
 
@@ -170,14 +197,23 @@ function generateMethodParams(endpoint: EndpointInfo): string {
   }
 
   if (endpoint.queryParams.length > 0) {
-    const queryParamTypes: string[] = [];
+    const destructuringParams: string[] = [];
+    const typeParams: string[] = [];
+    const allOptional = endpoint.queryParams.every(p => !p.required);
+
     for (const param of endpoint.queryParams) {
       const tsType = param.schema.type === "integer" ? "number" : "string";
       const safeName = param.name.replace(/\./g, "_");
       const optional = param.required ? "" : "?";
-      queryParamTypes.push(`${safeName}${optional}: ${tsType}`);
+      // Destructuring pattern (no optional marker in the pattern itself)
+      destructuringParams.push(safeName);
+      // Type annotation
+      typeParams.push(`${safeName}${optional}: ${tsType}`);
     }
-    params.push(`{ ${queryParamTypes.join(", ")} }: { ${queryParamTypes.join("; ")} }`);
+
+    // If all parameters are optional, make the entire object optional with a default value
+    const objOptional = allOptional ? " = {}" : "";
+    params.push(`{ ${destructuringParams.join(", ")} }: { ${typeParams.join("; ")} }${objOptional}`);
   }
 
   return params.join(", ");
