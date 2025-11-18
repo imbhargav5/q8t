@@ -133,12 +133,12 @@ function generateMethod(endpoint: EndpointInfo): string {
   // Generate method body
   if (endpoint.method === "GET") {
     if (endpoint.queryParams.length > 0) {
-      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, {`);
+      lines.push(`    const params: Record<string, any> = {};`);
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
-        lines.push(`      "${param.name}": ${safeName},`);
+        lines.push(`    if (options?.${safeName} !== undefined) params["${param.name}"] = options.${safeName};`);
       }
-      lines.push(`    });`);
+      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, params);`);
     } else {
       lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr});`);
     }
@@ -177,7 +177,7 @@ function generateMethodParams(endpoint: EndpointInfo): string {
     params.push(`body: ${endpoint.requestBodyType}`);
   }
 
-  // Query parameters (as optional object)
+  // Query parameters (as optional object) - use simpler syntax
   if (endpoint.queryParams.length > 0) {
     const queryParamTypes: string[] = [];
     for (const param of endpoint.queryParams) {
@@ -185,7 +185,7 @@ function generateMethodParams(endpoint: EndpointInfo): string {
       const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
       queryParamTypes.push(`${safeName}?: ${tsType}`);
     }
-    params.push(`{ ${queryParamTypes.join(", ")} }: { ${queryParamTypes.join("; ")} } = {}`);
+    params.push(`options?: { ${queryParamTypes.join("; ")} }`);
   }
 
   return params.join(", ");
