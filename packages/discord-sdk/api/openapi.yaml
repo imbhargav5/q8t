@@ -6,6 +6,7 @@ info:
 servers:
   - url: https://discord.com/api/v10
 paths:
+  # User Operations
   /users/@me:
     get:
       operationId: getCurrentUser
@@ -18,14 +19,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateCurrentUser
+      summary: Update Current User
+      description: Modify the requester's user account settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: Updated user object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 
-  /guilds/{guild.id}:
+  /users/{user_id}:
+    get:
+      operationId: getUser
+      summary: Get User
+      description: Returns a user object for a given user ID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # Guild Operations
+  /guilds/{guild_id}:
     get:
       operationId: getGuild
       summary: Get Guild
       description: Returns the guild object for the given id
       parameters:
-        - name: guild.id
+        - name: guild_id
           in: path
           required: true
           schema:
@@ -37,14 +75,237 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Guild"
+    patch:
+      operationId: updateGuild
+      summary: Update Guild
+      description: Modify a guild's settings
+      parameters:
+        - name: guild_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGuildRequest"
+      responses:
+        "200":
+          description: Updated guild object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Guild"
 
-  /channels/{channel.id}/messages:
+  /guilds/{guild_id}/channels:
+    get:
+      operationId: getGuildChannels
+      summary: Get Guild Channels
+      description: Returns a list of guild channel objects
+      parameters:
+        - name: guild_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Array of channel objects
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelList"
+    post:
+      operationId: createGuildChannel
+      summary: Create Guild Channel
+      description: Create a new channel object for the guild
+      parameters:
+        - name: guild_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChannelRequest"
+      responses:
+        "201":
+          description: Created channel object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Channel"
+
+  /guilds/{guild_id}/members:
+    get:
+      operationId: listGuildMembers
+      summary: List Guild Members
+      description: Returns a list of guild member objects
+      parameters:
+        - name: guild_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Array of guild member objects
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuildMemberList"
+
+  /guilds/{guild_id}/members/{user_id}:
+    get:
+      operationId: getGuildMember
+      summary: Get Guild Member
+      description: Returns a guild member object for the specified user
+      parameters:
+        - name: guild_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Guild member object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuildMember"
+
+  /guilds/{guild_id}/roles:
+    get:
+      operationId: getGuildRoles
+      summary: Get Guild Roles
+      description: Returns a list of role objects for the guild
+      parameters:
+        - name: guild_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Array of role objects
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleList"
+    post:
+      operationId: createGuildRole
+      summary: Create Guild Role
+      description: Create a new role for the guild
+      parameters:
+        - name: guild_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRoleRequest"
+      responses:
+        "200":
+          description: Created role object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+
+  # Channel Operations
+  /channels/{channel_id}:
+    get:
+      operationId: getChannel
+      summary: Get Channel
+      description: Get a channel by ID
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Channel object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Channel"
+    patch:
+      operationId: updateChannel
+      summary: Update Channel
+      description: Update a channel's settings
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateChannelRequest"
+      responses:
+        "200":
+          description: Updated channel object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Channel"
+    delete:
+      operationId: deleteChannel
+      summary: Delete Channel
+      description: Delete a channel
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted channel object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Channel"
+
+  # Message Operations
+  /channels/{channel_id}/messages:
     get:
       operationId: getChannelMessages
       summary: Get Channel Messages
       description: Returns the messages for a channel
       parameters:
-        - name: channel.id
+        - name: channel_id
           in: path
           required: true
           schema:
@@ -78,13 +339,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MessageList"
-
     post:
       operationId: createMessage
       summary: Create Message
       description: Post a message to a guild text or DM channel
       parameters:
-        - name: channel.id
+        - name: channel_id
           in: path
           required: true
           schema:
@@ -102,6 +362,217 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+
+  /channels/{channel_id}/messages/{message_id}:
+    get:
+      operationId: getMessage
+      summary: Get Message
+      description: Returns a specific message in the channel
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: message_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Message object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+    patch:
+      operationId: updateMessage
+      summary: Update Message
+      description: Edit a previously sent message
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: message_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMessageRequest"
+      responses:
+        "200":
+          description: Updated message object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+    delete:
+      operationId: deleteMessage
+      summary: Delete Message
+      description: Delete a message
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: message_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Message deleted
+
+  /channels/{channel_id}/messages/bulk-delete:
+    post:
+      operationId: bulkDeleteMessages
+      summary: Bulk Delete Messages
+      description: Delete multiple messages in a single request
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkDeleteRequest"
+      responses:
+        "204":
+          description: Messages deleted
+
+  # Reaction Operations
+  /channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me:
+    put:
+      operationId: addReaction
+      summary: Add Reaction
+      description: Create a reaction for the message
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: message_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: emoji
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Reaction added
+    delete:
+      operationId: deleteOwnReaction
+      summary: Delete Own Reaction
+      description: Delete a reaction the current user has made for the message
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: message_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: emoji
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Reaction removed
+
+  /channels/{channel_id}/messages/{message_id}/reactions/{emoji}/{user_id}:
+    delete:
+      operationId: deleteUserReaction
+      summary: Delete User Reaction
+      description: Deletes another user's reaction
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: message_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: emoji
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Reaction removed
+
+  /channels/{channel_id}/messages/{message_id}/reactions/{emoji}:
+    get:
+      operationId: getReactions
+      summary: Get Reactions
+      description: Get a list of users that reacted with this emoji
+      parameters:
+        - name: channel_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: message_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: emoji
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Array of user objects
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserList"
 
 components:
   schemas:
@@ -224,6 +695,49 @@ components:
         premium_progress_bar_enabled:
           type: boolean
 
+    Channel:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+        type:
+          type: integer
+        guild_id:
+          type: string
+        position:
+          type: integer
+        name:
+          type: string
+        topic:
+          type: string
+        nsfw:
+          type: boolean
+        last_message_id:
+          type: string
+        bitrate:
+          type: integer
+        user_limit:
+          type: integer
+        rate_limit_per_user:
+          type: integer
+        recipients:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        icon:
+          type: string
+        owner_id:
+          type: string
+        application_id:
+          type: string
+        parent_id:
+          type: string
+        last_pin_timestamp:
+          type: string
+
     Message:
       type: object
       required:
@@ -290,10 +804,97 @@ components:
         referenced_message:
           $ref: "#/components/schemas/Message"
 
+    GuildMember:
+      type: object
+      required:
+        - user
+        - roles
+        - joined_at
+        - deaf
+        - mute
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        nick:
+          type: string
+        avatar:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        joined_at:
+          type: string
+        premium_since:
+          type: string
+        deaf:
+          type: boolean
+        mute:
+          type: boolean
+        pending:
+          type: boolean
+        permissions:
+          type: string
+
+    Role:
+      type: object
+      required:
+        - id
+        - name
+        - color
+        - hoist
+        - position
+        - permissions
+        - managed
+        - mentionable
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        color:
+          type: integer
+        hoist:
+          type: boolean
+        icon:
+          type: string
+        unicode_emoji:
+          type: string
+        position:
+          type: integer
+        permissions:
+          type: string
+        managed:
+          type: boolean
+        mentionable:
+          type: boolean
+        tags:
+          type: object
+
     MessageList:
       type: array
       items:
         $ref: "#/components/schemas/Message"
+
+    UserList:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+
+    ChannelList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Channel"
+
+    GuildMemberList:
+      type: array
+      items:
+        $ref: "#/components/schemas/GuildMember"
+
+    RoleList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Role"
 
     CreateMessageRequest:
       type: object
@@ -313,6 +914,139 @@ components:
           $ref: "#/components/schemas/MessageReference"
         flags:
           type: integer
+
+    UpdateMessageRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          maxLength: 2000
+        embeds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Embed"
+        flags:
+          type: integer
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+
+    UpdateGuildRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        region:
+          type: string
+        verification_level:
+          type: integer
+        default_message_notifications:
+          type: integer
+        explicit_content_filter:
+          type: integer
+        afk_channel_id:
+          type: string
+        afk_timeout:
+          type: integer
+        icon:
+          type: string
+        owner_id:
+          type: string
+        splash:
+          type: string
+        discovery_splash:
+          type: string
+        banner:
+          type: string
+        system_channel_id:
+          type: string
+        system_channel_flags:
+          type: integer
+        rules_channel_id:
+          type: string
+        public_updates_channel_id:
+          type: string
+        preferred_locale:
+          type: string
+        description:
+          type: string
+        premium_progress_bar_enabled:
+          type: boolean
+
+    CreateChannelRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        type:
+          type: integer
+        topic:
+          type: string
+        bitrate:
+          type: integer
+        user_limit:
+          type: integer
+        rate_limit_per_user:
+          type: integer
+        position:
+          type: integer
+        parent_id:
+          type: string
+        nsfw:
+          type: boolean
+
+    UpdateChannelRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: integer
+        topic:
+          type: string
+        bitrate:
+          type: integer
+        user_limit:
+          type: integer
+        rate_limit_per_user:
+          type: integer
+        position:
+          type: integer
+        parent_id:
+          type: string
+        nsfw:
+          type: boolean
+
+    CreateRoleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        permissions:
+          type: string
+        color:
+          type: integer
+        hoist:
+          type: boolean
+        mentionable:
+          type: boolean
+
+    BulkDeleteRequest:
+      type: object
+      required:
+        - messages
+      properties:
+        messages:
+          type: array
+          items:
+            type: string
+          minItems: 2
+          maxItems: 100
 
     Attachment:
       type: object

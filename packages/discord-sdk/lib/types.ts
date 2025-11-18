@@ -59,6 +59,26 @@ export interface Guild {
   premium_progress_bar_enabled?: boolean;
 }
 
+export interface Channel {
+  id: string;
+  type: number;
+  guild_id?: string;
+  position?: number;
+  name?: string;
+  topic?: string;
+  nsfw?: boolean;
+  last_message_id?: string;
+  bitrate?: number;
+  user_limit?: number;
+  rate_limit_per_user?: number;
+  recipients?: User[];
+  icon?: string;
+  owner_id?: string;
+  application_id?: string;
+  parent_id?: string;
+  last_pin_timestamp?: string;
+}
+
 export interface Message {
   id: string;
   channel_id: string;
@@ -81,7 +101,46 @@ export interface Message {
   referenced_message?: Message;
 }
 
+export interface GuildMember {
+  user: User;
+  nick?: string;
+  avatar?: string;
+  roles: string[];
+  joined_at: string;
+  premium_since?: string;
+  deaf: boolean;
+  mute: boolean;
+  pending?: boolean;
+  permissions?: string;
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  color: number;
+  hoist: boolean;
+  icon?: string;
+  unicode_emoji?: string;
+  position: number;
+  permissions: string;
+  managed: boolean;
+  mentionable: boolean;
+  tags?: Record<string, unknown>;
+}
+
 export interface MessageList {
+}
+
+export interface UserList {
+}
+
+export interface ChannelList {
+}
+
+export interface GuildMemberList {
+}
+
+export interface RoleList {
 }
 
 export interface CreateMessageRequest {
@@ -91,6 +150,74 @@ export interface CreateMessageRequest {
   embeds?: Embed[];
   message_reference?: MessageReference;
   flags?: number;
+}
+
+export interface UpdateMessageRequest {
+  content?: string;
+  embeds?: Embed[];
+  flags?: number;
+}
+
+export interface UpdateUserRequest {
+  username?: string;
+}
+
+export interface UpdateGuildRequest {
+  name?: string;
+  region?: string;
+  verification_level?: number;
+  default_message_notifications?: number;
+  explicit_content_filter?: number;
+  afk_channel_id?: string;
+  afk_timeout?: number;
+  icon?: string;
+  owner_id?: string;
+  splash?: string;
+  discovery_splash?: string;
+  banner?: string;
+  system_channel_id?: string;
+  system_channel_flags?: number;
+  rules_channel_id?: string;
+  public_updates_channel_id?: string;
+  preferred_locale?: string;
+  description?: string;
+  premium_progress_bar_enabled?: boolean;
+}
+
+export interface CreateChannelRequest {
+  name: string;
+  type?: number;
+  topic?: string;
+  bitrate?: number;
+  user_limit?: number;
+  rate_limit_per_user?: number;
+  position?: number;
+  parent_id?: string;
+  nsfw?: boolean;
+}
+
+export interface UpdateChannelRequest {
+  name?: string;
+  type?: number;
+  topic?: string;
+  bitrate?: number;
+  user_limit?: number;
+  rate_limit_per_user?: number;
+  position?: number;
+  parent_id?: string;
+  nsfw?: boolean;
+}
+
+export interface CreateRoleRequest {
+  name?: string;
+  permissions?: string;
+  color?: number;
+  hoist?: boolean;
+  mentionable?: boolean;
+}
+
+export interface BulkDeleteRequest {
+  messages: string[];
 }
 
 export interface Attachment {
