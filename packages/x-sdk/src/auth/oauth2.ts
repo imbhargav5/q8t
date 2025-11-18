@@ -99,7 +99,7 @@ export async function exchangeCodeForToken(params: ExchangeCodeParams): Promise<
     throw new Error(`Token exchange failed: ${error}`);
   }
 
-  return response.json();
+  return response.json() as Promise<TokenResponse>;
 }
 
 export async function refreshAccessToken(params: RefreshTokenParams): Promise<TokenResponse> {
@@ -132,7 +132,7 @@ export async function refreshAccessToken(params: RefreshTokenParams): Promise<To
     throw new Error(`Token refresh failed: ${error}`);
   }
 
-  return response.json();
+  return response.json() as Promise<TokenResponse>;
 }
 
 export async function revokeToken(
