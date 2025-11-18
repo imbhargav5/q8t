@@ -95,11 +95,11 @@ describe('XApi - Method Existence', () => {
   });
 
   describe('Method Count Validation', () => {
-    it('should have exactly 12 public methods (excluding constructor)', () => {
+    it('should have exactly 47 public methods (excluding constructor)', () => {
       const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(api))
         .filter(name => name !== 'constructor' && typeof api[name as keyof XApi] === 'function');
 
-      expect(methods).toHaveLength(12);
+      expect(methods).toHaveLength(47);
     });
 
     it('should have all expected methods', () => {
