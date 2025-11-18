@@ -218,6 +218,377 @@ paths:
               schema:
                 $ref: "#/components/schemas/SearchSubredditsResponse"
 
+  /api/unsave:
+    post:
+      operationId: unsaveItem
+      summary: Unsave a post or comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnsaveRequest"
+      responses:
+        "200":
+          description: Item unsaved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+
+  /api/hide:
+    post:
+      operationId: hidePost
+      summary: Hide a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HideRequest"
+      responses:
+        "200":
+          description: Post hidden successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+
+  /api/unhide:
+    post:
+      operationId: unhidePost
+      summary: Unhide a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnhideRequest"
+      responses:
+        "200":
+          description: Post unhidden successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+
+  /api/info:
+    get:
+      operationId: getInfo
+      summary: Get info about things by fullname
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of thing fullnames
+        - name: url
+          in: query
+          schema:
+            type: string
+          description: URL to get info about
+      responses:
+        "200":
+          description: Info retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /r/{subreddit}/top:
+    get:
+      operationId: getSubredditTop
+      summary: Get top posts from subreddit
+      parameters:
+        - name: subreddit
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: after
+          in: query
+          schema:
+            type: string
+        - name: before
+          in: query
+          schema:
+            type: string
+        - name: t
+          in: query
+          schema:
+            type: string
+            enum: [hour, day, week, month, year, all]
+          description: Time period for top posts
+      responses:
+        "200":
+          description: Posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /r/{subreddit}/rising:
+    get:
+      operationId: getSubredditRising
+      summary: Get rising posts from subreddit
+      parameters:
+        - name: subreddit
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: after
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /r/{subreddit}/controversial:
+    get:
+      operationId: getSubredditControversial
+      summary: Get controversial posts from subreddit
+      parameters:
+        - name: subreddit
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: after
+          in: query
+          schema:
+            type: string
+        - name: t
+          in: query
+          schema:
+            type: string
+            enum: [hour, day, week, month, year, all]
+          description: Time period for controversial posts
+      responses:
+        "200":
+          description: Posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /api/editusertext:
+    post:
+      operationId: editUserText
+      summary: Edit a comment or self post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EditUserTextRequest"
+      responses:
+        "200":
+          description: Text edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+
+  /api/del:
+    post:
+      operationId: deleteItem
+      summary: Delete a post or comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteRequest"
+      responses:
+        "200":
+          description: Item deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+
+  /message/inbox:
+    get:
+      operationId: getInbox
+      summary: Get inbox messages
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: after
+          in: query
+          schema:
+            type: string
+        - name: before
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Messages retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /api/compose:
+    post:
+      operationId: composeMessage
+      summary: Send a private message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComposeMessageRequest"
+      responses:
+        "200":
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+
+  /user/{username}/submitted:
+    get:
+      operationId: getUserSubmitted
+      summary: Get user's submitted posts
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: after
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /user/{username}/comments:
+    get:
+      operationId: getUserComments
+      summary: Get user's comments
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: after
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comments retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResponse"
+
+  /comments/{article}:
+    get:
+      operationId: getComments
+      summary: Get comments for a post
+      parameters:
+        - name: article
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: depth
+          in: query
+          schema:
+            type: integer
+        - name: context
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Comments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ListingResponse"
+
+  /api/morechildren:
+    get:
+      operationId: getMoreChildren
+      summary: Get more children comments
+      parameters:
+        - name: link_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Fullname of the link
+        - name: children
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of comment IDs
+      responses:
+        "200":
+          description: Children retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoreChildrenResponse"
+
 components:
   schemas:
     User:
@@ -500,3 +871,88 @@ components:
           type: integer
         icon_img:
           type: string
+
+    UnsaveRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    HideRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    UnhideRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    EditUserTextRequest:
+      type: object
+      required:
+        - thing_id
+        - text
+      properties:
+        thing_id:
+          type: string
+        text:
+          type: string
+
+    DeleteRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    ComposeMessageRequest:
+      type: object
+      required:
+        - to
+        - subject
+        - text
+      properties:
+        to:
+          type: string
+        subject:
+          type: string
+        text:
+          type: string
+        from_sr:
+          type: string
+
+    MoreChildrenResponse:
+      type: object
+      properties:
+        json:
+          type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: string
+            data:
+              type: object
+              properties:
+                things:
+                  type: array
+                  items:
+                    type: object
+
+    GenericResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        json:
+          type: object

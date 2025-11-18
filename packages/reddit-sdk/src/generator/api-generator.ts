@@ -170,13 +170,15 @@ function generateMethodParams(endpoint: EndpointInfo): string {
   }
 
   if (endpoint.queryParams.length > 0) {
+    const queryParamNames: string[] = [];
     const queryParamTypes: string[] = [];
     for (const param of endpoint.queryParams) {
       const tsType = param.schema.type === "integer" ? "number" : "string";
       const safeName = param.name.replace(/\./g, "_");
+      queryParamNames.push(safeName);
       queryParamTypes.push(`${safeName}?: ${tsType}`);
     }
-    params.push(`{ ${queryParamTypes.join(", ")} }: { ${queryParamTypes.join("; ")} } = {}`);
+    params.push(`{ ${queryParamNames.join(", ")} }: { ${queryParamTypes.join("; ")} } = {}`);
   }
 
   return params.join(", ");
