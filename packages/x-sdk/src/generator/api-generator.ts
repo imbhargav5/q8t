@@ -135,7 +135,7 @@ function generateMethod(endpoint: EndpointInfo): string {
       lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, {`);
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_");
-        lines.push(`      "${param.name}": ${safeName},`);
+        lines.push(`      "${param.name}": params?.${safeName},`);
       }
       lines.push(`    });`);
     } else {
@@ -183,7 +183,7 @@ function generateMethodParams(endpoint: EndpointInfo): string {
       const safeName = param.name.replace(/\./g, "_");
       queryParamTypes.push(`${safeName}?: ${tsType}`);
     }
-    params.push(`{ ${queryParamTypes.join(", ")} }: { ${queryParamTypes.join("; ")} } = {}`);
+    params.push(`params?: { ${queryParamTypes.join("; ")} }`);
   }
 
   return params.join(", ");

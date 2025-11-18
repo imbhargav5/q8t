@@ -21,10 +21,10 @@ export class XApi {
   /**
    * Get a tweet by ID
    */
-  async getTweet(id: string, { tweet_fields?: string, expansions?: string }: { tweet_fields?: string; expansions?: string } = {}): Promise<Types.TweetResponse> {
+  async getTweet(id: string, params?: { tweet_fields?: string; expansions?: string }): Promise<Types.TweetResponse> {
     return this.client.get<Types.TweetResponse>(`/tweets/${id}`, {
-      "tweet.fields": tweet_fields,
-      "expansions": expansions,
+      "tweet.fields": params?.tweet_fields,
+      "expansions": params?.expansions,
     });
   }
 
@@ -38,68 +38,68 @@ export class XApi {
   /**
    * Get authenticated user
    */
-  async getMe({ user_fields?: string }: { user_fields?: string } = {}): Promise<Types.UserResponse> {
+  async getMe(params?: { user_fields?: string }): Promise<Types.UserResponse> {
     return this.client.get<Types.UserResponse>("/users/me", {
-      "user.fields": user_fields,
+      "user.fields": params?.user_fields,
     });
   }
 
   /**
    * Get user by ID
    */
-  async getUser(id: string, { user_fields?: string }: { user_fields?: string } = {}): Promise<Types.UserResponse> {
+  async getUser(id: string, params?: { user_fields?: string }): Promise<Types.UserResponse> {
     return this.client.get<Types.UserResponse>(`/users/${id}`, {
-      "user.fields": user_fields,
+      "user.fields": params?.user_fields,
     });
   }
 
   /**
    * Get user by username
    */
-  async getUserByUsername(username: string, { user_fields?: string }: { user_fields?: string } = {}): Promise<Types.UserResponse> {
+  async getUserByUsername(username: string, params?: { user_fields?: string }): Promise<Types.UserResponse> {
     return this.client.get<Types.UserResponse>(`/users/by/username/${username}`, {
-      "user.fields": user_fields,
+      "user.fields": params?.user_fields,
     });
   }
 
   /**
    * Get tweets by user ID
    */
-  async getUserTweets(id: string, { max_results?: number, pagination_token?: string, tweet_fields?: string }: { max_results?: number; pagination_token?: string; tweet_fields?: string } = {}): Promise<Types.TweetsResponse> {
+  async getUserTweets(id: string, params?: { max_results?: number; pagination_token?: string; tweet_fields?: string }): Promise<Types.TweetsResponse> {
     return this.client.get<Types.TweetsResponse>(`/users/${id}/tweets`, {
-      "max_results": max_results,
-      "pagination_token": pagination_token,
-      "tweet.fields": tweet_fields,
+      "max_results": params?.max_results,
+      "pagination_token": params?.pagination_token,
+      "tweet.fields": params?.tweet_fields,
     });
   }
 
   /**
    * Get followers of a user
    */
-  async getFollowers(id: string, { max_results?: number, pagination_token?: string }: { max_results?: number; pagination_token?: string } = {}): Promise<Types.UsersResponse> {
+  async getFollowers(id: string, params?: { max_results?: number; pagination_token?: string }): Promise<Types.UsersResponse> {
     return this.client.get<Types.UsersResponse>(`/users/${id}/followers`, {
-      "max_results": max_results,
-      "pagination_token": pagination_token,
+      "max_results": params?.max_results,
+      "pagination_token": params?.pagination_token,
     });
   }
 
   /**
    * Get users that a user is following
    */
-  async getFollowing(id: string, { max_results?: number, pagination_token?: string }: { max_results?: number; pagination_token?: string } = {}): Promise<Types.UsersResponse> {
+  async getFollowing(id: string, params?: { max_results?: number; pagination_token?: string }): Promise<Types.UsersResponse> {
     return this.client.get<Types.UsersResponse>(`/users/${id}/following`, {
-      "max_results": max_results,
-      "pagination_token": pagination_token,
+      "max_results": params?.max_results,
+      "pagination_token": params?.pagination_token,
     });
   }
 
   /**
    * Get tweets liked by a user
    */
-  async getLikedTweets(id: string, { max_results?: number, pagination_token?: string }: { max_results?: number; pagination_token?: string } = {}): Promise<Types.TweetsResponse> {
+  async getLikedTweets(id: string, params?: { max_results?: number; pagination_token?: string }): Promise<Types.TweetsResponse> {
     return this.client.get<Types.TweetsResponse>(`/users/${id}/liked_tweets`, {
-      "max_results": max_results,
-      "pagination_token": pagination_token,
+      "max_results": params?.max_results,
+      "pagination_token": params?.pagination_token,
     });
   }
 

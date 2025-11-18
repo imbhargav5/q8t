@@ -87,7 +87,7 @@ export function createXClient(config: XClientConfig): HttpClient {
       throw new Error(`X API error (${response.status}): ${errorText}`);
     }
 
-    return response.json();
+    return response.json() as Promise<T>;
   }
 
   return {
