@@ -122,8 +122,8 @@ describe('OpenAPI Specification Validation', () => {
       expect(spec.paths['/users/{id}/retweets'].post?.operationId).toBe('retweet');
     });
 
-    it('should have exactly 11 paths defined', () => {
-      expect(Object.keys(spec.paths)).toHaveLength(11);
+    it('should have exactly 37 paths defined', () => {
+      expect(Object.keys(spec.paths)).toHaveLength(37);
     });
   });
 
