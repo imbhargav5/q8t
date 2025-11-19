@@ -1,36 +1,34 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from api/openapi.yaml
 
-export interface UserProfile {
-  id: string;
+export interface User {
+  id?: string;
   username?: string;
+  name?: string;
   threads_profile_picture_url?: string;
   threads_biography?: string;
+  is_verified?: boolean;
 }
 
-export interface CreateThreadRequest {
-  media_type: "TEXT" | "IMAGE" | "VIDEO" | "CAROUSEL";
-  text?: string;
-  image_url?: string;
-  video_url?: string;
-  children?: string[];
-  reply_to_id?: string;
-  reply_control?: "everyone" | "accounts_you_follow" | "mentioned_only";
+export interface PublishingLimit {
+  data?: { quota_usage?: number; config?: { quota_total?: number; quota_duration?: number } }[];
 }
 
-export interface ThreadContainer {
+export interface MediaType {
+}
+
+export interface MediaContainer {
   id: string;
 }
 
-export interface ThreadsList {
-  data: Thread[];
-  paging?: Paging;
+export interface PublishedMedia {
+  id: string;
 }
 
-export interface Thread {
-  id: string;
+export interface Media {
+  id?: string;
   media_product_type?: string;
-  media_type?: "TEXT_POST" | "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM" | "AUDIO" | "REPOST_FACADE";
+  media_type?: string;
   media_url?: string;
   permalink?: string;
   owner?: { id?: string };
@@ -39,20 +37,86 @@ export interface Thread {
   timestamp?: string;
   shortcode?: string;
   thumbnail_url?: string;
-  children?: { data?: { id?: string }[] };
+  children?: Record<string, unknown>;
   is_quote_post?: boolean;
-  alt_text?: string;
   has_replies?: boolean;
   is_reply?: boolean;
-  is_reply_owned_by_me?: boolean;
-  root_post?: { id?: string };
-  replied_to?: { id?: string };
-  hide_status?: "NOT_HUSHED" | "UNHUSHED" | "HIDDEN" | "COVERED" | "BLOCKED" | "RESTRICTED";
-  reply_audience?: "EVERYONE" | "ACCOUNTS_YOU_FOLLOW" | "MENTIONED_ONLY";
+  hide_status?: "NOT_HUSHED" | "UNHIDDEN" | "HIDDEN";
+  reply_audience?: "everyone" | "accounts_you_follow" | "mentioned_only" | "parent_post_author_only" | "followers_only";
+  alt_text?: string;
+  topic_tag?: string;
+}
+
+export interface MediaList {
+  data?: Media[];
+  paging?: Paging;
+}
+
+export interface CreateMediaRequest {
+  media_type: "TEXT" | "IMAGE" | "VIDEO" | "CAROUSEL";
+  text?: string;
+  image_url?: string;
+  video_url?: string;
+  children?: string[];
+  alt_text?: string;
+  reply_to_id?: string;
+  reply_control?: "everyone" | "accounts_you_follow" | "mentioned_only" | "parent_post_author_only" | "followers_only";
+  location_id?: string;
+  topic_tag?: string;
+  poll?: { question?: string; options?: string[]; duration_minutes?: number };
+  gif_url?: string;
+}
+
+export interface PublishMediaRequest {
+  creation_id: string;
+}
+
+export interface ManageReplyRequest {
+  hide: boolean;
+}
+
+export interface ManageReplyResponse {
+  success?: boolean;
+}
+
+export interface MediaInsight {
+  name?: "views" | "likes" | "replies" | "reposts" | "quotes" | "clicks";
+  period?: "day" | "week" | "days_28" | "lifetime";
+  values?: { value?: number }[];
+  title?: string;
+  id?: string;
+}
+
+export interface MediaInsightsList {
+  data?: MediaInsight[];
+}
+
+export interface UserInsight {
+  name?: "views" | "likes" | "followers_count" | "follower_demographics";
+  period?: string;
+  values?: Record<string, unknown>[];
+  title?: string;
+}
+
+export interface ShortLivedTokenResponse {
+  access_token?: string;
+  user_id?: string;
+}
+
+export interface LongLivedTokenResponse {
+  access_token?: string;
+  token_type?: string;
+  expires_in?: number;
 }
 
 export interface Paging {
   cursors?: { before?: string; after?: string };
-  next?: string;
-  previous?: string;
+}
+
+export interface Error {
+  error: { message?: string; type?: string; code?: number; fbtrace_id?: string };
+}
+
+export interface SearchResult {
+  data?: Record<string, unknown>[];
 }

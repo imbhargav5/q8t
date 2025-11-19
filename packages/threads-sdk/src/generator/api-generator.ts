@@ -76,6 +76,9 @@ function extractEndpointInfo(path: string, method: string, operation: Operation)
   if (operation.requestBody?.content["application/json"]) {
     const schema = operation.requestBody.content["application/json"].schema;
     requestBodyType = getTypeName(schema);
+  } else if (operation.requestBody?.content["application/x-www-form-urlencoded"]) {
+    const schema = operation.requestBody.content["application/x-www-form-urlencoded"].schema;
+    requestBodyType = getTypeName(schema);
   }
 
   let responseType = "void";
@@ -135,8 +138,8 @@ function generateMethod(endpoint: EndpointInfo): string {
     if (endpoint.queryParams.length > 0) {
       lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, {`);
       for (const param of endpoint.queryParams) {
-        const safeName = param.name.replace(/\./g, "_");
-        lines.push(`      "${param.name}": ${safeName},`);
+        const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
+        lines.push(`      "${param.name}": params?.${safeName},`);
       }
       lines.push(`    });`);
     } else {
@@ -144,7 +147,16 @@ function generateMethod(endpoint: EndpointInfo): string {
     }
   } else if (endpoint.method === "POST") {
     if (endpoint.requestBodyType) {
-      lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr}, body);`);
+      if (endpoint.queryParams.length > 0) {
+        lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr}, body, {`);
+        for (const param of endpoint.queryParams) {
+          const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
+          lines.push(`      "${param.name}": params?.${safeName},`);
+        }
+        lines.push(`    });`);
+      } else {
+        lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr}, body);`);
+      }
     } else {
       lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr});`);
     }
@@ -181,11 +193,11 @@ function generateMethodParams(endpoint: EndpointInfo): string {
   if (endpoint.queryParams.length > 0) {
     const queryParamTypes: string[] = [];
     for (const param of endpoint.queryParams) {
-      const tsType = param.schema.type === "integer" ? "number" : "string";
+      const tsType = param.schema.type === "integer" ? "number" : param.schema.type === "boolean" ? "boolean" : "string";
       const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
       queryParamTypes.push(`${safeName}?: ${tsType}`);
     }
-    params.push(`{ ${queryParamTypes.join(", ")} }: { ${queryParamTypes.join("; ")} } = {}`);
+    params.push(`params?: { ${queryParamTypes.join("; ")} }`);
   }
 
   return params.join(", ");

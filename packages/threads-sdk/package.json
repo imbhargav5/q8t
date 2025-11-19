@@ -11,7 +11,9 @@
     "dev": "tsc --watch",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "check": "biome check . && tsc --noEmit"
+    "check": "biome check . && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "yaml": "^2.3.4"
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.0"
   }
 }
