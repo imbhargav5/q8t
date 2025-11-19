@@ -1,6 +1,6 @@
 export interface ThreadsAuthConfig {
   clientId: string;
-  clientSecret?: string;
+  clientSecret: string;
   redirectUri: string;
   scopes: ThreadsScope[];
 }
@@ -15,7 +15,8 @@ export type ThreadsScope =
 export const THREADS_AUTH_ENDPOINTS = {
   authorize: "https://threads.net/oauth/authorize",
   token: "https://graph.threads.net/oauth/access_token",
+  exchange: "https://graph.threads.net/access_token",
   refresh: "https://graph.threads.net/refresh_access_token",
 } as const;
 
-export const THREADS_API_BASE_URL = "https://graph.threads.net/v1.0";
+export const THREADS_API_BASE_URL = "https://graph.threads.net";

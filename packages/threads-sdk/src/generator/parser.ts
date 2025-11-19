@@ -42,7 +42,10 @@ export interface Parameter {
 export interface RequestBody {
   required?: boolean;
   content: {
-    "application/json": {
+    "application/json"?: {
+      schema: SchemaObject | RefObject;
+    };
+    "application/x-www-form-urlencoded"?: {
       schema: SchemaObject | RefObject;
     };
   };

@@ -1,199 +1,164 @@
 # @q8t/threads-sdk
 
-A TypeScript SDK for the Threads API with code generation from OpenAPI specifications.
+TypeScript SDK for the Threads API, generated from OpenAPI specifications.
 
 ## Features
 
-- **OAuth 2.0 Authentication**: Full Meta OAuth flow with PKCE support
-- **Type-Safe API**: Auto-generated TypeScript types from OpenAPI spec
-- **Automatic Token Refresh**: Built-in token refresh handling
-- **Complete Threads API Coverage**: Posts, profiles, and media management
+- **Type-safe API client** - Generated from OpenAPI spec with full TypeScript support
+- **OAuth 2.0 authentication** - Complete auth flow implementation
+- **Comprehensive API coverage** - All Threads API v1.0 endpoints
+- **Auto-generated** - SDK generated from YAML specifications
 
 ## Installation
 
 ```bash
-pnpm add @q8t/threads-sdk
+pnpm install @q8t/threads-sdk
 ```
-
-## OAuth Setup
-
-Threads uses Meta's OAuth 2.0 implementation. To get started:
-
-1. Create a Meta App at [Meta for Developers](https://developers.facebook.com/)
-2. Add the Threads API product to your app
-3. Configure your OAuth redirect URIs
-4. Note your App ID (Client ID) and App Secret
-
-### Available Scopes
-
-- `threads_basic` - Read user profile information
-- `threads_content_publish` - Create and publish threads
-- `threads_manage_insights` - Access insights data
-- `threads_manage_replies` - Manage replies to threads
-- `threads_read_replies` - Read replies to threads
 
 ## Quick Start
 
-### 1. Configure Authentication
-
 ```typescript
-import { ThreadsAuthConfig } from "@q8t/threads-sdk";
+import {
+  ThreadsApi,
+  createThreadsClient,
+  generateAuthUrl,
+  exchangeCodeForToken,
+  exchangeForLongLivedToken,
+  type ThreadsAuthConfig,
+} from '@q8t/threads-sdk';
 
-const config: ThreadsAuthConfig = {
-  clientId: "YOUR_APP_ID",
-  clientSecret: "YOUR_APP_SECRET", // Optional for public clients
-  redirectUri: "https://yourapp.com/callback",
-  scopes: ["threads_basic", "threads_content_publish"],
+// 1. Generate authorization URL
+const authConfig: ThreadsAuthConfig = {
+  clientId: 'your-client-id',
+  clientSecret: 'your-client-secret',
+  redirectUri: 'https://your-app.com/callback',
+  scopes: ['threads_basic', 'threads_content_publish'],
 };
-```
 
-### 2. Generate Authorization URL
-
-```typescript
-import { generateAuthUrl } from "@q8t/threads-sdk";
-
-const { url, state, codeVerifier } = await generateAuthUrl(config);
+const { url, state } = generateAuthUrl(authConfig);
 // Redirect user to `url`
-// Store `state` and `codeVerifier` for the callback
-```
 
-### 3. Exchange Code for Token
-
-```typescript
-import { exchangeCodeForToken } from "@q8t/threads-sdk";
-
-const tokens = await exchangeCodeForToken({
-  clientId: config.clientId,
-  clientSecret: config.clientSecret,
-  code: "AUTHORIZATION_CODE_FROM_CALLBACK",
-  redirectUri: config.redirectUri,
-  codeVerifier: storedCodeVerifier,
+// 2. Exchange authorization code for tokens
+const shortLivedToken = await exchangeCodeForToken({
+  clientId: authConfig.clientId,
+  clientSecret: authConfig.clientSecret,
+  code: authorizationCode,
+  redirectUri: authConfig.redirectUri,
 });
-```
 
-### 4. Create API Client
+const longLivedToken = await exchangeForLongLivedToken({
+  clientSecret: authConfig.clientSecret,
+  accessToken: shortLivedToken.access_token,
+});
 
-```typescript
-import { createThreadsClient, ThreadsApi } from "@q8t/threads-sdk";
-
-const httpClient = createThreadsClient({
-  clientId: config.clientId,
-  clientSecret: config.clientSecret,
-  accessToken: tokens.access_token,
-  refreshToken: tokens.refresh_token,
-  onTokenRefresh: (newTokens) => {
-    // Store new tokens
-    console.log("Tokens refreshed:", newTokens);
+// 3. Create API client
+const client = createThreadsClient({
+  accessToken: longLivedToken.access_token,
+  onTokenRefresh: (newToken) => {
+    // Save new token
+    console.log('Token refreshed:', newToken);
   },
 });
 
-const api = new ThreadsApi(httpClient);
+const api = new ThreadsApi(client);
+
+// 4. Use the API
+const profile = await api.getMyProfile({ access_token: longLivedToken.access_token });
+console.log('Profile:', profile);
+
+// Create a text post
+const container = await api.createMediaContainer(
+  profile.id!,
+  {
+    media_type: 'TEXT',
+    text: 'Hello from Threads SDK! 🧵',
+  },
+  { access_token: longLivedToken.access_token }
+);
+
+// Wait 30 seconds before publishing
+await new Promise((resolve) => setTimeout(resolve, 30000));
+
+const published = await api.publishMediaContainer(
+  profile.id!,
+  { creation_id: container.id },
+  { access_token: longLivedToken.access_token }
+);
+console.log('Published:', published);
 ```
 
-### 5. Make API Calls
+## API Coverage
 
-```typescript
-// Get user profile
-const profile = await api.getMe();
-console.log("Profile:", profile);
+### Authentication (3 methods)
+- `exchangeCodeForToken` - Exchange authorization code for short-lived token
+- `exchangeToken` - Exchange short-lived for long-lived token
+- `refreshToken` - Refresh long-lived token
 
-// Create a new thread
-const thread = await api.createThread("USER_ID", {
-  media_type: "TEXT",
-  text: "Hello from Threads SDK!",
-});
+### User Profile (3 methods)
+- `getMyProfile` - Get authenticated user profile
+- `getUserProfile` - Get user profile by ID
+- `getPublishingLimit` - Get publishing rate limits
 
-// List user's threads
-const threads = await api.getUserThreads("USER_ID");
-```
+### Media Publishing (4 methods)
+- `createMediaContainer` - Create media container
+- `publishMediaContainer` - Publish media container
+- `listUserThreads` - List user's threads
+- `getMedia` - Get media details
 
-## Token Management
+### Replies (3 methods)
+- `getReplies` - Get replies to a post
+- `getConversation` - Get conversation thread
+- `manageReply` - Hide/unhide reply
 
-### Refreshing Tokens
+### Insights (2 methods)
+- `getMediaInsights` - Get media metrics
+- `getUserInsights` - Get user-level metrics
 
-```typescript
-import { refreshAccessToken } from "@q8t/threads-sdk";
+### Search (1 method)
+- `searchContent` - Search by keyword or topic tag
 
-const newTokens = await refreshAccessToken({
-  clientId: config.clientId,
-  clientSecret: config.clientSecret,
-  refreshToken: currentRefreshToken,
-});
-```
+## Scopes
 
-### Long-Lived Tokens
+- `threads_basic` - Read user profile and media
+- `threads_content_publish` - Create and publish posts
+- `threads_manage_insights` - Access analytics
+- `threads_manage_replies` - Manage replies
+- `threads_read_replies` - Read replies
 
-Threads API supports exchanging short-lived tokens for long-lived tokens (60 days):
+## Rate Limits
 
-```typescript
-import { exchangeForLongLivedToken } from "@q8t/threads-sdk";
-
-const longLivedToken = await exchangeForLongLivedToken({
-  clientId: config.clientId,
-  clientSecret: config.clientSecret,
-  accessToken: shortLivedToken,
-});
-```
-
-## Code Generation
-
-The SDK uses code generation from OpenAPI specifications:
-
-```bash
-# Generate API client and types
-pnpm generate
-```
-
-This reads `api/openapi.yaml` and generates:
-
-- `lib/types.ts` - TypeScript interfaces for all data models
-- `lib/api.ts` - Type-safe API methods
-- `lib/index.ts` - Exports
-
-## API Endpoints
-
-### User Profile
-
-- `GET /me` - Get authenticated user's profile
-
-### Threads
-
-- `POST /{user-id}/threads` - Create a new thread
-- `GET /{user-id}/threads` - List user's threads
-- `GET /{thread-id}` - Get a specific thread
-
-## Error Handling
-
-```typescript
-try {
-  const profile = await api.getMe();
-} catch (error) {
-  if (error.message.includes("401")) {
-    // Token expired - will auto-refresh if refreshToken provided
-  } else if (error.message.includes("400")) {
-    // Bad request - check parameters
-  }
-}
-```
+- **Posts**: 250 per 24-hour rolling period
+- **Container Publishing**: Wait ~30 seconds after creating container before publishing
 
 ## Development
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Generate API client
+# Generate SDK from OpenAPI spec
 pnpm generate
 
 # Build
 pnpm build
 
-# Lint
-pnpm lint
+# Run tests
+pnpm test
 
-# Format
-pnpm format
+# Type check
+pnpm check
 ```
+
+## Architecture
+
+The SDK is generated from OpenAPI specifications:
+
+- `api/openapi.yaml` - Complete Threads API specification
+- `src/generator/` - Code generation utilities
+- `lib/` - Generated TypeScript code (types & API)
+- `src/auth/` - Authentication helpers
+
+## Resources
+
+- [Threads API Documentation](https://developers.facebook.com/docs/threads)
+- [OAuth 2.0 Flow](https://developers.facebook.com/docs/threads/get-started/get-access-tokens-and-permissions)
 
 ## License
 

@@ -2,16 +2,13 @@ import { THREADS_API_BASE_URL } from "./config";
 import { refreshAccessToken } from "./oauth2";
 
 export interface ThreadsClientConfig {
-  clientId: string;
-  clientSecret?: string;
   accessToken: string;
-  refreshToken?: string;
-  onTokenRefresh?: (newTokens: { accessToken: string; refreshToken?: string }) => void;
+  onTokenRefresh?: (newToken: string) => void;
 }
 
 export interface HttpClient {
-  get<T>(path: string, params?: Record<string, string | number | undefined>): Promise<T>;
-  post<T>(path: string, body?: unknown): Promise<T>;
+  get<T>(path: string, params?: Record<string, string | number | boolean | undefined>): Promise<T>;
+  post<T>(path: string, body?: unknown, params?: Record<string, string | number | boolean | undefined>): Promise<T>;
   put<T>(path: string, body?: unknown): Promise<T>;
   delete<T>(path: string): Promise<T>;
 }
@@ -23,11 +20,10 @@ export function createThreadsClient(config: ThreadsClientConfig): HttpClient {
     method: string,
     path: string,
     body?: unknown,
-    params?: Record<string, string | number | undefined>
+    params?: Record<string, string | number | boolean | undefined>
   ): Promise<T> {
     let url = `${THREADS_API_BASE_URL}${path}`;
 
-    // Build query parameters
     const searchParams = new URLSearchParams();
     searchParams.append("access_token", accessToken);
 
@@ -60,35 +56,21 @@ export function createThreadsClient(config: ThreadsClientConfig): HttpClient {
     let response = await fetch(url, requestOptions);
 
     // Handle token refresh on 401
-    if (response.status === 401 && config.refreshToken) {
+    if (response.status === 401) {
       try {
         const newTokens = await refreshAccessToken({
-          clientId: config.clientId,
-          clientSecret: config.clientSecret,
-          refreshToken: config.refreshToken,
+          accessToken: accessToken,
         });
 
         accessToken = newTokens.access_token;
 
         if (config.onTokenRefresh) {
-          config.onTokenRefresh({
-            accessToken: newTokens.access_token,
-            refreshToken: newTokens.refresh_token,
-          });
+          config.onTokenRefresh(newTokens.access_token);
         }
 
         // Retry the request with new token
-        const retryParams = new URLSearchParams();
-        retryParams.append("access_token", accessToken);
-        if (params) {
-          for (const [key, value] of Object.entries(params)) {
-            if (value !== undefined) {
-              retryParams.append(key, String(value));
-            }
-          }
-        }
-        const retryUrl = `${THREADS_API_BASE_URL}${path}?${retryParams.toString()}`;
-        response = await fetch(retryUrl, requestOptions);
+        const newUrl = url.replace(/access_token=[^&]+/, `access_token=${accessToken}`);
+        response = await fetch(newUrl, requestOptions);
       } catch {
         throw new Error("Token refresh failed");
       }
@@ -99,16 +81,16 @@ export function createThreadsClient(config: ThreadsClientConfig): HttpClient {
       throw new Error(`Threads API error (${response.status}): ${errorText}`);
     }
 
-    return response.json();
+    return response.json() as Promise<T>;
   }
 
   return {
-    get<T>(path: string, params?: Record<string, string | number | undefined>): Promise<T> {
+    get<T>(path: string, params?: Record<string, string | number | boolean | undefined>): Promise<T> {
       return makeRequest<T>("GET", path, undefined, params);
     },
 
-    post<T>(path: string, body?: unknown): Promise<T> {
-      return makeRequest<T>("POST", path, body);
+    post<T>(path: string, body?: unknown, params?: Record<string, string | number | boolean | undefined>): Promise<T> {
+      return makeRequest<T>("POST", path, body, params);
     },
 
     put<T>(path: string, body?: unknown): Promise<T> {

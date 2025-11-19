@@ -1,314 +1,307 @@
 openapi: 3.0.3
 info:
   title: Threads API
-  version: "1.0"
-  description: |
-    The Threads API allows you to read and publish content on the Threads platform.
-    Authentication uses Meta's OAuth 2.0 flow.
+  description: Official Meta Threads API
+  version: v1.0
 
 servers:
-  - url: https://graph.threads.net/v1.0
-
-paths:
-  /me:
-    get:
-      operationId: getMe
-      summary: Get authenticated user profile
-      description: Returns the profile information for the currently authenticated user.
-      parameters:
-        - name: fields
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Comma-separated list of fields to return (e.g., id,username,threads_profile_picture_url)
-      responses:
-        "200":
-          description: User profile information
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserProfile"
-
-  /{user-id}/threads:
-    post:
-      operationId: createThread
-      summary: Create a new thread
-      description: Creates a new thread container for the specified user.
-      parameters:
-        - name: user-id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The user ID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateThreadRequest"
-      responses:
-        "200":
-          description: Thread container created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ThreadContainer"
-
-    get:
-      operationId: getUserThreads
-      summary: List user's threads
-      description: Returns a list of threads created by the specified user.
-      parameters:
-        - name: user-id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The user ID
-        - name: fields
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Comma-separated list of fields to return
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-          description: Maximum number of threads to return
-        - name: since
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Unix timestamp or strtotime data value for oldest thread
-        - name: until
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Unix timestamp or strtotime data value for newest thread
-      responses:
-        "200":
-          description: List of threads
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ThreadsList"
-
-  /{thread-id}:
-    get:
-      operationId: getThread
-      summary: Get a specific thread
-      description: Returns information about a specific thread.
-      parameters:
-        - name: thread-id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The thread ID
-        - name: fields
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Comma-separated list of fields to return
-      responses:
-        "200":
-          description: Thread information
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Thread"
+  - url: https://graph.threads.net
+    description: Production
+  - url: https://threads.net
+    description: OAuth
 
 components:
   schemas:
-    UserProfile:
+    # User Schemas
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        name:
+          type: string
+        threads_profile_picture_url:
+          type: string
+          format: uri
+        threads_biography:
+          type: string
+        is_verified:
+          type: boolean
+
+    PublishingLimit:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              quota_usage:
+                type: integer
+              config:
+                type: object
+                properties:
+                  quota_total:
+                    type: integer
+                  quota_duration:
+                    type: integer
+
+    # Media Schemas
+    MediaType:
+      type: string
+      enum:
+        - TEXT
+        - IMAGE
+        - VIDEO
+        - CAROUSEL
+        - REPOST
+
+    MediaContainer:
       type: object
       required:
         - id
       properties:
         id:
           type: string
-          description: The user's app-scoped ID
+
+    PublishedMedia:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    Media:
+      type: object
+      properties:
+        id:
+          type: string
+        media_product_type:
+          type: string
+        media_type:
+          type: string
+        media_url:
+          type: string
+          format: uri
+        permalink:
+          type: string
+          format: uri
+        owner:
+          type: object
+          properties:
+            id:
+              type: string
         username:
           type: string
-          description: The user's username
-        threads_profile_picture_url:
+        text:
           type: string
-          description: URL of the user's profile picture
-        threads_biography:
+        timestamp:
           type: string
-          description: The user's biography/description
+          format: date-time
+        shortcode:
+          type: string
+        thumbnail_url:
+          type: string
+          format: uri
+        children:
+          type: object
+        is_quote_post:
+          type: boolean
+        has_replies:
+          type: boolean
+        is_reply:
+          type: boolean
+        hide_status:
+          type: string
+          enum:
+            - NOT_HUSHED
+            - UNHIDDEN
+            - HIDDEN
+        reply_audience:
+          type: string
+          enum:
+            - everyone
+            - accounts_you_follow
+            - mentioned_only
+            - parent_post_author_only
+            - followers_only
+        alt_text:
+          type: string
+        topic_tag:
+          type: string
 
-    CreateThreadRequest:
+    MediaList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+        paging:
+          $ref: '#/components/schemas/Paging'
+
+    # Create Media Request
+    CreateMediaRequest:
       type: object
       required:
         - media_type
       properties:
         media_type:
           type: string
-          enum:
-            - TEXT
-            - IMAGE
-            - VIDEO
-            - CAROUSEL
-          description: The type of media for the thread
+          enum: [TEXT, IMAGE, VIDEO, CAROUSEL]
         text:
           type: string
           maxLength: 500
-          description: The text content of the thread (max 500 characters)
         image_url:
           type: string
-          description: URL of the image (required for IMAGE media type)
+          format: uri
         video_url:
           type: string
-          description: URL of the video (required for VIDEO media type)
+          format: uri
         children:
           type: array
           items:
             type: string
-          description: Array of media container IDs for CAROUSEL type
+        alt_text:
+          type: string
         reply_to_id:
           type: string
-          description: ID of the thread to reply to
         reply_control:
           type: string
           enum:
             - everyone
             - accounts_you_follow
             - mentioned_only
-          description: Who can reply to this thread
+            - parent_post_author_only
+            - followers_only
+        location_id:
+          type: string
+        topic_tag:
+          type: string
+        poll:
+          type: object
+          properties:
+            question:
+              type: string
+              maxLength: 500
+            options:
+              type: array
+              minItems: 2
+              maxItems: 4
+              items:
+                type: string
+                maxLength: 25
+            duration_minutes:
+              type: integer
+              default: 1440
+        gif_url:
+          type: string
+          format: uri
 
-    ThreadContainer:
+    PublishMediaRequest:
       type: object
       required:
-        - id
+        - creation_id
       properties:
+        creation_id:
+          type: string
+
+    ManageReplyRequest:
+      type: object
+      required:
+        - hide
+      properties:
+        hide:
+          type: boolean
+
+    ManageReplyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+    # Insights Schemas
+    MediaInsight:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+            - views
+            - likes
+            - replies
+            - reposts
+            - quotes
+            - clicks
+        period:
+          type: string
+          enum:
+            - day
+            - week
+            - days_28
+            - lifetime
+        values:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: integer
+        title:
+          type: string
         id:
           type: string
-          description: The thread container ID
 
-    ThreadsList:
+    MediaInsightsList:
       type: object
-      required:
-        - data
       properties:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/Thread"
-        paging:
-          $ref: "#/components/schemas/Paging"
+            $ref: '#/components/schemas/MediaInsight'
 
-    Thread:
+    UserInsight:
       type: object
-      required:
-        - id
       properties:
-        id:
-          type: string
-          description: The thread ID
-        media_product_type:
-          type: string
-          description: Surface where the media is published (always THREADS)
-        media_type:
+        name:
           type: string
           enum:
-            - TEXT_POST
-            - IMAGE
-            - VIDEO
-            - CAROUSEL_ALBUM
-            - AUDIO
-            - REPOST_FACADE
-          description: The type of media
-        media_url:
+            - views
+            - likes
+            - followers_count
+            - follower_demographics
+        period:
           type: string
-          description: URL of the media (for IMAGE and VIDEO)
-        permalink:
+        values:
+          type: array
+          items:
+            type: object
+        title:
           type: string
-          description: Permanent link to the thread
-        owner:
-          type: object
-          properties:
-            id:
-              type: string
-          description: Owner information
-        username:
-          type: string
-          description: Username of the thread owner
-        text:
-          type: string
-          description: Text content of the thread
-        timestamp:
-          type: string
-          description: ISO 8601 timestamp of when the thread was created
-        shortcode:
-          type: string
-          description: Shortcode of the thread
-        thumbnail_url:
-          type: string
-          description: URL of the thumbnail (for VIDEO)
-        children:
-          type: object
-          properties:
-            data:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: string
-          description: Children threads (for CAROUSEL_ALBUM)
-        is_quote_post:
-          type: boolean
-          description: Whether this thread is a quote post
-        alt_text:
-          type: string
-          description: Alt text for the media
-        has_replies:
-          type: boolean
-          description: Whether the thread has replies
-        is_reply:
-          type: boolean
-          description: Whether this thread is a reply
-        is_reply_owned_by_me:
-          type: boolean
-          description: Whether the reply is owned by the authenticated user
-        root_post:
-          type: object
-          properties:
-            id:
-              type: string
-          description: Root post information
-        replied_to:
-          type: object
-          properties:
-            id:
-              type: string
-          description: Thread that this is replying to
-        hide_status:
-          type: string
-          enum:
-            - NOT_HUSHED
-            - UNHUSHED
-            - HIDDEN
-            - COVERED
-            - BLOCKED
-            - RESTRICTED
-          description: Hide status of the thread
-        reply_audience:
-          type: string
-          enum:
-            - EVERYONE
-            - ACCOUNTS_YOU_FOLLOW
-            - MENTIONED_ONLY
-          description: Who can reply to this thread
 
+    # Auth Schemas
+    ShortLivedTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        user_id:
+          type: string
+
+    LongLivedTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+
+    # Common Schemas
     Paging:
       type: object
       properties:
@@ -319,23 +312,552 @@ components:
               type: string
             after:
               type: string
-        next:
-          type: string
-          description: URL for the next page of results
-        previous:
-          type: string
-          description: URL for the previous page of results
 
-  securitySchemes:
-    oauth2:
-      type: oauth2
-      flows:
-        authorizationCode:
-          authorizationUrl: https://threads.net/oauth/authorize
-          tokenUrl: https://graph.threads.net/oauth/access_token
-          scopes:
-            threads_basic: Read user profile information
-            threads_content_publish: Create and publish threads
-            threads_manage_insights: Access insights data
-            threads_manage_replies: Manage replies to threads
-            threads_read_replies: Read replies to threads
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+            type:
+              type: string
+            code:
+              type: integer
+            fbtrace_id:
+              type: string
+
+    SearchResult:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+
+paths:
+  # Authentication
+  /oauth/access_token:
+    post:
+      operationId: exchangeCodeForToken
+      summary: Exchange authorization code for access token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - client_id
+                - client_secret
+                - grant_type
+                - redirect_uri
+                - code
+              properties:
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+                grant_type:
+                  type: string
+                  enum: [authorization_code]
+                redirect_uri:
+                  type: string
+                code:
+                  type: string
+      responses:
+        '200':
+          description: Short-lived access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortLivedTokenResponse'
+
+  /access_token:
+    get:
+      operationId: exchangeToken
+      summary: Exchange short-lived for long-lived token
+      tags:
+        - Authentication
+      parameters:
+        - name: grant_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [th_exchange_token]
+        - name: client_secret
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Long-lived token (60 days)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongLivedTokenResponse'
+
+  /refresh_access_token:
+    get:
+      operationId: refreshToken
+      summary: Refresh long-lived token
+      tags:
+        - Authentication
+      parameters:
+        - name: grant_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [th_refresh_token]
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: New long-lived token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongLivedTokenResponse'
+
+  # User Profile
+  /me:
+    get:
+      operationId: getMyProfile
+      summary: Get authenticated user profile
+      tags:
+        - User Profile
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /v1.0/{user-id}:
+    get:
+      operationId: getUserProfile
+      summary: Get user profile
+      tags:
+        - User Profile
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /v1.0/{user-id}/threads_publishing_limit:
+    get:
+      operationId: getPublishingLimit
+      summary: Get publishing limits
+      tags:
+        - User Profile
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Publishing limits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishingLimit'
+
+  # Media Publishing
+  /v1.0/{user-id}/threads:
+    post:
+      operationId: createMediaContainer
+      summary: Create media container
+      description: Rate limit - 250 posts/24 hours. Wait ~30 seconds before publishing
+      tags:
+        - Media Publishing
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMediaRequest'
+      responses:
+        '200':
+          description: Media container created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaContainer'
+
+    get:
+      operationId: listUserThreads
+      summary: List user threads
+      tags:
+        - Media Publishing
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - name: before
+          in: query
+          schema:
+            type: string
+        - name: after
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of threads
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaList'
+
+  /v1.0/{user-id}/threads_publish:
+    post:
+      operationId: publishMediaContainer
+      summary: Publish media container
+      description: Wait ~30 seconds after creating container
+      tags:
+        - Media Publishing
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishMediaRequest'
+      responses:
+        '200':
+          description: Media published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishedMedia'
+
+  /v1.0/{media-id}:
+    get:
+      operationId: getMedia
+      summary: Get media details
+      tags:
+        - Media Publishing
+      parameters:
+        - name: media-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Media details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+
+  # Replies
+  /v1.0/{media-id}/replies:
+    get:
+      operationId: getReplies
+      summary: Get replies to a post
+      tags:
+        - Replies
+      parameters:
+        - name: media-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - name: fields
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of replies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaList'
+
+  /v1.0/{media-id}/conversation:
+    get:
+      operationId: getConversation
+      summary: Get conversation thread
+      tags:
+        - Replies
+      parameters:
+        - name: media-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conversation thread
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaList'
+
+  /v1.0/{reply-id}:
+    post:
+      operationId: manageReply
+      summary: Hide or unhide reply
+      tags:
+        - Replies
+      parameters:
+        - name: reply-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageReplyRequest'
+      responses:
+        '200':
+          description: Reply managed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManageReplyResponse'
+
+  # Insights
+  /v1.0/{media-id}/insights:
+    get:
+      operationId: getMediaInsights
+      summary: Get media insights
+      description: Metrics - views, likes, replies, reposts, quotes, clicks
+      tags:
+        - Insights
+      parameters:
+        - name: media-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: metric
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Comma-separated list of metrics
+      responses:
+        '200':
+          description: Media insights
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaInsightsList'
+
+  /v1.0/{user-id}/threads_insights:
+    get:
+      operationId: getUserInsights
+      summary: Get user-level insights
+      description: Metrics - views, likes, followers_count, follower_demographics
+      tags:
+        - Insights
+      parameters:
+        - name: user-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: metric
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, days_28, lifetime]
+      responses:
+        '200':
+          description: User insights
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInsight'
+
+  # Search
+  /keyword_search:
+    get:
+      operationId: searchContent
+      summary: Search by keyword or topic tag
+      tags:
+        - Search
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: topic_tag
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [threads, users, all]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
