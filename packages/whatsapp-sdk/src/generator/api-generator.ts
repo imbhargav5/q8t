@@ -132,12 +132,7 @@ function generateMethod(endpoint: EndpointInfo): string {
   // Generate method body
   if (endpoint.method === "GET") {
     if (endpoint.queryParams.length > 0) {
-      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, {`);
-      for (const param of endpoint.queryParams) {
-        const safeName = param.name.replace(/\./g, "_");
-        lines.push(`      "${param.name}": ${safeName},`);
-      }
-      lines.push(`    });`);
+      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, queryParams);`);
     } else {
       lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr});`);
     }
@@ -154,7 +149,11 @@ function generateMethod(endpoint: EndpointInfo): string {
       lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "DELETE") {
-    lines.push(`    return this.client.delete<${endpoint.responseType}>(${pathExpr});`);
+    if (endpoint.queryParams.length > 0) {
+      lines.push(`    return this.client.delete<${endpoint.responseType}>(${pathExpr});`);
+    } else {
+      lines.push(`    return this.client.delete<${endpoint.responseType}>(${pathExpr});`);
+    }
   }
 
   lines.push(`  }`);
@@ -183,7 +182,7 @@ function generateMethodParams(endpoint: EndpointInfo): string {
       const safeName = param.name.replace(/\./g, "_");
       queryParamTypes.push(`${safeName}?: ${tsType}`);
     }
-    params.push(`{ ${queryParamTypes.join(", ")} }: { ${queryParamTypes.join("; ")} } = {}`);
+    params.push(`queryParams?: { ${queryParamTypes.join("; ")} }`);
   }
 
   return params.join(", ");

@@ -1,25 +1,25 @@
 openapi: "3.0.0"
 info:
   title: WhatsApp Cloud API
-  version: "18.0"
-  description: WhatsApp Cloud API for sending messages, managing templates, and phone numbers
+  version: "23.0"
+  description: WhatsApp Business Platform API for sending messages, managing templates, phone numbers, and more
 
 servers:
-  - url: https://graph.facebook.com/v18.0
+  - url: https://graph.facebook.com/v23.0
 
 paths:
+  # Messages API
   /{phone_number_id}/messages:
     post:
       operationId: sendMessage
       summary: Send a message
-      description: Send a text, template, media, or interactive message to a WhatsApp user
+      description: Send text, template, media, interactive, location, or contact messages
       parameters:
         - name: phone_number_id
           in: path
           required: true
           schema:
             type: string
-          description: The phone number ID to send from
       requestBody:
         required: true
         content:
@@ -34,44 +34,204 @@ paths:
               schema:
                 $ref: "#/components/schemas/SendMessageResponse"
 
-  /{phone_number_id}/message_templates:
-    get:
-      operationId: getMessageTemplates
-      summary: List message templates
-      description: Get all message templates for a WhatsApp Business Account
+  /{phone_number_id}/markAsRead:
+    post:
+      operationId: markMessageAsRead
+      summary: Mark message as read
+      description: Mark a received message as read
       parameters:
         - name: phone_number_id
           in: path
           required: true
           schema:
             type: string
-          description: The phone number ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkAsReadRequest"
+      responses:
+        "200":
+          description: Message marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Media API
+  /{phone_number_id}/media:
+    post:
+      operationId: uploadMedia
+      summary: Upload media
+      description: Upload media files (images, videos, documents, audio, stickers)
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadMediaRequest"
+      responses:
+        "200":
+          description: Media uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaUploadResponse"
+
+  /{media_id}:
+    get:
+      operationId: getMediaUrl
+      summary: Get media URL
+      description: Retrieve the URL of uploaded media
+      parameters:
+        - name: media_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Media URL retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaUrlResponse"
+    delete:
+      operationId: deleteMedia
+      summary: Delete media
+      description: Delete uploaded media
+      parameters:
+        - name: media_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Media deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Templates API
+  /{waba_id}/message_templates:
+    get:
+      operationId: listTemplates
+      summary: List message templates
+      description: Get all message templates for a WhatsApp Business Account
+      parameters:
+        - name: waba_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
         - name: limit
           in: query
           required: false
           schema:
             type: integer
-          description: Maximum number of templates to return
       responses:
         "200":
-          description: List of message templates
+          description: List of templates
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MessageTemplatesResponse"
-
-  /{business_id}/phone_numbers:
-    get:
-      operationId: getPhoneNumbers
-      summary: List phone numbers
-      description: Get all phone numbers associated with a WhatsApp Business Account
+                $ref: "#/components/schemas/TemplatesListResponse"
+    post:
+      operationId: createTemplate
+      summary: Create message template
+      description: Create a new message template
       parameters:
-        - name: business_id
+        - name: waba_id
           in: path
           required: true
           schema:
             type: string
-          description: The WhatsApp Business Account ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTemplateRequest"
+      responses:
+        "200":
+          description: Template created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplateResponse"
+
+  /{template_id}/template:
+    get:
+      operationId: getTemplate
+      summary: Get template
+      description: Get a specific message template
+      parameters:
+        - name: template_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Template details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Template"
+    delete:
+      operationId: deleteTemplate
+      summary: Delete template
+      description: Delete a message template
+      parameters:
+        - name: template_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Template deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Phone Numbers API
+  /{waba_id}/phone_numbers:
+    get:
+      operationId: listPhoneNumbers
+      summary: List phone numbers
+      description: Get all phone numbers for a WhatsApp Business Account
+      parameters:
+        - name: waba_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: List of phone numbers
@@ -80,8 +240,344 @@ paths:
               schema:
                 $ref: "#/components/schemas/PhoneNumbersResponse"
 
+  /{phone_number_id}/phoneNumber:
+    get:
+      operationId: getPhoneNumber
+      summary: Get phone number
+      description: Get details of a specific phone number
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Phone number details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhoneNumber"
+
+  /{phone_number_id}/register:
+    post:
+      operationId: registerPhoneNumber
+      summary: Register phone number
+      description: Register a phone number with WhatsApp Business
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterPhoneRequest"
+      responses:
+        "200":
+          description: Phone number registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /{phone_number_id}/deregister:
+    post:
+      operationId: deregisterPhoneNumber
+      summary: Deregister phone number
+      description: Deregister a phone number from WhatsApp Business
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeregisterPhoneRequest"
+      responses:
+        "200":
+          description: Phone number deregistered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /{phone_number_id}/request_code:
+    post:
+      operationId: requestVerificationCode
+      summary: Request verification code
+      description: Request a verification code for phone number verification
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestCodeRequest"
+      responses:
+        "200":
+          description: Verification code sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /{phone_number_id}/verify_code:
+    post:
+      operationId: verifyPhoneNumber
+      summary: Verify phone number
+      description: Verify a phone number with the received code
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyCodeRequest"
+      responses:
+        "200":
+          description: Phone number verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # QR Codes API
+  /{phone_number_id}/message_qrdls:
+    get:
+      operationId: listQRCodes
+      summary: List QR codes
+      description: Get all QR codes for a phone number
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of QR codes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QRCodesResponse"
+    post:
+      operationId: createQRCode
+      summary: Create QR code
+      description: Create a new QR code
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQRCodeRequest"
+      responses:
+        "200":
+          description: QR code created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QRCode"
+
+  /{phone_number_id}/message_qrdls/{qr_code_id}:
+    get:
+      operationId: getQRCode
+      summary: Get QR code
+      description: Get details of a specific QR code
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: qr_code_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: QR code details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QRCode"
+    post:
+      operationId: updateQRCode
+      summary: Update QR code
+      description: Update an existing QR code
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: qr_code_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateQRCodeRequest"
+      responses:
+        "200":
+          description: QR code updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QRCode"
+    delete:
+      operationId: deleteQRCode
+      summary: Delete QR code
+      description: Delete a QR code
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: qr_code_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: QR code deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Business Profile API
+  /{phone_number_id}/whatsapp_business_profile:
+    get:
+      operationId: getBusinessProfile
+      summary: Get business profile
+      description: Get the business profile for a phone number
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Business profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessProfileResponse"
+    post:
+      operationId: updateBusinessProfile
+      summary: Update business profile
+      description: Update the business profile
+      parameters:
+        - name: phone_number_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBusinessProfileRequest"
+      responses:
+        "200":
+          description: Business profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # WABA Management API
+  /{waba_id}/waba:
+    get:
+      operationId: getWABA
+      summary: Get WABA info
+      description: Get WhatsApp Business Account information
+      parameters:
+        - name: waba_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: WABA details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WABA"
+
+  /{waba_id}/subscribed_apps:
+    get:
+      operationId: getSubscribedApps
+      summary: Get subscribed apps
+      description: Get apps subscribed to webhooks
+      parameters:
+        - name: waba_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Subscribed apps
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscribedAppsResponse"
+    post:
+      operationId: subscribeToWebhooks
+      summary: Subscribe to webhooks
+      description: Subscribe an app to receive webhooks
+      parameters:
+        - name: waba_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Subscribed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
 components:
   schemas:
+    # Message Schemas
     SendMessageRequest:
       type: object
       required:
@@ -91,39 +587,41 @@ components:
       properties:
         messaging_product:
           type: string
-          description: Must be "whatsapp"
+          enum: [whatsapp]
         recipient_type:
           type: string
-          description: Type of recipient (individual or group)
+          enum: [individual, group]
         to:
           type: string
-          description: WhatsApp ID or phone number of the recipient
         type:
           type: string
-          enum:
-            - text
-            - template
-            - image
-            - document
-            - audio
-            - video
-            - sticker
-            - location
-            - contacts
-            - interactive
-          description: Type of message to send
+          enum: [text, template, image, video, audio, document, sticker, location, contacts, interactive, reaction]
         text:
           $ref: "#/components/schemas/TextObject"
         template:
           $ref: "#/components/schemas/TemplateObject"
         image:
           $ref: "#/components/schemas/MediaObject"
-        document:
+        video:
           $ref: "#/components/schemas/MediaObject"
         audio:
           $ref: "#/components/schemas/MediaObject"
-        video:
+        document:
+          $ref: "#/components/schemas/DocumentObject"
+        sticker:
           $ref: "#/components/schemas/MediaObject"
+        location:
+          $ref: "#/components/schemas/LocationObject"
+        contacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactObject"
+        interactive:
+          $ref: "#/components/schemas/InteractiveObject"
+        reaction:
+          $ref: "#/components/schemas/ReactionObject"
+        context:
+          $ref: "#/components/schemas/ContextObject"
 
     TextObject:
       type: object
@@ -133,10 +631,8 @@ components:
         body:
           type: string
           maxLength: 4096
-          description: The text of the message
         preview_url:
           type: boolean
-          description: Whether to show URL preview
 
     TemplateObject:
       type: object
@@ -146,7 +642,6 @@ components:
       properties:
         name:
           type: string
-          description: Name of the template
         language:
           $ref: "#/components/schemas/LanguageObject"
         components:
@@ -161,18 +656,23 @@ components:
       properties:
         code:
           type: string
-          description: Language code (e.g., en_US)
+        policy:
+          type: string
+          enum: [deterministic]
 
     TemplateComponent:
       type: object
+      required:
+        - type
       properties:
         type:
           type: string
-          enum:
-            - header
-            - body
-            - button
-          description: Component type
+          enum: [header, body, button]
+        sub_type:
+          type: string
+          enum: [quick_reply, url]
+        index:
+          type: string
         parameters:
           type: array
           items:
@@ -180,43 +680,283 @@ components:
 
     TemplateParameter:
       type: object
+      required:
+        - type
       properties:
         type:
           type: string
-          enum:
-            - text
-            - currency
-            - date_time
-            - image
-            - document
-            - video
-          description: Parameter type
+          enum: [text, currency, date_time, image, video, document, payload]
         text:
           type: string
-          description: Text value for text parameters
+        currency:
+          $ref: "#/components/schemas/CurrencyParameter"
+        date_time:
+          $ref: "#/components/schemas/DateTimeParameter"
+        image:
+          $ref: "#/components/schemas/MediaObject"
+        video:
+          $ref: "#/components/schemas/MediaObject"
+        document:
+          $ref: "#/components/schemas/MediaObject"
+        payload:
+          type: string
+
+    CurrencyParameter:
+      type: object
+      required:
+        - fallback_value
+        - code
+        - amount_1000
+      properties:
+        fallback_value:
+          type: string
+        code:
+          type: string
+        amount_1000:
+          type: number
+
+    DateTimeParameter:
+      type: object
+      required:
+        - fallback_value
+      properties:
+        fallback_value:
+          type: string
 
     MediaObject:
       type: object
       properties:
         id:
           type: string
-          description: Media ID from Meta
         link:
           type: string
-          description: URL of the media
         caption:
           type: string
-          description: Caption for the media
+
+    DocumentObject:
+      type: object
+      properties:
+        id:
+          type: string
+        link:
+          type: string
+        caption:
+          type: string
         filename:
           type: string
-          description: Filename for documents
+
+    LocationObject:
+      type: object
+      required:
+        - longitude
+        - latitude
+      properties:
+        longitude:
+          type: number
+        latitude:
+          type: number
+        name:
+          type: string
+        address:
+          type: string
+
+    ContactObject:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/ContactName"
+        phones:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactPhone"
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactEmail"
+
+    ContactName:
+      type: object
+      required:
+        - formatted_name
+      properties:
+        formatted_name:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+
+    ContactPhone:
+      type: object
+      properties:
+        phone:
+          type: string
+        type:
+          type: string
+          enum: [CELL, MAIN, IPHONE, HOME, WORK]
+
+    ContactEmail:
+      type: object
+      properties:
+        email:
+          type: string
+        type:
+          type: string
+          enum: [WORK, HOME]
+
+    InteractiveObject:
+      type: object
+      required:
+        - type
+        - action
+      properties:
+        type:
+          type: string
+          enum: [button, list]
+        header:
+          $ref: "#/components/schemas/InteractiveHeader"
+        body:
+          $ref: "#/components/schemas/InteractiveBody"
+        footer:
+          $ref: "#/components/schemas/InteractiveFooter"
+        action:
+          $ref: "#/components/schemas/InteractiveAction"
+
+    InteractiveHeader:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [text, image, video, document]
+        text:
+          type: string
+        image:
+          $ref: "#/components/schemas/MediaObject"
+        video:
+          $ref: "#/components/schemas/MediaObject"
+        document:
+          $ref: "#/components/schemas/MediaObject"
+
+    InteractiveBody:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+
+    InteractiveFooter:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+
+    InteractiveAction:
+      type: object
+      properties:
+        button:
+          type: string
+        buttons:
+          type: array
+          items:
+            $ref: "#/components/schemas/InteractiveButton"
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/InteractiveSection"
+
+    InteractiveButton:
+      type: object
+      required:
+        - type
+        - reply
+      properties:
+        type:
+          type: string
+          enum: [reply]
+        reply:
+          $ref: "#/components/schemas/InteractiveReply"
+
+    InteractiveReply:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+
+    InteractiveSection:
+      type: object
+      required:
+        - rows
+      properties:
+        title:
+          type: string
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/InteractiveRow"
+
+    InteractiveRow:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+
+    ReactionObject:
+      type: object
+      required:
+        - message_id
+        - emoji
+      properties:
+        message_id:
+          type: string
+        emoji:
+          type: string
+
+    ContextObject:
+      type: object
+      required:
+        - message_id
+      properties:
+        message_id:
+          type: string
+
+    MarkAsReadRequest:
+      type: object
+      required:
+        - messaging_product
+        - status
+        - message_id
+      properties:
+        messaging_product:
+          type: string
+          enum: [whatsapp]
+        status:
+          type: string
+          enum: [read]
+        message_id:
+          type: string
 
     SendMessageResponse:
       type: object
       properties:
         messaging_product:
           type: string
-          description: Always "whatsapp"
         contacts:
           type: array
           items:
@@ -231,53 +971,72 @@ components:
       properties:
         input:
           type: string
-          description: Input phone number
         wa_id:
           type: string
-          description: WhatsApp ID of the contact
 
     MessageInfo:
       type: object
       properties:
         id:
           type: string
-          description: Message ID
         message_status:
           type: string
-          description: Status of the message
 
-    MessageTemplatesResponse:
+    # Media Schemas
+    UploadMediaRequest:
       type: object
+      required:
+        - file
+        - type
+        - messaging_product
       properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/MessageTemplate"
-        paging:
-          $ref: "#/components/schemas/Paging"
+        file:
+          type: string
+          format: binary
+        type:
+          type: string
+        messaging_product:
+          type: string
+          enum: [whatsapp]
 
-    MessageTemplate:
+    MediaUploadResponse:
       type: object
       properties:
         id:
           type: string
-          description: Template ID
+
+    MediaUrlResponse:
+      type: object
+      properties:
+        url:
+          type: string
+        mime_type:
+          type: string
+        sha256:
+          type: string
+        file_size:
+          type: number
+        id:
+          type: string
+        messaging_product:
+          type: string
+
+    # Template Schemas
+    CreateTemplateRequest:
+      type: object
+      required:
+        - name
+        - language
+        - category
+        - components
+      properties:
         name:
           type: string
-          description: Template name
-        status:
-          type: string
-          enum:
-            - APPROVED
-            - PENDING
-            - REJECTED
-          description: Template approval status
-        category:
-          type: string
-          description: Template category
         language:
           type: string
-          description: Template language
+        category:
+          type: string
+          enum: [AUTHENTICATION, MARKETING, UTILITY]
         components:
           type: array
           items:
@@ -285,17 +1044,80 @@ components:
 
     TemplateComponentDefinition:
       type: object
+      required:
+        - type
       properties:
         type:
           type: string
-          description: Component type
-        text:
-          type: string
-          description: Component text
+          enum: [HEADER, BODY, FOOTER, BUTTONS]
         format:
           type: string
-          description: Component format
+          enum: [TEXT, IMAGE, VIDEO, DOCUMENT]
+        text:
+          type: string
+        buttons:
+          type: array
+          items:
+            $ref: "#/components/schemas/TemplateButton"
+        example:
+          type: object
 
+    TemplateButton:
+      type: object
+      required:
+        - type
+        - text
+      properties:
+        type:
+          type: string
+          enum: [QUICK_REPLY, PHONE_NUMBER, URL, OTP]
+        text:
+          type: string
+        phone_number:
+          type: string
+        url:
+          type: string
+
+    Template:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [APPROVED, PENDING, REJECTED, PAUSED, DISABLED]
+        category:
+          type: string
+        language:
+          type: string
+        components:
+          type: array
+          items:
+            $ref: "#/components/schemas/TemplateComponentDefinition"
+
+    TemplatesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Template"
+        paging:
+          $ref: "#/components/schemas/Paging"
+
+    TemplateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        category:
+          type: string
+
+    # Phone Number Schemas
     PhoneNumbersResponse:
       type: object
       properties:
@@ -311,36 +1133,199 @@ components:
       properties:
         id:
           type: string
-          description: Phone number ID
         display_phone_number:
           type: string
-          description: Display phone number
         verified_name:
           type: string
-          description: Verified business name
         quality_rating:
           type: string
-          enum:
-            - GREEN
-            - YELLOW
-            - RED
-          description: Quality rating
+          enum: [GREEN, YELLOW, RED]
         code_verification_status:
           type: string
-          description: Verification status
+
+    RegisterPhoneRequest:
+      type: object
+      required:
+        - messaging_product
+        - pin
+      properties:
+        messaging_product:
+          type: string
+          enum: [whatsapp]
+        pin:
+          type: string
+
+    DeregisterPhoneRequest:
+      type: object
+      required:
+        - messaging_product
+      properties:
+        messaging_product:
+          type: string
+          enum: [whatsapp]
+
+    RequestCodeRequest:
+      type: object
+      required:
+        - code_method
+        - language
+      properties:
+        code_method:
+          type: string
+          enum: [SMS, VOICE]
+        language:
+          type: string
+
+    VerifyCodeRequest:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+
+    # QR Code Schemas
+    QRCodesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/QRCode"
+
+    QRCode:
+      type: object
+      properties:
+        code:
+          type: string
+        prefilled_message:
+          type: string
+        deep_link_url:
+          type: string
+        qr_image_url:
+          type: string
+
+    CreateQRCodeRequest:
+      type: object
+      required:
+        - prefilled_message
+        - generate_qr_image
+      properties:
+        prefilled_message:
+          type: string
+        generate_qr_image:
+          type: string
+          enum: [PNG, SVG]
+
+    UpdateQRCodeRequest:
+      type: object
+      properties:
+        code:
+          type: string
+        prefilled_message:
+          type: string
+
+    # Business Profile Schemas
+    BusinessProfileResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/BusinessProfile"
+
+    BusinessProfile:
+      type: object
+      properties:
+        about:
+          type: string
+        address:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        messaging_product:
+          type: string
+        profile_picture_url:
+          type: string
+        websites:
+          type: array
+          items:
+            type: string
+        vertical:
+          type: string
+
+    UpdateBusinessProfileRequest:
+      type: object
+      required:
+        - messaging_product
+      properties:
+        messaging_product:
+          type: string
+          enum: [whatsapp]
+        about:
+          type: string
+        address:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        profile_picture_handle:
+          type: string
+        websites:
+          type: array
+          items:
+            type: string
+        vertical:
+          type: string
+
+    # WABA Schemas
+    WABA:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        timezone_id:
+          type: string
+        message_template_namespace:
+          type: string
+
+    SubscribedAppsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              whatsapp_business_api_data:
+                type: object
+
+    # Utility Schemas
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
 
     Paging:
       type: object
       properties:
         cursors:
           $ref: "#/components/schemas/Cursors"
+        next:
+          type: string
+        previous:
+          type: string
 
     Cursors:
       type: object
       properties:
         before:
           type: string
-          description: Cursor for previous page
         after:
           type: string
-          description: Cursor for next page
