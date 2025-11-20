@@ -1,0 +1,108 @@
+import { readFileSync } from "fs";
+import { parse } from "yaml";
+
+export interface OpenAPISpec {
+  openapi: string;
+  info: {
+    title: string;
+    version: string;
+    description?: string;
+  };
+  servers: Array<{
+    url: string;
+    variables?: Record<string, { default: string; description?: string }>;
+  }>;
+  paths: Record<string, PathItem>;
+  components: {
+    schemas: Record<string, SchemaObject>;
+  };
+}
+
+export interface PathItem {
+  get?: Operation;
+  post?: Operation;
+  put?: Operation;
+  delete?: Operation;
+  patch?: Operation;
+}
+
+export interface Operation {
+  operationId: string;
+  summary?: string;
+  description?: string;
+  parameters?: Parameter[];
+  requestBody?: RequestBody;
+  responses: Record<string, Response>;
+}
+
+export interface Parameter {
+  name: string;
+  in: "path" | "query" | "header";
+  required?: boolean;
+  schema: SchemaObject;
+  description?: string;
+}
+
+export interface RequestBody {
+  required?: boolean;
+  content: {
+    "application/json"?: {
+      schema: SchemaObject | RefObject;
+    };
+    "application/x-www-form-urlencoded"?: {
+      schema: SchemaObject | RefObject;
+    };
+    "text/csv"?: {
+      schema: SchemaObject;
+    };
+  };
+}
+
+export interface Response {
+  description: string;
+  content?: {
+    "application/json"?: {
+      schema: SchemaObject | RefObject;
+    };
+    "text/csv"?: {
+      schema: SchemaObject;
+    };
+  };
+}
+
+export interface SchemaObject {
+  type?: string;
+  format?: string;
+  properties?: Record<string, SchemaObject | RefObject>;
+  required?: string[];
+  items?: SchemaObject | RefObject;
+  $ref?: string;
+  enum?: string[];
+  minimum?: number;
+  maximum?: number;
+  maxLength?: number;
+  minLength?: number;
+  minItems?: number;
+  maxItems?: number;
+  default?: unknown;
+  additionalProperties?: boolean | SchemaObject | RefObject;
+}
+
+export interface RefObject {
+  $ref: string;
+}
+
+export function parseOpenAPISpec(filePath: string): OpenAPISpec {
+  const content = readFileSync(filePath, "utf-8");
+  return parse(content) as OpenAPISpec;
+}
+
+export function resolveRef(ref: string): string {
+  // Extract type name from $ref: "#/components/schemas/TypeName"
+  const parts = ref.split("/");
+  return parts[parts.length - 1];
+}
+
+export function isRefObject(obj: SchemaObject | RefObject): obj is RefObject {
+  return "$ref" in obj;
+}
