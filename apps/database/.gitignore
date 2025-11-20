@@ -15,7 +15,14 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files
+.env
 .env*.local
 
 # typescript
 *.tsbuildinfo
+
+# Supabase
+.supabase/
+
+# Generated types
+src/types/database.ts

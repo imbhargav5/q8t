@@ -36,6 +36,7 @@ export interface Parameter {
   name: string;
   in: "path" | "query" | "header";
   required?: boolean;
+  description?: string;
   schema: SchemaObject;
 }
 

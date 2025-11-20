@@ -1,0 +1,752 @@
+openapi: 3.0.3
+info:
+  title: Dropbox Core API
+  description: Dropbox API v2 for user file operations, sharing, and content management
+  version: "2.0"
+
+servers:
+  - url: https://api.dropboxapi.com/2
+    description: Core API endpoints
+  - url: https://content.dropboxapi.com/2
+    description: Content endpoints (upload/download)
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://www.dropbox.com/oauth2/authorize
+          tokenUrl: https://api.dropboxapi.com/oauth2/token
+          scopes:
+            account_info.read: Read account info
+            files.content.write: Create, edit, and delete files and folders
+            files.content.read: View content of files and folders
+            files.metadata.write: Edit metadata on files and folders
+            files.metadata.read: View metadata on files and folders
+            sharing.write: Create and modify shared links and groups
+            sharing.read: View shared links and groups
+            file_requests.write: Create and update file requests
+            file_requests.read: Read file requests
+
+  schemas:
+    # Metadata types
+    Metadata:
+      type: object
+      required:
+        - .tag
+        - name
+        - path_lower
+        - path_display
+        - id
+      properties:
+        .tag:
+          type: string
+          enum: [file, folder]
+        name:
+          type: string
+        path_lower:
+          type: string
+        path_display:
+          type: string
+        id:
+          type: string
+
+    FileMetadata:
+      allOf:
+        - $ref: '#/components/schemas/Metadata'
+        - type: object
+          properties:
+            client_modified:
+              type: string
+              format: date-time
+            server_modified:
+              type: string
+              format: date-time
+            rev:
+              type: string
+            size:
+              type: integer
+            content_hash:
+              type: string
+
+    FolderMetadata:
+      allOf:
+        - $ref: '#/components/schemas/Metadata'
+        - type: object
+          properties:
+            shared_folder_id:
+              type: string
+
+    # List folder types
+    ListFolderResult:
+      type: object
+      required:
+        - entries
+        - cursor
+        - has_more
+      properties:
+        entries:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/FileMetadata'
+              - $ref: '#/components/schemas/FolderMetadata'
+        cursor:
+          type: string
+        has_more:
+          type: boolean
+
+    # Upload types
+    CommitInfo:
+      type: object
+      required:
+        - path
+      properties:
+        path:
+          type: string
+        mode:
+          type: string
+          enum: [add, overwrite, update]
+          default: add
+        autorename:
+          type: boolean
+          default: false
+        mute:
+          type: boolean
+          default: false
+        strict_conflict:
+          type: boolean
+          default: false
+
+    # Account types
+    FullAccount:
+      type: object
+      properties:
+        account_id:
+          type: string
+        name:
+          type: object
+          properties:
+            given_name:
+              type: string
+            surname:
+              type: string
+            familiar_name:
+              type: string
+            display_name:
+              type: string
+        email:
+          type: string
+        email_verified:
+          type: boolean
+        disabled:
+          type: boolean
+        country:
+          type: string
+        locale:
+          type: string
+        profile_photo_url:
+          type: string
+        is_paired:
+          type: boolean
+        account_type:
+          type: object
+          properties:
+            .tag:
+              type: string
+              enum: [basic, pro, business]
+        root_info:
+          type: object
+          properties:
+            .tag:
+              type: string
+            root_namespace_id:
+              type: string
+            home_namespace_id:
+              type: string
+
+    SpaceUsage:
+      type: object
+      properties:
+        used:
+          type: integer
+        allocation:
+          type: object
+          properties:
+            .tag:
+              type: string
+            allocated:
+              type: integer
+
+    # Shared link types
+    SharedLinkMetadata:
+      type: object
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+        link_permissions:
+          type: object
+          properties:
+            can_revoke:
+              type: boolean
+            resolved_visibility:
+              type: object
+              properties:
+                .tag:
+                  type: string
+        path_lower:
+          type: string
+        expires:
+          type: string
+          format: date-time
+
+    CreateSharedLinkSettings:
+      type: object
+      properties:
+        requested_visibility:
+          type: string
+          enum: [public, team_only, password]
+        link_password:
+          type: string
+        expires:
+          type: string
+          format: date-time
+
+    # File request types
+    FileRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        created:
+          type: string
+          format: date-time
+        is_open:
+          type: boolean
+        file_count:
+          type: integer
+        destination:
+          type: string
+        deadline:
+          type: object
+          properties:
+            deadline:
+              type: string
+              format: date-time
+            allow_late_uploads:
+              type: string
+
+    # Error types
+    Error:
+      type: object
+      properties:
+        error_summary:
+          type: string
+        error:
+          type: object
+
+    # Search types
+    SearchMatch:
+      type: object
+      properties:
+        match_type:
+          type: object
+          properties:
+            .tag:
+              type: string
+        metadata:
+          oneOf:
+            - $ref: '#/components/schemas/FileMetadata'
+            - $ref: '#/components/schemas/FolderMetadata'
+
+    SearchResult:
+      type: object
+      properties:
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchMatch'
+        more:
+          type: boolean
+        start:
+          type: integer
+
+security:
+  - oauth2: []
+
+paths:
+  # Files endpoints
+  /files/list_folder:
+    post:
+      summary: List folder contents
+      description: Returns the contents of a folder
+      operationId: listFolder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - path
+              properties:
+                path:
+                  type: string
+                recursive:
+                  type: boolean
+                  default: false
+                include_deleted:
+                  type: boolean
+                  default: false
+                include_has_explicit_shared_members:
+                  type: boolean
+                  default: false
+                include_mounted_folders:
+                  type: boolean
+                  default: true
+                include_non_downloadable_files:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFolderResult'
+
+  /files/list_folder/continue:
+    post:
+      summary: Continue listing folder
+      description: Continue listing folder contents using cursor
+      operationId: listFolderContinue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cursor
+              properties:
+                cursor:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListFolderResult'
+
+  /files/get_metadata:
+    post:
+      summary: Get file or folder metadata
+      description: Returns the metadata for a file or folder
+      operationId: getMetadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - path
+              properties:
+                path:
+                  type: string
+                include_deleted:
+                  type: boolean
+                include_has_explicit_shared_members:
+                  type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FileMetadata'
+                  - $ref: '#/components/schemas/FolderMetadata'
+
+  /files/create_folder_v2:
+    post:
+      summary: Create a folder
+      description: Create a folder at a given path
+      operationId: createFolderV2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - path
+              properties:
+                path:
+                  type: string
+                autorename:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    $ref: '#/components/schemas/FolderMetadata'
+
+  /files/delete_v2:
+    post:
+      summary: Delete a file or folder
+      description: Delete the file or folder at a given path
+      operationId: deleteV2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - path
+              properties:
+                path:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    oneOf:
+                      - $ref: '#/components/schemas/FileMetadata'
+                      - $ref: '#/components/schemas/FolderMetadata'
+
+  /files/copy_v2:
+    post:
+      summary: Copy a file or folder
+      description: Copy a file or folder to a different location
+      operationId: copyV2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - from_path
+                - to_path
+              properties:
+                from_path:
+                  type: string
+                to_path:
+                  type: string
+                allow_shared_folder:
+                  type: boolean
+                  default: false
+                autorename:
+                  type: boolean
+                  default: false
+                allow_ownership_transfer:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    oneOf:
+                      - $ref: '#/components/schemas/FileMetadata'
+                      - $ref: '#/components/schemas/FolderMetadata'
+
+  /files/move_v2:
+    post:
+      summary: Move a file or folder
+      description: Move a file or folder to a different location
+      operationId: moveV2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - from_path
+                - to_path
+              properties:
+                from_path:
+                  type: string
+                to_path:
+                  type: string
+                allow_shared_folder:
+                  type: boolean
+                  default: false
+                autorename:
+                  type: boolean
+                  default: false
+                allow_ownership_transfer:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metadata:
+                    oneOf:
+                      - $ref: '#/components/schemas/FileMetadata'
+                      - $ref: '#/components/schemas/FolderMetadata'
+
+  /files/search_v2:
+    post:
+      summary: Search for files and folders
+      description: Searches for files and folders
+      operationId: searchV2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                options:
+                  type: object
+                  properties:
+                    path:
+                      type: string
+                    max_results:
+                      type: integer
+                    file_status:
+                      type: string
+                      enum: [active, deleted]
+                    filename_only:
+                      type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+
+  # Users endpoints
+  /users/get_current_account:
+    post:
+      summary: Get current account info
+      description: Get information about the current user's account
+      operationId: getCurrentAccount
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullAccount'
+
+  /users/get_space_usage:
+    post:
+      summary: Get space usage
+      description: Get the space usage information for the current user's account
+      operationId: getSpaceUsage
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceUsage'
+
+  # Sharing endpoints
+  /sharing/create_shared_link_with_settings:
+    post:
+      summary: Create a shared link
+      description: Create a shared link with custom settings
+      operationId: createSharedLinkWithSettings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - path
+              properties:
+                path:
+                  type: string
+                settings:
+                  $ref: '#/components/schemas/CreateSharedLinkSettings'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SharedLinkMetadata'
+
+  /sharing/list_shared_links:
+    post:
+      summary: List shared links
+      description: List shared links for a file or folder
+      operationId: listSharedLinks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                cursor:
+                  type: string
+                direct_only:
+                  type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SharedLinkMetadata'
+                  has_more:
+                    type: boolean
+                  cursor:
+                    type: string
+
+  /sharing/revoke_shared_link:
+    post:
+      summary: Revoke a shared link
+      description: Revoke a shared link
+      operationId: revokeSharedLink
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+
+  # File requests endpoints
+  /file_requests/list_v2:
+    post:
+      summary: List file requests
+      description: Returns a list of file requests owned by this user
+      operationId: listFileRequestsV2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                  default: 1000
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file_requests:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FileRequest'
+
+  /file_requests/create:
+    post:
+      summary: Create a file request
+      description: Creates a file request for this user
+      operationId: createFileRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - destination
+              properties:
+                title:
+                  type: string
+                destination:
+                  type: string
+                deadline:
+                  type: object
+                  properties:
+                    deadline:
+                      type: string
+                      format: date-time
+                    allow_late_uploads:
+                      type: string
+                open:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileRequest'
+
+  /file_requests/get:
+    post:
+      summary: Get a file request
+      description: Returns the specified file request
+      operationId: getFileRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileRequest'
