@@ -1,0 +1,1183 @@
+openapi: "3.0.0"
+info:
+  title: Warpcast/Farcaster Client API
+  version: "2.0"
+  description: |
+    Warpcast Client API for application-level features like channels, moderation, direct casts, and user management.
+    Requires Bearer token authentication.
+
+servers:
+  - url: https://api.warpcast.com
+    description: Warpcast API
+  - url: https://api.farcaster.xyz
+    description: Farcaster Client API
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ============= User API =============
+
+  /v2/me:
+    get:
+      operationId: getMe
+      summary: Get authenticated user
+      description: Get information about the authenticated user
+      responses:
+        "200":
+          description: User info retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # ============= Channels API =============
+
+  /v2/all-channels:
+    get:
+      operationId: getAllChannels
+      summary: Get all channels
+      description: Retrieve a list of all channels
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Channels retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelsResponse"
+
+  /v1/channel:
+    get:
+      operationId: getChannel
+      summary: Get channel by ID
+      description: Retrieve a specific channel by its ID
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Channel retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Channel"
+
+  /v1/channel-followers:
+    get:
+      operationId: getChannelFollowers
+      summary: Get channel followers
+      description: Retrieve followers of a specific channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Channel followers retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelFollowersResponse"
+
+  /v1/user-following-channels:
+    get:
+      operationId: getUserFollowingChannels
+      summary: Get channels followed by user
+      description: Retrieve channels that a user is following
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Following channels retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelsResponse"
+
+  /v1/user-channel:
+    get:
+      operationId: getUserChannel
+      summary: Check if user follows channel
+      description: Check if a specific user is following a channel
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User channel relationship retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserChannel"
+
+  /fc/channel-members:
+    get:
+      operationId: getChannelMembers
+      summary: Get channel members
+      description: Retrieve members of a specific channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Channel members retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelMembersResponse"
+
+  /fc/channel-follows:
+    post:
+      operationId: followChannel
+      summary: Follow a channel
+      description: Follow a specific channel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channelId:
+                  type: string
+              required:
+                - channelId
+      responses:
+        "200":
+          description: Channel followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      operationId: unfollowChannel
+      summary: Unfollow a channel
+      description: Unfollow a specific channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Channel unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ============= Channel Invites API =============
+
+  /fc/channel-invites:
+    get:
+      operationId: getChannelInvites
+      summary: Get channel invites
+      description: Retrieve invites for a specific channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Channel invites retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelInvitesResponse"
+
+    post:
+      operationId: createChannelInvite
+      summary: Invite user to channel
+      description: Send an invite to a user to join a channel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channelId:
+                  type: string
+                invitedFid:
+                  type: integer
+                role:
+                  type: string
+              required:
+                - channelId
+                - invitedFid
+      responses:
+        "200":
+          description: Channel invite created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelInvite"
+
+    delete:
+      operationId: deleteChannelInvite
+      summary: Remove/revoke channel invite
+      description: Remove or revoke a channel invite
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: invitedFid
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Channel invite removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    patch:
+      operationId: respondToChannelInvite
+      summary: Accept or decline channel invite
+      description: Respond to a channel invite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channelId:
+                  type: string
+                accept:
+                  type: boolean
+              required:
+                - channelId
+                - accept
+      responses:
+        "200":
+          description: Channel invite response recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ============= Moderation API =============
+
+  /fc/moderated-casts:
+    get:
+      operationId: getModeratedCasts
+      summary: Get moderated casts
+      description: Retrieve moderation actions for casts in a channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Moderated casts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModeratedCastsResponse"
+
+    post:
+      operationId: moderateCast
+      summary: Hide or unhide a cast
+      description: Hide or unhide a cast in a channel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channelId:
+                  type: string
+                castHash:
+                  type: string
+                action:
+                  type: string
+                  enum: [hide, unhide]
+              required:
+                - channelId
+                - castHash
+                - action
+      responses:
+        "200":
+          description: Cast moderation action recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /fc/channel-restricted-users:
+    get:
+      operationId: getChannelRestrictedUsers
+      summary: Get restricted users
+      description: Retrieve users restricted in a channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Restricted users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestrictedUsersResponse"
+
+  /fc/channel-bans:
+    get:
+      operationId: getChannelBans
+      summary: Get banned users
+      description: Retrieve users banned from a channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Banned users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BannedUsersResponse"
+
+    post:
+      operationId: banUser
+      summary: Ban user from channel
+      description: Ban a user from a channel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channelId:
+                  type: string
+                fid:
+                  type: integer
+              required:
+                - channelId
+                - fid
+      responses:
+        "200":
+          description: User banned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      operationId: unbanUser
+      summary: Unban user from channel
+      description: Remove a ban from a user in a channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User unbanned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ============= Pinning API =============
+
+  /fc/pinned-casts:
+    put:
+      operationId: pinCast
+      summary: Pin cast to channel
+      description: Pin a cast to a channel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channelId:
+                  type: string
+                castHash:
+                  type: string
+              required:
+                - channelId
+                - castHash
+      responses:
+        "200":
+          description: Cast pinned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      operationId: unpinCast
+      summary: Unpin cast from channel
+      description: Remove a pinned cast from a channel
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: castHash
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cast unpinned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ============= User Features API =============
+
+  /fc/blocked-users:
+    get:
+      operationId: getBlockedUsers
+      summary: Get blocked users
+      description: Retrieve users blocked by a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Blocked users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlockedUsersResponse"
+
+    post:
+      operationId: blockUser
+      summary: Block a user
+      description: Block a specific user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                targetFid:
+                  type: integer
+              required:
+                - targetFid
+      responses:
+        "200":
+          description: User blocked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      operationId: unblockUser
+      summary: Unblock a user
+      description: Remove a block from a user
+      parameters:
+        - name: targetFid
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User unblocked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /fc/primary-address:
+    get:
+      operationId: getPrimaryAddress
+      summary: Get primary address
+      description: Get the primary Ethereum address for a FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Primary address retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrimaryAddress"
+
+  /fc/primary-addresses:
+    get:
+      operationId: getPrimaryAddresses
+      summary: Get primary addresses (bulk)
+      description: Get primary Ethereum addresses for multiple FIDs
+      parameters:
+        - name: fids
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Comma-separated list of FIDs
+      responses:
+        "200":
+          description: Primary addresses retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrimaryAddressesResponse"
+
+  /fc/account-verifications:
+    get:
+      operationId: getAccountVerifications
+      summary: Get account verifications
+      description: Get account verifications for a FID (beta feature)
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Account verifications retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountVerificationsResponse"
+
+  /fc/starter-pack-members:
+    get:
+      operationId: getStarterPackMembers
+      summary: Get starter pack members
+      description: Retrieve members of a starter pack
+      parameters:
+        - name: starterPackId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Starter pack members retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StarterPackMembersResponse"
+
+  # ============= Direct Casts API =============
+
+  /v2/ext-send-direct-cast:
+    put:
+      operationId: sendDirectCast
+      summary: Send direct message
+      description: Send a direct message to another user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipientFid:
+                  type: integer
+                message:
+                  type: string
+                idempotencyKey:
+                  type: string
+              required:
+                - recipientFid
+                - message
+      responses:
+        "200":
+          description: Direct message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DirectCastResponse"
+
+  # ============= Discovery API =============
+
+  /v2/discover-actions:
+    get:
+      operationId: getDiscoverActions
+      summary: Get Farcaster actions
+      description: Retrieve a list of Farcaster actions for discovery
+      responses:
+        "200":
+          description: Actions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActionsResponse"
+
+  # ============= Rewards API =============
+
+  /v1/creator-rewards-winner-history:
+    get:
+      operationId: getCreatorRewardsWinnerHistory
+      summary: Get creator rewards history
+      description: Retrieve creator rewards winner history
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Creator rewards retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RewardsHistoryResponse"
+
+  /v1/developer-rewards-winner-history:
+    get:
+      operationId: getDeveloperRewardsWinnerHistory
+      summary: Get developer rewards history
+      description: Retrieve developer rewards winner history
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Developer rewards retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RewardsHistoryResponse"
+
+  /v2/power-badge-users:
+    get:
+      operationId: getPowerBadgeUsers
+      summary: Get power badge users
+      description: Retrieve users with power badges
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Power badge users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PowerBadgeUsersResponse"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    # ============= User Types =============
+
+    User:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                fid:
+                  type: integer
+                username:
+                  type: string
+                displayName:
+                  type: string
+                pfp:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                profile:
+                  type: object
+                  properties:
+                    bio:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                followerCount:
+                  type: integer
+                followingCount:
+                  type: integer
+                activeOnFcNetwork:
+                  type: boolean
+
+    # ============= Channel Types =============
+
+    Channel:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            channel:
+              type: object
+              properties:
+                id:
+                  type: string
+                url:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                imageUrl:
+                  type: string
+                leadFid:
+                  type: integer
+                moderatorFids:
+                  type: array
+                  items:
+                    type: integer
+                createdAt:
+                  type: integer
+                followerCount:
+                  type: integer
+
+    ChannelsResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            channels:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  url:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  imageUrl:
+                    type: string
+                  followerCount:
+                    type: integer
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    ChannelFollowersResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            users:
+              type: array
+              items:
+                type: object
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    UserChannel:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            following:
+              type: boolean
+            channelId:
+              type: string
+
+    ChannelMembersResponse:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            type: object
+            properties:
+              fid:
+                type: integer
+              role:
+                type: string
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    # ============= Channel Invite Types =============
+
+    ChannelInvite:
+      type: object
+      properties:
+        channelId:
+          type: string
+        invitedFid:
+          type: integer
+        inviterFid:
+          type: integer
+        role:
+          type: string
+        createdAt:
+          type: integer
+        status:
+          type: string
+
+    ChannelInvitesResponse:
+      type: object
+      properties:
+        invites:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChannelInvite"
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    # ============= Moderation Types =============
+
+    ModeratedCastsResponse:
+      type: object
+      properties:
+        casts:
+          type: array
+          items:
+            type: object
+            properties:
+              castHash:
+                type: string
+              action:
+                type: string
+              moderatorFid:
+                type: integer
+              timestamp:
+                type: integer
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    RestrictedUsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            type: object
+            properties:
+              fid:
+                type: integer
+              restrictedAt:
+                type: integer
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    BannedUsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            type: object
+            properties:
+              fid:
+                type: integer
+              bannedAt:
+                type: integer
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    # ============= User Feature Types =============
+
+    BlockedUsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            type: object
+            properties:
+              fid:
+                type: integer
+              blockedAt:
+                type: integer
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    PrimaryAddress:
+      type: object
+      properties:
+        fid:
+          type: integer
+        address:
+          type: string
+
+    PrimaryAddressesResponse:
+      type: object
+      properties:
+        addresses:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrimaryAddress"
+
+    AccountVerificationsResponse:
+      type: object
+      properties:
+        verifications:
+          type: array
+          items:
+            type: object
+
+    StarterPackMembersResponse:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            type: object
+            properties:
+              fid:
+                type: integer
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    # ============= Direct Cast Types =============
+
+    DirectCastResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            success:
+              type: boolean
+            messageId:
+              type: string
+
+    # ============= Discovery Types =============
+
+    ActionsResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            actions:
+              type: array
+              items:
+                type: object
+
+    # ============= Rewards Types =============
+
+    RewardsHistoryResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            winners:
+              type: array
+              items:
+                type: object
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    PowerBadgeUsersResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            users:
+              type: array
+              items:
+                type: object
+        next:
+          type: object
+          properties:
+            cursor:
+              type: string
+
+    # ============= Generic Types =============
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
