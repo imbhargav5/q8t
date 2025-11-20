@@ -1,0 +1,832 @@
+openapi: 3.0.3
+info:
+  title: Dropbox Team API
+  description: Dropbox API v2 for team administration and management
+  version: "2.0"
+
+servers:
+  - url: https://api.dropboxapi.com/2
+    description: Team API endpoints
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://www.dropbox.com/oauth2/authorize
+          tokenUrl: https://api.dropboxapi.com/oauth2/token
+          scopes:
+            team_info.read: View team information
+            members.read: View team member information
+            members.write: Add, remove, and manage team members
+            groups.read: View team group information
+            groups.write: Create and manage team groups
+            events.read: View team events
+            sessions.list: List team member sessions
+            team_data.member: Access team member data
+
+  schemas:
+    # Team member types
+    TeamMemberInfo:
+      type: object
+      properties:
+        profile:
+          type: object
+          properties:
+            team_member_id:
+              type: string
+            email:
+              type: string
+            email_verified:
+              type: boolean
+            status:
+              type: object
+              properties:
+                .tag:
+                  type: string
+                  enum: [active, invited, suspended, removed]
+            name:
+              type: object
+              properties:
+                given_name:
+                  type: string
+                surname:
+                  type: string
+                familiar_name:
+                  type: string
+                display_name:
+                  type: string
+            membership_type:
+              type: object
+              properties:
+                .tag:
+                  type: string
+                  enum: [full, limited]
+            joined_on:
+              type: string
+              format: date-time
+            account_id:
+              type: string
+        role:
+          type: object
+          properties:
+            .tag:
+              type: string
+              enum: [team_admin, user_management_admin, support_admin, member_only]
+
+    # Team group types
+    GroupInfo:
+      type: object
+      properties:
+        group_name:
+          type: string
+        group_id:
+          type: string
+        group_management_type:
+          type: object
+          properties:
+            .tag:
+              type: string
+              enum: [user_managed, company_managed, system_managed]
+        group_type:
+          type: object
+          properties:
+            .tag:
+              type: string
+              enum: [team, user_managed]
+        member_count:
+          type: integer
+        created:
+          type: integer
+
+    # Team folder types
+    TeamFolderMetadata:
+      type: object
+      properties:
+        team_folder_id:
+          type: string
+        name:
+          type: string
+        status:
+          type: object
+          properties:
+            .tag:
+              type: string
+              enum: [active, archived, archive_in_progress]
+        is_team_shared_dropbox:
+          type: boolean
+        sync_setting:
+          type: object
+          properties:
+            .tag:
+              type: string
+              enum: [default, not_synced, sync_all]
+        content_sync_settings:
+          type: array
+          items:
+            type: object
+
+    # Device types
+    DeviceSession:
+      type: object
+      properties:
+        session_id:
+          type: string
+        ip_address:
+          type: string
+        country:
+          type: string
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+
+    MemberDevices:
+      type: object
+      properties:
+        team_member_id:
+          type: string
+        web_sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceSession'
+        desktop_clients:
+          type: array
+          items:
+            type: object
+            properties:
+              session_id:
+                type: string
+              host_name:
+                type: string
+              client_type:
+                type: object
+                properties:
+                  .tag:
+                    type: string
+              platform:
+                type: string
+        mobile_clients:
+          type: array
+          items:
+            type: object
+            properties:
+              session_id:
+                type: string
+              device_name:
+                type: string
+              client_type:
+                type: object
+                properties:
+                  .tag:
+                    type: string
+
+    # Namespace types
+    TeamNamespace:
+      type: object
+      properties:
+        name:
+          type: string
+        namespace_id:
+          type: string
+        namespace_type:
+          type: object
+          properties:
+            .tag:
+              type: string
+              enum: [app_folder, shared_folder, team_folder, team_member_folder]
+        team_member_id:
+          type: string
+
+    # Error types
+    Error:
+      type: object
+      properties:
+        error_summary:
+          type: string
+        error:
+          type: object
+
+security:
+  - oauth2: []
+
+paths:
+  # Team member management
+  /team/members/list_v2:
+    post:
+      summary: List team members
+      description: Lists members of a team
+      operationId: listMembersV2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                  default: 100
+                include_removed:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  members:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamMemberInfo'
+                  cursor:
+                    type: string
+                  has_more:
+                    type: boolean
+
+  /team/members/list/continue_v2:
+    post:
+      summary: Continue listing team members
+      description: Continue listing team members using cursor
+      operationId: listMembersContinueV2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cursor
+              properties:
+                cursor:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  members:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamMemberInfo'
+                  cursor:
+                    type: string
+                  has_more:
+                    type: boolean
+
+  /team/members/get_info:
+    post:
+      summary: Get team member info
+      description: Returns information about multiple team members
+      operationId: getMembersInfo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - members
+              properties:
+                members:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      .tag:
+                        type: string
+                      team_member_id:
+                        type: string
+                      email:
+                        type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/TeamMemberInfo'
+                    - $ref: '#/components/schemas/Error'
+
+  /team/members/add:
+    post:
+      summary: Add team member
+      description: Adds members to a team
+      operationId: addMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - new_members
+              properties:
+                new_members:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - member_email
+                    properties:
+                      member_email:
+                        type: string
+                      member_given_name:
+                        type: string
+                      member_surname:
+                        type: string
+                      send_welcome_email:
+                        type: boolean
+                        default: true
+                      role:
+                        type: string
+                        enum: [member_only, team_admin, user_management_admin, support_admin]
+                force_async:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /team/members/remove:
+    post:
+      summary: Remove team member
+      description: Removes a member from a team
+      operationId: removeMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user
+              properties:
+                user:
+                  type: object
+                  properties:
+                    .tag:
+                      type: string
+                    team_member_id:
+                      type: string
+                wipe_data:
+                  type: boolean
+                  default: true
+                transfer_dest_id:
+                  type: object
+                transfer_admin_id:
+                  type: object
+                keep_account:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Successful response
+
+  /team/members/suspend:
+    post:
+      summary: Suspend team member
+      description: Suspend a member from a team
+      operationId: suspendMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user
+              properties:
+                user:
+                  type: object
+                  properties:
+                    .tag:
+                      type: string
+                    team_member_id:
+                      type: string
+                wipe_data:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Successful response
+
+  /team/members/unsuspend:
+    post:
+      summary: Unsuspend team member
+      description: Unsuspend a member from a team
+      operationId: unsuspendMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user
+              properties:
+                user:
+                  type: object
+                  properties:
+                    .tag:
+                      type: string
+                    team_member_id:
+                      type: string
+      responses:
+        '200':
+          description: Successful response
+
+  # Group management
+  /team/groups/list:
+    post:
+      summary: List groups
+      description: Lists groups on a team
+      operationId: listGroups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                  default: 100
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GroupInfo'
+                  cursor:
+                    type: string
+                  has_more:
+                    type: boolean
+
+  /team/groups/create:
+    post:
+      summary: Create group
+      description: Creates a new, empty group
+      operationId: createGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - group_name
+              properties:
+                group_name:
+                  type: string
+                group_management_type:
+                  type: string
+                  enum: [user_managed, company_managed]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupInfo'
+
+  /team/groups/delete:
+    post:
+      summary: Delete group
+      description: Deletes a group
+      operationId: deleteGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - group
+              properties:
+                group:
+                  type: object
+                  properties:
+                    .tag:
+                      type: string
+                    group_id:
+                      type: string
+      responses:
+        '200':
+          description: Successful response
+
+  /team/groups/members/add:
+    post:
+      summary: Add members to group
+      description: Adds members to a group
+      operationId: addMembersToGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - group
+                - members
+              properties:
+                group:
+                  type: object
+                  properties:
+                    .tag:
+                      type: string
+                    group_id:
+                      type: string
+                members:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          .tag:
+                            type: string
+                          team_member_id:
+                            type: string
+                      access_type:
+                        type: string
+                        enum: [member, owner]
+      responses:
+        '200':
+          description: Successful response
+
+  /team/groups/members/remove:
+    post:
+      summary: Remove members from group
+      description: Removes members from a group
+      operationId: removeMembersFromGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - group
+                - users
+              properties:
+                group:
+                  type: object
+                  properties:
+                    .tag:
+                      type: string
+                    group_id:
+                      type: string
+                users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      .tag:
+                        type: string
+                      team_member_id:
+                        type: string
+      responses:
+        '200':
+          description: Successful response
+
+  # Team folder management
+  /team/team_folder/list:
+    post:
+      summary: List team folders
+      description: Lists all team folders
+      operationId: listTeamFolders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                  default: 100
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  team_folders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamFolderMetadata'
+                  cursor:
+                    type: string
+                  has_more:
+                    type: boolean
+
+  /team/team_folder/create:
+    post:
+      summary: Create team folder
+      description: Creates a new, active, team folder
+      operationId: createTeamFolder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                sync_setting:
+                  type: string
+                  enum: [default, not_synced, sync_all]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamFolderMetadata'
+
+  /team/team_folder/archive:
+    post:
+      summary: Archive team folder
+      description: Sets an active team folder's status to archived
+      operationId: archiveTeamFolder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - team_folder_id
+              properties:
+                team_folder_id:
+                  type: string
+                force_async_off:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Successful response
+
+  # Device management
+  /team/devices/list_member_devices:
+    post:
+      summary: List member devices
+      description: List all device sessions of a team's member
+      operationId: listMemberDevices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - team_member_id
+              properties:
+                team_member_id:
+                  type: string
+                include_web_sessions:
+                  type: boolean
+                  default: true
+                include_desktop_clients:
+                  type: boolean
+                  default: true
+                include_mobile_clients:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberDevices'
+
+  /team/devices/list_members_devices:
+    post:
+      summary: List all members' devices
+      description: List all device sessions of all team members
+      operationId: listMembersDevices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cursor:
+                  type: string
+                include_web_sessions:
+                  type: boolean
+                  default: true
+                include_desktop_clients:
+                  type: boolean
+                  default: true
+                include_mobile_clients:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  devices:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MemberDevices'
+                  has_more:
+                    type: boolean
+                  cursor:
+                    type: string
+
+  # Namespace management
+  /team/namespaces/list:
+    post:
+      summary: List namespaces
+      description: Returns a list of all team-accessible namespaces
+      operationId: listNamespaces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                  default: 100
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  namespaces:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamNamespace'
+                  cursor:
+                    type: string
+                  has_more:
+                    type: boolean
+
+  /team/namespaces/list/continue:
+    post:
+      summary: Continue listing namespaces
+      description: Continue listing team-accessible namespaces using cursor
+      operationId: listNamespacesContinue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cursor
+              properties:
+                cursor:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  namespaces:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamNamespace'
+                  cursor:
+                    type: string
+                  has_more:
+                    type: boolean
