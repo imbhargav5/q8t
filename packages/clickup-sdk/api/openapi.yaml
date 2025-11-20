@@ -1,0 +1,3559 @@
+openapi: "3.0.0"
+info:
+  title: ClickUp API
+  version: "2.0"
+  description: ClickUp API for managing workspaces, spaces, folders, lists, tasks, and more
+
+servers:
+  - url: https://api.clickup.com/api/v2
+
+security:
+  - PersonalToken: []
+  - OAuth2: []
+
+paths:
+  # Authorization & Workspaces
+  /team:
+    get:
+      operationId: getAuthorizedWorkspaces
+      summary: Get authorized workspaces
+      description: Get the authorized workspaces (teams) for the authenticated user
+      responses:
+        "200":
+          description: List of authorized workspaces
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspacesResponse"
+
+  /team/{team_id}:
+    get:
+      operationId: getWorkspace
+      summary: Get workspace details
+      description: Get details about a specific workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workspace details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceResponse"
+
+  # Spaces
+  /team/{team_id}/space:
+    get:
+      operationId: getSpaces
+      summary: Get spaces
+      description: Get all spaces in a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: archived
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of spaces
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpacesResponse"
+    post:
+      operationId: createSpace
+      summary: Create space
+      description: Create a new space in a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSpaceRequest"
+      responses:
+        "200":
+          description: Space created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpaceResponse"
+
+  /space/{space_id}:
+    get:
+      operationId: getSpace
+      summary: Get space
+      description: Get details about a specific space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Space details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpaceResponse"
+    put:
+      operationId: updateSpace
+      summary: Update space
+      description: Update a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSpaceRequest"
+      responses:
+        "200":
+          description: Space updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpaceResponse"
+    delete:
+      operationId: deleteSpace
+      summary: Delete space
+      description: Delete a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Space deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Folders
+  /space/{space_id}/folder:
+    get:
+      operationId: getFolders
+      summary: Get folders
+      description: Get all folders in a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: archived
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of folders
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FoldersResponse"
+    post:
+      operationId: createFolder
+      summary: Create folder
+      description: Create a new folder in a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFolderRequest"
+      responses:
+        "200":
+          description: Folder created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FolderResponse"
+
+  /folder/{folder_id}:
+    get:
+      operationId: getFolder
+      summary: Get folder
+      description: Get details about a specific folder
+      parameters:
+        - name: folder_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Folder details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FolderResponse"
+    put:
+      operationId: updateFolder
+      summary: Update folder
+      description: Update a folder
+      parameters:
+        - name: folder_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFolderRequest"
+      responses:
+        "200":
+          description: Folder updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FolderResponse"
+    delete:
+      operationId: deleteFolder
+      summary: Delete folder
+      description: Delete a folder
+      parameters:
+        - name: folder_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Folder deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Lists
+  /folder/{folder_id}/list:
+    get:
+      operationId: getListsInFolder
+      summary: Get lists in folder
+      description: Get all lists in a folder
+      parameters:
+        - name: folder_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: archived
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Lists in folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListsResponse"
+    post:
+      operationId: createListInFolder
+      summary: Create list in folder
+      description: Create a new list in a folder
+      parameters:
+        - name: folder_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListRequest"
+      responses:
+        "200":
+          description: List created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+
+  /space/{space_id}/list:
+    get:
+      operationId: getFolderlessLists
+      summary: Get folderless lists
+      description: Get all folderless lists in a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: archived
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Folderless lists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListsResponse"
+    post:
+      operationId: createFolderlessList
+      summary: Create folderless list
+      description: Create a new folderless list in a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListRequest"
+      responses:
+        "200":
+          description: List created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+
+  /list/{list_id}:
+    get:
+      operationId: getList
+      summary: Get list
+      description: Get details about a specific list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+    put:
+      operationId: updateList
+      summary: Update list
+      description: Update a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateListRequest"
+      responses:
+        "200":
+          description: List updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+    delete:
+      operationId: deleteList
+      summary: Delete list
+      description: Delete a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Tasks
+  /list/{list_id}/task:
+    get:
+      operationId: getTasksInList
+      summary: Get tasks in list
+      description: Get all tasks in a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: archived
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: order_by
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: reverse
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: subtasks
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: include_closed
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Tasks in list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TasksResponse"
+    post:
+      operationId: createTask
+      summary: Create task
+      description: Create a new task in a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskRequest"
+      responses:
+        "200":
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+
+  /task/{task_id}:
+    get:
+      operationId: getTask
+      summary: Get task
+      description: Get details about a specific task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: include_subtasks
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+    put:
+      operationId: updateTask
+      summary: Update task
+      description: Update a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskRequest"
+      responses:
+        "200":
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+    delete:
+      operationId: deleteTask
+      summary: Delete task
+      description: Delete a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /team/{team_id}/task:
+    get:
+      operationId: getFilteredTeamTasks
+      summary: Get filtered team tasks
+      description: Get tasks filtered by various criteria from a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: order_by
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: reverse
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: subtasks
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: space_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: project_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: list_ids
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: statuses
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: include_closed
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: assignees
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: tags
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: due_date_gt
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: due_date_lt
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: date_created_gt
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: date_created_lt
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: date_updated_gt
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: date_updated_lt
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: custom_fields
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: Filtered tasks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TasksResponse"
+
+  # Comments
+  /task/{task_id}/comment:
+    get:
+      operationId: getTaskComments
+      summary: Get task comments
+      description: Get all comments on a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: start_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentsResponse"
+    post:
+      operationId: createTaskComment
+      summary: Create task comment
+      description: Create a comment on a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+      responses:
+        "200":
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentResponse"
+
+  /list/{list_id}/comment:
+    get:
+      operationId: getListComments
+      summary: Get list comments
+      description: Get all comments on a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: start_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentsResponse"
+    post:
+      operationId: createListComment
+      summary: Create list comment
+      description: Create a comment on a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+      responses:
+        "200":
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentResponse"
+
+  /view/{view_id}/comment:
+    get:
+      operationId: getViewComments
+      summary: Get view comments
+      description: Get all comments on a view
+      parameters:
+        - name: view_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: start_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: View comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentsResponse"
+    post:
+      operationId: createViewComment
+      summary: Create view comment
+      description: Create a comment on a view
+      parameters:
+        - name: view_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+      responses:
+        "200":
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentResponse"
+
+  /comment/{comment_id}:
+    put:
+      operationId: updateComment
+      summary: Update comment
+      description: Update a comment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCommentRequest"
+      responses:
+        "200":
+          description: Comment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentResponse"
+    delete:
+      operationId: deleteComment
+      summary: Delete comment
+      description: Delete a comment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comment deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Checklists
+  /task/{task_id}/checklist:
+    post:
+      operationId: createChecklist
+      summary: Create checklist
+      description: Create a checklist on a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChecklistRequest"
+      responses:
+        "200":
+          description: Checklist created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChecklistResponse"
+
+  /checklist/{checklist_id}:
+    put:
+      operationId: updateChecklist
+      summary: Update checklist
+      description: Update a checklist
+      parameters:
+        - name: checklist_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateChecklistRequest"
+      responses:
+        "200":
+          description: Checklist updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChecklistResponse"
+    delete:
+      operationId: deleteChecklist
+      summary: Delete checklist
+      description: Delete a checklist
+      parameters:
+        - name: checklist_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Checklist deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /checklist/{checklist_id}/checklist_item:
+    post:
+      operationId: createChecklistItem
+      summary: Create checklist item
+      description: Create a checklist item
+      parameters:
+        - name: checklist_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChecklistItemRequest"
+      responses:
+        "200":
+          description: Checklist item created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChecklistItemResponse"
+
+  /checklist/{checklist_id}/checklist_item/{checklist_item_id}:
+    put:
+      operationId: updateChecklistItem
+      summary: Update checklist item
+      description: Update a checklist item
+      parameters:
+        - name: checklist_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: checklist_item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateChecklistItemRequest"
+      responses:
+        "200":
+          description: Checklist item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChecklistItemResponse"
+    delete:
+      operationId: deleteChecklistItem
+      summary: Delete checklist item
+      description: Delete a checklist item
+      parameters:
+        - name: checklist_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: checklist_item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Checklist item deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Goals
+  /team/{team_id}/goal:
+    get:
+      operationId: getGoals
+      summary: Get goals
+      description: Get all goals in a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: include_completed
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of goals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GoalsResponse"
+    post:
+      operationId: createGoal
+      summary: Create goal
+      description: Create a new goal
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGoalRequest"
+      responses:
+        "200":
+          description: Goal created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GoalResponse"
+
+  /goal/{goal_id}:
+    get:
+      operationId: getGoal
+      summary: Get goal
+      description: Get details about a specific goal
+      parameters:
+        - name: goal_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Goal details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GoalResponse"
+    put:
+      operationId: updateGoal
+      summary: Update goal
+      description: Update a goal
+      parameters:
+        - name: goal_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGoalRequest"
+      responses:
+        "200":
+          description: Goal updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GoalResponse"
+    delete:
+      operationId: deleteGoal
+      summary: Delete goal
+      description: Delete a goal
+      parameters:
+        - name: goal_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Goal deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /goal/{goal_id}/key_result:
+    post:
+      operationId: createKeyResult
+      summary: Create key result
+      description: Create a key result for a goal
+      parameters:
+        - name: goal_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateKeyResultRequest"
+      responses:
+        "200":
+          description: Key result created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyResultResponse"
+
+  /key_result/{key_result_id}:
+    put:
+      operationId: updateKeyResult
+      summary: Update key result
+      description: Update a key result
+      parameters:
+        - name: key_result_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateKeyResultRequest"
+      responses:
+        "200":
+          description: Key result updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyResultResponse"
+    delete:
+      operationId: deleteKeyResult
+      summary: Delete key result
+      description: Delete a key result
+      parameters:
+        - name: key_result_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Key result deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Members
+  /team/{team_id}/user:
+    get:
+      operationId: getTeamMembers
+      summary: Get team members
+      description: Get all members in a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of team members
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MembersResponse"
+
+  /list/{list_id}/member:
+    get:
+      operationId: getListMembers
+      summary: Get list members
+      description: Get all members with access to a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List members
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MembersResponse"
+
+  /task/{task_id}/member:
+    get:
+      operationId: getTaskMembers
+      summary: Get task members
+      description: Get all members with access to a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task members
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MembersResponse"
+
+  # Tags
+  /space/{space_id}/tag:
+    get:
+      operationId: getSpaceTags
+      summary: Get space tags
+      description: Get all tags in a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagsResponse"
+    post:
+      operationId: createSpaceTag
+      summary: Create space tag
+      description: Create a new tag in a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTagRequest"
+      responses:
+        "200":
+          description: Tag created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagResponse"
+
+  /space/{space_id}/tag/{tag_name}:
+    put:
+      operationId: updateTag
+      summary: Update tag
+      description: Update a tag
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tag_name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTagRequest"
+      responses:
+        "200":
+          description: Tag updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagResponse"
+    delete:
+      operationId: deleteTag
+      summary: Delete tag
+      description: Delete a tag
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tag_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tag deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /task/{task_id}/tag/{tag_name}:
+    post:
+      operationId: addTaskTag
+      summary: Add task tag
+      description: Add a tag to a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tag_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tag added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+    delete:
+      operationId: removeTaskTag
+      summary: Remove task tag
+      description: Remove a tag from a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tag_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tag removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Custom Fields
+  /list/{list_id}/field:
+    get:
+      operationId: getAccessibleCustomFields
+      summary: Get accessible custom fields
+      description: Get all custom fields accessible for a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of custom fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomFieldsResponse"
+    post:
+      operationId: setCustomFieldValue
+      summary: Set custom field value
+      description: Set a custom field value on a task
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetCustomFieldValueRequest"
+      responses:
+        "200":
+          description: Custom field value set successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /task/{task_id}/field/{field_id}:
+    post:
+      operationId: setTaskCustomFieldValue
+      summary: Set task custom field value
+      description: Set a custom field value on a specific task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: field_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomFieldValueRequest"
+      responses:
+        "200":
+          description: Custom field value set successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+    delete:
+      operationId: removeTaskCustomFieldValue
+      summary: Remove task custom field value
+      description: Remove a custom field value from a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: field_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Custom field value removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Task Dependencies
+  /task/{task_id}/dependency:
+    post:
+      operationId: addTaskDependency
+      summary: Add task dependency
+      description: Add a dependency to a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddDependencyRequest"
+      responses:
+        "200":
+          description: Dependency added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+    delete:
+      operationId: removeTaskDependency
+      summary: Remove task dependency
+      description: Remove a dependency from a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoveDependencyRequest"
+      responses:
+        "200":
+          description: Dependency removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /task/{task_id}/link/{links_to}:
+    post:
+      operationId: addTaskLink
+      summary: Add task link
+      description: Link two tasks together
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: links_to
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task linked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+    delete:
+      operationId: removeTaskLink
+      summary: Remove task link
+      description: Remove a link between two tasks
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: links_to
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: custom_task_ids
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: team_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task link removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Time Tracking
+  /team/{team_id}/time_entries:
+    get:
+      operationId: getTimeEntries
+      summary: Get time entries
+      description: Get time entries for a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: assignee
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: include_task_tags
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: include_location_names
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: space_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: folder_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: list_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: task_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Time entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntriesResponse"
+    post:
+      operationId: createTimeEntry
+      summary: Create time entry
+      description: Create a time entry
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTimeEntryRequest"
+      responses:
+        "200":
+          description: Time entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntryResponse"
+
+  /team/{team_id}/time_entries/{timer_id}:
+    get:
+      operationId: getTimeEntry
+      summary: Get time entry
+      description: Get a specific time entry
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: timer_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Time entry details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntryResponse"
+    put:
+      operationId: updateTimeEntry
+      summary: Update time entry
+      description: Update a time entry
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: timer_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTimeEntryRequest"
+      responses:
+        "200":
+          description: Time entry updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntryResponse"
+    delete:
+      operationId: deleteTimeEntry
+      summary: Delete time entry
+      description: Delete a time entry
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: timer_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Time entry deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /team/{team_id}/time_entries/start:
+    post:
+      operationId: startTimeEntry
+      summary: Start timer
+      description: Start a time entry timer
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartTimeEntryRequest"
+      responses:
+        "200":
+          description: Timer started successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntryResponse"
+
+  /team/{team_id}/time_entries/stop:
+    post:
+      operationId: stopTimeEntry
+      summary: Stop timer
+      description: Stop the current time entry timer
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Timer stopped successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntryResponse"
+
+  /team/{team_id}/time_entries/current:
+    get:
+      operationId: getCurrentTimeEntry
+      summary: Get current timer
+      description: Get the currently running time entry
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: assignee
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Current timer details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeEntryResponse"
+
+  # Views
+  /team/{team_id}/view:
+    get:
+      operationId: getTeamViews
+      summary: Get team views
+      description: Get all views at the workspace level
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of views
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ViewsResponse"
+
+  /space/{space_id}/view:
+    get:
+      operationId: getSpaceViews
+      summary: Get space views
+      description: Get all views in a space
+      parameters:
+        - name: space_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of views
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ViewsResponse"
+
+  /folder/{folder_id}/view:
+    get:
+      operationId: getFolderViews
+      summary: Get folder views
+      description: Get all views in a folder
+      parameters:
+        - name: folder_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of views
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ViewsResponse"
+
+  /list/{list_id}/view:
+    get:
+      operationId: getListViews
+      summary: Get list views
+      description: Get all views in a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of views
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ViewsResponse"
+
+  /view/{view_id}:
+    get:
+      operationId: getView
+      summary: Get view
+      description: Get details about a specific view
+      parameters:
+        - name: view_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: View details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ViewResponse"
+
+  /view/{view_id}/task:
+    get:
+      operationId: getViewTasks
+      summary: Get view tasks
+      description: Get all tasks in a view
+      parameters:
+        - name: view_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Tasks in view
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TasksResponse"
+
+  # Webhooks
+  /team/{team_id}/webhook:
+    get:
+      operationId: getWebhooks
+      summary: Get webhooks
+      description: Get all webhooks for a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of webhooks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhooksResponse"
+    post:
+      operationId: createWebhook
+      summary: Create webhook
+      description: Create a new webhook
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWebhookRequest"
+      responses:
+        "200":
+          description: Webhook created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookResponse"
+
+  /webhook/{webhook_id}:
+    put:
+      operationId: updateWebhook
+      summary: Update webhook
+      description: Update a webhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWebhookRequest"
+      responses:
+        "200":
+          description: Webhook updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookResponse"
+    delete:
+      operationId: deleteWebhook
+      summary: Delete webhook
+      description: Delete a webhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Webhook deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Guests
+  /team/{team_id}/guest:
+    post:
+      operationId: inviteGuest
+      summary: Invite guest
+      description: Invite a guest to a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InviteGuestRequest"
+      responses:
+        "200":
+          description: Guest invited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuestResponse"
+
+  /team/{team_id}/guest/{guest_id}:
+    get:
+      operationId: getGuest
+      summary: Get guest
+      description: Get details about a guest user
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: guest_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Guest details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuestResponse"
+    put:
+      operationId: updateGuest
+      summary: Update guest
+      description: Edit a guest's permissions
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: guest_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGuestRequest"
+      responses:
+        "200":
+          description: Guest updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuestResponse"
+    delete:
+      operationId: removeGuest
+      summary: Remove guest
+      description: Remove a guest from a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: guest_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Guest removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # User Groups
+  /team/{team_id}/group:
+    get:
+      operationId: getUserGroups
+      summary: Get user groups
+      description: Get all user groups in a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of user groups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGroupsResponse"
+
+  /group/{group_id}:
+    get:
+      operationId: getUserGroup
+      summary: Get user group
+      description: Get details about a specific user group
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User group details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGroupResponse"
+
+  # User
+  /user:
+    get:
+      operationId: getAuthenticatedUser
+      summary: Get authenticated user
+      description: Get details about the authenticated user
+      responses:
+        "200":
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  # Shared Hierarchy
+  /team/{team_id}/shared:
+    get:
+      operationId: getSharedHierarchy
+      summary: Get shared hierarchy
+      description: Get the shared hierarchy for a workspace
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Shared hierarchy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedHierarchyResponse"
+
+components:
+  securitySchemes:
+    PersonalToken:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Personal API token (starts with pk_)
+    OAuth2:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: OAuth 2.0 access token
+
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+    WorkspacesResponse:
+      type: object
+      properties:
+        teams:
+          type: array
+          items:
+            $ref: "#/components/schemas/Workspace"
+
+    WorkspaceResponse:
+      type: object
+      properties:
+        team:
+          $ref: "#/components/schemas/Workspace"
+
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        color:
+          type: string
+        avatar:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/Member"
+
+    Member:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        color:
+          type: string
+        profilePicture:
+          type: string
+        initials:
+          type: string
+        role:
+          type: integer
+
+    SpacesResponse:
+      type: object
+      properties:
+        spaces:
+          type: array
+          items:
+            $ref: "#/components/schemas/Space"
+
+    SpaceResponse:
+      type: object
+      properties:
+        space:
+          $ref: "#/components/schemas/Space"
+
+    Space:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        private:
+          type: boolean
+        statuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Status"
+        multiple_assignees:
+          type: boolean
+        features:
+          type: object
+
+    Status:
+      type: object
+      properties:
+        status:
+          type: string
+        type:
+          type: string
+        orderindex:
+          type: integer
+        color:
+          type: string
+
+    CreateSpaceRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        multiple_assignees:
+          type: boolean
+        features:
+          type: object
+
+    UpdateSpaceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+        private:
+          type: boolean
+        admin_can_manage:
+          type: boolean
+
+    FoldersResponse:
+      type: object
+      properties:
+        folders:
+          type: array
+          items:
+            $ref: "#/components/schemas/Folder"
+
+    FolderResponse:
+      type: object
+      properties:
+        folder:
+          $ref: "#/components/schemas/Folder"
+
+    Folder:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        orderindex:
+          type: integer
+        override_statuses:
+          type: boolean
+        hidden:
+          type: boolean
+        space:
+          $ref: "#/components/schemas/Space"
+        task_count:
+          type: string
+        lists:
+          type: array
+          items:
+            $ref: "#/components/schemas/List"
+
+    CreateFolderRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    UpdateFolderRequest:
+      type: object
+      properties:
+        name:
+          type: string
+
+    ListsResponse:
+      type: object
+      properties:
+        lists:
+          type: array
+          items:
+            $ref: "#/components/schemas/List"
+
+    ListResponse:
+      type: object
+      properties:
+        list:
+          $ref: "#/components/schemas/List"
+
+    List:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        orderindex:
+          type: integer
+        content:
+          type: string
+        status:
+          $ref: "#/components/schemas/Status"
+        priority:
+          $ref: "#/components/schemas/Priority"
+        assignee:
+          $ref: "#/components/schemas/User"
+        task_count:
+          type: integer
+        due_date:
+          type: string
+        start_date:
+          type: string
+        folder:
+          $ref: "#/components/schemas/Folder"
+        space:
+          $ref: "#/components/schemas/Space"
+        archived:
+          type: boolean
+
+    Priority:
+      type: object
+      properties:
+        priority:
+          type: string
+        color:
+          type: string
+
+    CreateListRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        content:
+          type: string
+        due_date:
+          type: integer
+        due_date_time:
+          type: boolean
+        priority:
+          type: integer
+        assignee:
+          type: integer
+        status:
+          type: string
+
+    UpdateListRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        content:
+          type: string
+        due_date:
+          type: integer
+        due_date_time:
+          type: boolean
+        priority:
+          type: integer
+        assignee:
+          type: integer
+        unset_status:
+          type: boolean
+
+    TasksResponse:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+        last_page:
+          type: boolean
+
+    TaskResponse:
+      type: object
+      properties:
+        task:
+          $ref: "#/components/schemas/Task"
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        custom_id:
+          type: string
+        name:
+          type: string
+        text_content:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: "#/components/schemas/Status"
+        orderindex:
+          type: string
+        date_created:
+          type: string
+        date_updated:
+          type: string
+        date_closed:
+          type: string
+        date_done:
+          type: string
+        archived:
+          type: boolean
+        creator:
+          $ref: "#/components/schemas/User"
+        assignees:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        watchers:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        checklists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Checklist"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        parent:
+          type: string
+        priority:
+          $ref: "#/components/schemas/Priority"
+        due_date:
+          type: string
+        start_date:
+          type: string
+        points:
+          type: number
+        time_estimate:
+          type: integer
+        time_spent:
+          type: integer
+        custom_fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomField"
+        dependencies:
+          type: array
+          items:
+            type: object
+        linked_tasks:
+          type: array
+          items:
+            type: object
+        list:
+          $ref: "#/components/schemas/List"
+        folder:
+          $ref: "#/components/schemas/Folder"
+        space:
+          $ref: "#/components/schemas/Space"
+        url:
+          type: string
+
+    CreateTaskRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        assignees:
+          type: array
+          items:
+            type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+        priority:
+          type: integer
+        due_date:
+          type: integer
+        due_date_time:
+          type: boolean
+        time_estimate:
+          type: integer
+        start_date:
+          type: integer
+        start_date_time:
+          type: boolean
+        notify_all:
+          type: boolean
+        parent:
+          type: string
+        links_to:
+          type: string
+        check_required_custom_fields:
+          type: boolean
+        custom_fields:
+          type: array
+          items:
+            type: object
+
+    UpdateTaskRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        priority:
+          type: integer
+        due_date:
+          type: integer
+        due_date_time:
+          type: boolean
+        parent:
+          type: string
+        time_estimate:
+          type: integer
+        start_date:
+          type: integer
+        start_date_time:
+          type: boolean
+        assignees:
+          type: object
+          properties:
+            add:
+              type: array
+              items:
+                type: integer
+            rem:
+              type: array
+              items:
+                type: integer
+
+    CommentsResponse:
+      type: object
+      properties:
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+
+    CommentResponse:
+      type: object
+      properties:
+        comment:
+          $ref: "#/components/schemas/Comment"
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        comment:
+          type: array
+          items:
+            type: object
+        comment_text:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        date:
+          type: string
+
+    CreateCommentRequest:
+      type: object
+      required:
+        - comment_text
+      properties:
+        comment_text:
+          type: string
+        assignee:
+          type: integer
+        notify_all:
+          type: boolean
+
+    UpdateCommentRequest:
+      type: object
+      required:
+        - comment_text
+      properties:
+        comment_text:
+          type: string
+        assignee:
+          type: integer
+        resolved:
+          type: boolean
+
+    ChecklistResponse:
+      type: object
+      properties:
+        checklist:
+          $ref: "#/components/schemas/Checklist"
+
+    Checklist:
+      type: object
+      properties:
+        id:
+          type: string
+        task_id:
+          type: string
+        name:
+          type: string
+        orderindex:
+          type: integer
+        resolved:
+          type: integer
+        unresolved:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChecklistItem"
+
+    ChecklistItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        orderindex:
+          type: integer
+        assignee:
+          $ref: "#/components/schemas/User"
+        resolved:
+          type: boolean
+        parent:
+          type: string
+        date_created:
+          type: string
+
+    CreateChecklistRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    UpdateChecklistRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        position:
+          type: integer
+
+    ChecklistItemResponse:
+      type: object
+      properties:
+        checklist_item:
+          $ref: "#/components/schemas/ChecklistItem"
+
+    CreateChecklistItemRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        assignee:
+          type: integer
+
+    UpdateChecklistItemRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        assignee:
+          type: integer
+        resolved:
+          type: boolean
+        parent:
+          type: string
+
+    GoalsResponse:
+      type: object
+      properties:
+        goals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Goal"
+
+    GoalResponse:
+      type: object
+      properties:
+        goal:
+          $ref: "#/components/schemas/Goal"
+
+    Goal:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        team_id:
+          type: string
+        date_created:
+          type: string
+        start_date:
+          type: string
+        due_date:
+          type: string
+        description:
+          type: string
+        private:
+          type: boolean
+        archived:
+          type: boolean
+        creator:
+          type: integer
+        color:
+          type: string
+        pretty_id:
+          type: string
+        multiple_owners:
+          type: boolean
+        folder_id:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        owners:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        key_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyResult"
+
+    KeyResult:
+      type: object
+      properties:
+        id:
+          type: string
+        goal_id:
+          type: string
+        name:
+          type: string
+        creator:
+          type: integer
+        type:
+          type: string
+        unit:
+          type: string
+        steps_start:
+          type: integer
+        steps_end:
+          type: integer
+        steps_current:
+          type: integer
+        completed:
+          type: boolean
+        task_ids:
+          type: array
+          items:
+            type: string
+        list_ids:
+          type: array
+          items:
+            type: string
+        owners:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+
+    CreateGoalRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        due_date:
+          type: integer
+        description:
+          type: string
+        multiple_owners:
+          type: boolean
+        owners:
+          type: array
+          items:
+            type: integer
+        color:
+          type: string
+
+    UpdateGoalRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        due_date:
+          type: integer
+        description:
+          type: string
+        rem_owners:
+          type: array
+          items:
+            type: integer
+        add_owners:
+          type: array
+          items:
+            type: integer
+        color:
+          type: string
+
+    KeyResultResponse:
+      type: object
+      properties:
+        key_result:
+          $ref: "#/components/schemas/KeyResult"
+
+    CreateKeyResultRequest:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+        owners:
+          type: array
+          items:
+            type: integer
+        type:
+          type: string
+        steps_start:
+          type: integer
+        steps_end:
+          type: integer
+        unit:
+          type: string
+        task_ids:
+          type: array
+          items:
+            type: string
+        list_ids:
+          type: array
+          items:
+            type: string
+
+    UpdateKeyResultRequest:
+      type: object
+      properties:
+        steps_current:
+          type: integer
+        note:
+          type: string
+
+    MembersResponse:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/Member"
+
+    TagsResponse:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+
+    TagResponse:
+      type: object
+      properties:
+        tag:
+          $ref: "#/components/schemas/Tag"
+
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+        tag_fg:
+          type: string
+        tag_bg:
+          type: string
+        creator:
+          type: integer
+
+    CreateTagRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        tag_fg:
+          type: string
+        tag_bg:
+          type: string
+
+    UpdateTagRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        tag_fg:
+          type: string
+        tag_bg:
+          type: string
+
+    CustomFieldsResponse:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomField"
+
+    CustomField:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        type_config:
+          type: object
+        date_created:
+          type: string
+        hide_from_guests:
+          type: boolean
+        value:
+          type: object
+        required:
+          type: boolean
+
+    SetCustomFieldValueRequest:
+      type: object
+      required:
+        - task_id
+        - field_id
+        - value
+      properties:
+        task_id:
+          type: string
+        field_id:
+          type: string
+        value:
+          type: object
+
+    CustomFieldValueRequest:
+      type: object
+      properties:
+        value:
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+            - type: array
+              items:
+                type: string
+        value_options:
+          type: array
+          items:
+            type: object
+
+    AddDependencyRequest:
+      type: object
+      required:
+        - depends_on
+      properties:
+        depends_on:
+          type: string
+        dependency_of:
+          type: string
+
+    RemoveDependencyRequest:
+      type: object
+      required:
+        - depends_on
+      properties:
+        depends_on:
+          type: string
+        dependency_of:
+          type: string
+
+    TimeEntriesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeEntry"
+
+    TimeEntryResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/TimeEntry"
+
+    TimeEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        task:
+          $ref: "#/components/schemas/Task"
+        wid:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        billable:
+          type: boolean
+        start:
+          type: string
+        end:
+          type: string
+        duration:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        source:
+          type: string
+        at:
+          type: string
+
+    CreateTimeEntryRequest:
+      type: object
+      required:
+        - duration
+        - start
+      properties:
+        tid:
+          type: string
+        start:
+          type: integer
+        duration:
+          type: integer
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        billable:
+          type: boolean
+
+    UpdateTimeEntryRequest:
+      type: object
+      properties:
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        start:
+          type: integer
+        end:
+          type: integer
+        billable:
+          type: boolean
+        duration:
+          type: integer
+
+    StartTimeEntryRequest:
+      type: object
+      required:
+        - tid
+      properties:
+        tid:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        billable:
+          type: boolean
+
+    ViewsResponse:
+      type: object
+      properties:
+        views:
+          type: array
+          items:
+            $ref: "#/components/schemas/View"
+
+    ViewResponse:
+      type: object
+      properties:
+        view:
+          $ref: "#/components/schemas/View"
+
+    View:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        parent:
+          type: object
+        grouping:
+          type: object
+        divide:
+          type: integer
+        sorting:
+          type: object
+        filters:
+          type: object
+        columns:
+          type: object
+        team_sidebar:
+          type: object
+        settings:
+          type: object
+
+    WebhooksResponse:
+      type: object
+      properties:
+        webhooks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Webhook"
+
+    WebhookResponse:
+      type: object
+      properties:
+        webhook:
+          $ref: "#/components/schemas/Webhook"
+
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+        userid:
+          type: integer
+        team_id:
+          type: integer
+        endpoint:
+          type: string
+        client_id:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        task_id:
+          type: string
+        list_id:
+          type: string
+        folder_id:
+          type: string
+        space_id:
+          type: string
+        health:
+          type: object
+        secret:
+          type: string
+
+    CreateWebhookRequest:
+      type: object
+      required:
+        - endpoint
+        - events
+      properties:
+        endpoint:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        space_id:
+          type: string
+        folder_id:
+          type: string
+        list_id:
+          type: string
+        task_id:
+          type: string
+
+    UpdateWebhookRequest:
+      type: object
+      properties:
+        endpoint:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+
+    GuestResponse:
+      type: object
+      properties:
+        guest:
+          $ref: "#/components/schemas/Guest"
+
+    Guest:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        invited_by:
+          $ref: "#/components/schemas/User"
+
+    InviteGuestRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+        can_edit_tags:
+          type: boolean
+        can_see_time_spent:
+          type: boolean
+        can_see_time_estimated:
+          type: boolean
+        can_create_views:
+          type: boolean
+        custom_role_id:
+          type: integer
+
+    UpdateGuestRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        can_edit_tags:
+          type: boolean
+        can_see_time_spent:
+          type: boolean
+        can_see_time_estimated:
+          type: boolean
+
+    UserGroupsResponse:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserGroup"
+
+    UserGroupResponse:
+      type: object
+      properties:
+        group:
+          $ref: "#/components/schemas/UserGroup"
+
+    UserGroup:
+      type: object
+      properties:
+        id:
+          type: string
+        team_id:
+          type: string
+        userid:
+          type: string
+        name:
+          type: string
+        handle:
+          type: string
+        date_created:
+          type: string
+        initials:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        avatar:
+          type: object
+
+    UserResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+
+    SharedHierarchyResponse:
+      type: object
+      properties:
+        shared:
+          type: object
