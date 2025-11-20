@@ -1,0 +1,1003 @@
+openapi: "3.0.0"
+info:
+  title: Farcaster Hub API
+  version: "1.0"
+  description: |
+    Farcaster Hub HTTP API for reading and writing to the Farcaster protocol.
+    Hub API provides access to casts, reactions, links (follows), user data, verifications, and more.
+
+servers:
+  - url: https://hub.pinata.cloud/v1
+    description: Pinata Hub
+  - url: https://nemes.farcaster.xyz:2281/v1
+    description: Nemes Hub
+
+paths:
+  # ============= Casts API =============
+
+  /castsByFid:
+    get:
+      operationId: getCastsByFid
+      summary: Get casts by FID
+      description: Retrieve all casts created by a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Casts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CastsResponse"
+
+  /castsByParent:
+    get:
+      operationId: getCastsByParent
+      summary: Get casts by parent
+      description: Retrieve all casts that are replies to a parent cast or URL
+      parameters:
+        - name: fid
+          in: query
+          schema:
+            type: integer
+        - name: hash
+          in: query
+          schema:
+            type: string
+        - name: url
+          in: query
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Casts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CastsResponse"
+
+  /castsByMention:
+    get:
+      operationId: getCastsByMention
+      summary: Get casts by mention
+      description: Retrieve all casts that mention a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Casts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CastsResponse"
+
+  /castById:
+    get:
+      operationId: getCastById
+      summary: Get cast by ID
+      description: Retrieve a specific cast by FID and hash
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: hash
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cast retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cast"
+
+  # ============= Reactions API =============
+
+  /reactionsByFid:
+    get:
+      operationId: getReactionsByFid
+      summary: Get reactions by FID
+      description: Retrieve all reactions created by a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: reaction_type
+          in: query
+          schema:
+            type: string
+            enum: [LIKE, RECAST]
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReactionsResponse"
+
+  /reactionsByCast:
+    get:
+      operationId: getReactionsByCast
+      summary: Get reactions to a cast
+      description: Retrieve all reactions to a specific cast
+      parameters:
+        - name: target_fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: target_hash
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: reaction_type
+          in: query
+          schema:
+            type: string
+            enum: [LIKE, RECAST]
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReactionsResponse"
+
+  /reactionById:
+    get:
+      operationId: getReactionById
+      summary: Get reaction by ID
+      description: Retrieve a specific reaction
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: target_fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: target_hash
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: reaction_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [LIKE, RECAST]
+      responses:
+        "200":
+          description: Reaction retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reaction"
+
+  # ============= Links API (Follows) =============
+
+  /linksByFid:
+    get:
+      operationId: getLinksByFid
+      summary: Get links by FID
+      description: Retrieve all links (follows) created by a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: link_type
+          in: query
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Links retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinksResponse"
+
+  /linksByTargetFid:
+    get:
+      operationId: getLinksByTargetFid
+      summary: Get links to a target FID
+      description: Retrieve all links (follows) to a specific FID
+      parameters:
+        - name: target_fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: link_type
+          in: query
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Links retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinksResponse"
+
+  /linkById:
+    get:
+      operationId: getLinkById
+      summary: Get link by ID
+      description: Retrieve a specific link
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: target_fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: link_type
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Link retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Link"
+
+  # ============= User Data API =============
+
+  /userDataByFid:
+    get:
+      operationId: getUserDataByFid
+      summary: Get user data by FID
+      description: Retrieve all user data for a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDataResponse"
+
+  # ============= Verifications API =============
+
+  /verificationsByFid:
+    get:
+      operationId: getVerificationsByFid
+      summary: Get verifications by FID
+      description: Retrieve all address verifications for a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Verifications retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerificationsResponse"
+
+  # ============= Username Proofs API =============
+
+  /userNameProofsByFid:
+    get:
+      operationId: getUsernameProofsByFid
+      summary: Get username proofs by FID
+      description: Retrieve username proofs for a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Username proofs retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsernameProofsResponse"
+
+  # ============= Storage API =============
+
+  /storageLimitsByFid:
+    get:
+      operationId: getStorageLimitsByFid
+      summary: Get storage limits by FID
+      description: Retrieve storage limits for a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Storage limits retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StorageLimits"
+
+  # ============= OnChain Events API =============
+
+  /onChainEventsByFid:
+    get:
+      operationId: getOnChainEventsByFid
+      summary: Get onchain events by FID
+      description: Retrieve onchain events for a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: event_type
+          in: query
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OnChain events retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnChainEventsResponse"
+
+  /onChainSignersByFid:
+    get:
+      operationId: getOnChainSignersByFid
+      summary: Get onchain signers by FID
+      description: Retrieve registered signers for a specific FID
+      parameters:
+        - name: fid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OnChain signers retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnChainSignersResponse"
+
+  # ============= Info API =============
+
+  /info:
+    get:
+      operationId: getInfo
+      summary: Get hub info
+      description: Retrieve information about the hub and its sync status
+      parameters:
+        - name: dbstats
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Hub info retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HubInfo"
+
+  # ============= FIDs API =============
+
+  /fids:
+    get:
+      operationId: getFids
+      summary: Get FIDs
+      description: Retrieve a list of FIDs
+      parameters:
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+        - name: reverse
+          in: query
+          schema:
+            type: boolean
+        - name: pageToken
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: FIDs retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FidsResponse"
+
+  # ============= Submit Message API =============
+
+  /submitMessage:
+    post:
+      operationId: submitMessage
+      summary: Submit a signed message
+      description: Submit a signed message to the Farcaster network
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Message submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+components:
+  schemas:
+    # ============= Cast Types =============
+
+    Cast:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+            fid:
+              type: integer
+            timestamp:
+              type: integer
+            network:
+              type: string
+            castAddBody:
+              type: object
+              properties:
+                embedsDeprecated:
+                  type: array
+                  items:
+                    type: string
+                mentions:
+                  type: array
+                  items:
+                    type: integer
+                parentCastId:
+                  type: object
+                  properties:
+                    fid:
+                      type: integer
+                    hash:
+                      type: string
+                text:
+                  type: string
+                mentionsPositions:
+                  type: array
+                  items:
+                    type: integer
+                embeds:
+                  type: array
+                  items:
+                    type: object
+        hash:
+          type: string
+        hashScheme:
+          type: string
+        signature:
+          type: string
+        signatureScheme:
+          type: string
+        signer:
+          type: string
+
+    CastsResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Cast"
+        nextPageToken:
+          type: string
+
+    # ============= Reaction Types =============
+
+    Reaction:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+            fid:
+              type: integer
+            timestamp:
+              type: integer
+            network:
+              type: string
+            reactionBody:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [LIKE, RECAST]
+                targetCastId:
+                  type: object
+                  properties:
+                    fid:
+                      type: integer
+                    hash:
+                      type: string
+        hash:
+          type: string
+        hashScheme:
+          type: string
+        signature:
+          type: string
+        signatureScheme:
+          type: string
+        signer:
+          type: string
+
+    ReactionsResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reaction"
+        nextPageToken:
+          type: string
+
+    # ============= Link Types =============
+
+    Link:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+            fid:
+              type: integer
+            timestamp:
+              type: integer
+            network:
+              type: string
+            linkBody:
+              type: object
+              properties:
+                type:
+                  type: string
+                targetFid:
+                  type: integer
+        hash:
+          type: string
+        hashScheme:
+          type: string
+        signature:
+          type: string
+        signatureScheme:
+          type: string
+        signer:
+          type: string
+
+    LinksResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Link"
+        nextPageToken:
+          type: string
+
+    # ============= User Data Types =============
+
+    UserData:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+            fid:
+              type: integer
+            timestamp:
+              type: integer
+            network:
+              type: string
+            userDataBody:
+              type: object
+              properties:
+                type:
+                  type: string
+                value:
+                  type: string
+        hash:
+          type: string
+        hashScheme:
+          type: string
+        signature:
+          type: string
+        signatureScheme:
+          type: string
+        signer:
+          type: string
+
+    UserDataResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserData"
+        nextPageToken:
+          type: string
+
+    # ============= Verification Types =============
+
+    Verification:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+            fid:
+              type: integer
+            timestamp:
+              type: integer
+            network:
+              type: string
+            verificationAddEthAddressBody:
+              type: object
+              properties:
+                address:
+                  type: string
+                ethSignature:
+                  type: string
+                blockHash:
+                  type: string
+        hash:
+          type: string
+        hashScheme:
+          type: string
+        signature:
+          type: string
+        signatureScheme:
+          type: string
+        signer:
+          type: string
+
+    VerificationsResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Verification"
+        nextPageToken:
+          type: string
+
+    # ============= Username Proof Types =============
+
+    UsernameProof:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+        name:
+          type: string
+        owner:
+          type: string
+        signature:
+          type: string
+        fid:
+          type: integer
+        type:
+          type: string
+
+    UsernameProofsResponse:
+      type: object
+      properties:
+        proofs:
+          type: array
+          items:
+            $ref: "#/components/schemas/UsernameProof"
+
+    # ============= Storage Types =============
+
+    StorageLimits:
+      type: object
+      properties:
+        limits:
+          type: array
+          items:
+            type: object
+            properties:
+              storeType:
+                type: string
+              name:
+                type: string
+              limit:
+                type: integer
+              used:
+                type: integer
+              earliestTimestamp:
+                type: integer
+              earliestHash:
+                type: string
+
+    # ============= OnChain Event Types =============
+
+    OnChainEvent:
+      type: object
+      properties:
+        type:
+          type: string
+        chainId:
+          type: integer
+        blockNumber:
+          type: integer
+        blockHash:
+          type: string
+        blockTimestamp:
+          type: integer
+        transactionHash:
+          type: string
+        logIndex:
+          type: integer
+        fid:
+          type: integer
+
+    OnChainEventsResponse:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/OnChainEvent"
+        nextPageToken:
+          type: string
+
+    OnChainSigner:
+      type: object
+      properties:
+        fid:
+          type: integer
+        key:
+          type: string
+        keyType:
+          type: integer
+        eventType:
+          type: string
+        metadata:
+          type: string
+
+    OnChainSignersResponse:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/OnChainSigner"
+        nextPageToken:
+          type: string
+
+    # ============= Hub Info Types =============
+
+    HubInfo:
+      type: object
+      properties:
+        version:
+          type: string
+        isSyncing:
+          type: boolean
+        nickname:
+          type: string
+        rootHash:
+          type: string
+        dbStats:
+          type: object
+
+    # ============= FIDs Types =============
+
+    FidsResponse:
+      type: object
+      properties:
+        fids:
+          type: array
+          items:
+            type: integer
+        nextPageToken:
+          type: string
+
+    # ============= Message Types =============
+
+    Message:
+      type: object
+      properties:
+        data:
+          type: object
+        hash:
+          type: string
+        hashScheme:
+          type: string
+        signature:
+          type: string
+        signatureScheme:
+          type: string
+        signer:
+          type: string

@@ -1,0 +1,659 @@
+openapi: 3.0.0
+info:
+  title: Airtable Web API
+  version: 1.0.0
+  description: Airtable Web API for records, tables, fields, and views operations
+
+servers:
+  - url: https://api.airtable.com/v0
+    description: Airtable API v0
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Personal Access Token (PAT) authentication
+
+  schemas:
+    AirtableRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          description: AirtableRecord ID
+        createdTime:
+          type: string
+          format: date-time
+        fields:
+          type: object
+          additionalProperties: true
+          description: AirtableRecord field values
+
+    RecordList:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/AirtableRecord"
+        offset:
+          type: string
+          description: Pagination offset
+
+    CreateRecordRequest:
+      type: object
+      properties:
+        fields:
+          type: object
+          additionalProperties: true
+      required:
+        - fields
+
+    CreateRecordsRequest:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/AirtableRecordRequest"
+        typecast:
+          type: boolean
+          description: Automatically cast field values
+      required:
+        - records
+
+    UpdateRecordRequest:
+      type: object
+      properties:
+        fields:
+          type: object
+          additionalProperties: true
+      required:
+        - fields
+
+    UpdateRecordsRequest:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              fields:
+                type: object
+                additionalProperties: true
+        performUpsert:
+          type: object
+          properties:
+            fieldsToMergeOn:
+              type: array
+              items:
+                type: string
+        typecast:
+          type: boolean
+      required:
+        - records
+
+    DeleteRecordsResponse:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              deleted:
+                type: boolean
+
+    Base:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        permissionLevel:
+          type: string
+          enum: [none, read, comment, edit, create]
+
+    BaseList:
+      type: object
+      properties:
+        bases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Base'
+        offset:
+          type: string
+
+    Table:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        primaryFieldId:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+        views:
+          type: array
+          items:
+            $ref: '#/components/schemas/View'
+
+    TableList:
+      type: object
+      properties:
+        tables:
+          type: array
+          items:
+            $ref: '#/components/schemas/Table'
+
+    Field:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        options:
+          type: object
+          additionalProperties: true
+
+    View:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+
+    CreateTableRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              description:
+                type: string
+              options:
+                type: object
+                additionalProperties: true
+        description:
+          type: string
+      required:
+        - name
+        - fields
+
+    CreateFieldRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        options:
+          type: object
+          additionalProperties: true
+      required:
+        - name
+        - type
+
+    UpdateFieldRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+paths:
+  /{baseId}/{tableIdOrName}:
+    get:
+      summary: List records
+      operationId: listRecords
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Only return specified fields
+        - name: filterByFormula
+          in: query
+          schema:
+            type: string
+          description: Airtable formula to filter records
+        - name: maxRecords
+          in: query
+          schema:
+            type: integer
+          description: Maximum number of records to return
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+          description: Number of records per page
+        - name: sort
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: Sort records by field
+        - name: view
+          in: query
+          schema:
+            type: string
+          description: View ID or name
+        - name: offset
+          in: query
+          schema:
+            type: string
+          description: Pagination offset
+      responses:
+        '200':
+          description: List of records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecordList"
+
+    post:
+      summary: Create records
+      operationId: createRecords
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AirtableRecordsRequest"
+      responses:
+        '200':
+          description: Created records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecordList"
+
+    patch:
+      summary: Update records
+      operationId: updateRecords
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AirtableRecordsRequest"
+      responses:
+        '200':
+          description: Updated records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecordList"
+
+    delete:
+      summary: Delete records
+      operationId: deleteRecords
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: records
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: AirtableRecord IDs to delete
+      responses:
+        '200':
+          description: Deleted records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecordsResponse"
+
+  /{baseId}/{tableIdOrName}/{recordId}:
+    get:
+      summary: Get record
+      operationId: getAirtableRecord
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: AirtableRecord details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecord"
+
+    patch:
+      summary: Update record
+      operationId: updateAirtableRecord
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AirtableRecordRequest"
+      responses:
+        '200':
+          description: Updated record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecord"
+
+    delete:
+      summary: Delete record
+      operationId: deleteAirtableRecord
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  deleted:
+                    type: boolean
+
+  /meta/bases:
+    get:
+      summary: List bases
+      operationId: listBases
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of bases
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseList'
+
+  /meta/bases/{baseId}/tables:
+    get:
+      summary: List tables
+      operationId: listTables
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tables with schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableList'
+
+    post:
+      summary: Create table
+      operationId: createTable
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTableRequest'
+      responses:
+        '200':
+          description: Created table
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+
+  /meta/bases/{baseId}/tables/{tableIdOrName}:
+    get:
+      summary: Get table schema
+      operationId: getTableSchema
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Table schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+
+    patch:
+      summary: Update table
+      operationId: updateTable
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Updated table
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+
+  /meta/bases/{baseId}/tables/{tableIdOrName}/fields:
+    post:
+      summary: Create field
+      operationId: createField
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFieldRequest'
+      responses:
+        '200':
+          description: Created field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Field'
+
+  /meta/bases/{baseId}/tables/{tableIdOrName}/fields/{fieldId}:
+    patch:
+      summary: Update field
+      operationId: updateField
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fieldId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFieldRequest'
+      responses:
+        '200':
+          description: Updated field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Field'

@@ -1,0 +1,1130 @@
+openapi: 3.0.0
+info:
+  title: Notion API
+  version: 2022-06-28
+  description: |
+    Comprehensive Notion API SDK supporting multiple authentication methods:
+    - Internal Integration (Bearer Token)
+    - OAuth 2.0 (Public Integration)
+
+servers:
+  - url: https://api.notion.com/v1
+    description: Notion API Production Server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Internal Integration token authentication
+
+    OAuth2:
+      type: oauth2
+      description: OAuth 2.0 for public integrations
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.notion.com/v1/oauth/authorize
+          tokenUrl: https://api.notion.com/v1/oauth/token
+          scopes: {}
+
+  schemas:
+    # Common schemas
+    User:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [user]
+        id:
+          type: string
+        type:
+          type: string
+          enum: [person, bot]
+        name:
+          type: string
+        avatar_url:
+          type: string
+
+    Page:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [page]
+        id:
+          type: string
+        created_time:
+          type: string
+          format: date-time
+        last_edited_time:
+          type: string
+          format: date-time
+        archived:
+          type: boolean
+        properties:
+          type: object
+        parent:
+          type: object
+        url:
+          type: string
+
+    Database:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [database]
+        id:
+          type: string
+        created_time:
+          type: string
+          format: date-time
+        last_edited_time:
+          type: string
+          format: date-time
+        title:
+          type: array
+          items:
+            type: object
+        properties:
+          type: object
+
+    Block:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [block]
+        id:
+          type: string
+        type:
+          type: string
+        created_time:
+          type: string
+          format: date-time
+        last_edited_time:
+          type: string
+          format: date-time
+        has_children:
+          type: boolean
+
+    Comment:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [comment]
+        id:
+          type: string
+        parent:
+          type: object
+        discussion_id:
+          type: string
+        created_time:
+          type: string
+          format: date-time
+        last_edited_time:
+          type: string
+          format: date-time
+        created_by:
+          $ref: '#/components/schemas/User'
+
+    PaginatedResponse:
+      type: object
+      properties:
+        has_more:
+          type: boolean
+        next_cursor:
+          type: string
+          nullable: true
+
+paths:
+  # OAuth Endpoints
+  /oauth/token:
+    post:
+      summary: Exchange authorization code for access token
+      operationId: exchangeOAuthToken
+      tags: [OAuth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - grant_type
+                - code
+              properties:
+                grant_type:
+                  type: string
+                  enum: [authorization_code, refresh_token]
+                code:
+                  type: string
+                redirect_uri:
+                  type: string
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Token response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  bot_id:
+                    type: string
+                  workspace_id:
+                    type: string
+                  workspace_name:
+                    type: string
+                  workspace_icon:
+                    type: string
+                  owner:
+                    type: object
+                  duplicated_template_id:
+                    type: string
+                  refresh_token:
+                    type: string
+
+  /oauth/token/introspect:
+    post:
+      summary: Introspect OAuth token
+      operationId: introspectOAuthToken
+      tags: [OAuth]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Token introspection response
+
+  /oauth/token/revoke:
+    post:
+      summary: Revoke OAuth token
+      operationId: revokeOAuthToken
+      tags: [OAuth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Token revoked successfully
+
+  # Pages Endpoints
+  /pages:
+    post:
+      summary: Create a page
+      operationId: createPage
+      tags: [Pages]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - parent
+              properties:
+                parent:
+                  type: object
+                properties:
+                  type: object
+                children:
+                  type: array
+                  items:
+                    type: object
+                icon:
+                  type: object
+                cover:
+                  type: object
+      responses:
+        '200':
+          description: Created page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+
+  /pages/{page_id}:
+    get:
+      summary: Retrieve a page
+      operationId: retrievePage
+      tags: [Pages]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: page_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Page details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+
+    patch:
+      summary: Update page properties
+      operationId: updatePage
+      tags: [Pages]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: page_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                properties:
+                  type: object
+                archived:
+                  type: boolean
+                icon:
+                  type: object
+                cover:
+                  type: object
+      responses:
+        '200':
+          description: Updated page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+
+  /pages/{page_id}/properties/{property_id}:
+    get:
+      summary: Retrieve a page property item
+      operationId: retrievePageProperty
+      tags: [Pages]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: page_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: property_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start_cursor
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 100
+      responses:
+        '200':
+          description: Property value
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # Databases Endpoints
+  /databases:
+    post:
+      summary: Create a database
+      operationId: createDatabase
+      tags: [Databases]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - parent
+                - title
+                - properties
+              properties:
+                parent:
+                  type: object
+                title:
+                  type: array
+                  items:
+                    type: object
+                properties:
+                  type: object
+                icon:
+                  type: object
+                cover:
+                  type: object
+      responses:
+        '200':
+          description: Created database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Database'
+
+  /databases/{database_id}:
+    get:
+      summary: Retrieve a database
+      operationId: retrieveDatabase
+      tags: [Databases]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: database_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Database details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Database'
+
+    patch:
+      summary: Update a database
+      operationId: updateDatabase
+      tags: [Databases]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: database_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: array
+                  items:
+                    type: object
+                description:
+                  type: array
+                  items:
+                    type: object
+                properties:
+                  type: object
+                icon:
+                  type: object
+                cover:
+                  type: object
+      responses:
+        '200':
+          description: Updated database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Database'
+
+  /databases/{database_id}/query:
+    post:
+      summary: Query a database
+      operationId: queryDatabase
+      tags: [Databases]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: database_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                sorts:
+                  type: array
+                  items:
+                    type: object
+                start_cursor:
+                  type: string
+                page_size:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 100
+      responses:
+        '200':
+          description: Query results
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Page'
+
+  # Blocks Endpoints
+  /blocks/{block_id}:
+    get:
+      summary: Retrieve a block
+      operationId: retrieveBlock
+      tags: [Blocks]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: block_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Block details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Block'
+
+    patch:
+      summary: Update a block
+      operationId: updateBlock
+      tags: [Blocks]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: block_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Updated block
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Block'
+
+    delete:
+      summary: Delete a block
+      operationId: deleteBlock
+      tags: [Blocks]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: block_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted block
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Block'
+
+  /blocks/{block_id}/children:
+    get:
+      summary: Retrieve block children
+      operationId: retrieveBlockChildren
+      tags: [Blocks]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: block_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start_cursor
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 100
+      responses:
+        '200':
+          description: Block children
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Block'
+
+    patch:
+      summary: Append block children
+      operationId: appendBlockChildren
+      tags: [Blocks]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: block_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - children
+              properties:
+                children:
+                  type: array
+                  items:
+                    type: object
+                after:
+                  type: string
+      responses:
+        '200':
+          description: Appended children
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Block'
+
+  # Data Sources Endpoints (2025 API)
+  /data_sources:
+    post:
+      summary: Create a data source
+      operationId: createDataSource
+      tags: [DataSources]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Created data source
+
+  /data_sources/{data_source_id}:
+    get:
+      summary: Retrieve a data source
+      operationId: retrieveDataSource
+      tags: [DataSources]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: data_source_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data source details
+
+    patch:
+      summary: Update a data source
+      operationId: updateDataSource
+      tags: [DataSources]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: data_source_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Updated data source
+
+  /data_sources/{data_source_id}/properties:
+    patch:
+      summary: Update data source properties
+      operationId: updateDataSourceProperties
+      tags: [DataSources]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: data_source_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Updated properties
+
+  /data_sources/{data_source_id}/query:
+    post:
+      summary: Query a data source
+      operationId: queryDataSource
+      tags: [DataSources]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: data_source_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                sorts:
+                  type: array
+                  items:
+                    type: object
+                start_cursor:
+                  type: string
+                page_size:
+                  type: integer
+      responses:
+        '200':
+          description: Query results
+
+  /data_sources/templates:
+    get:
+      summary: List data source templates
+      operationId: listDataSourceTemplates
+      tags: [DataSources]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      responses:
+        '200':
+          description: List of templates
+
+  # Comments Endpoints
+  /comments:
+    get:
+      summary: List comments
+      operationId: listComments
+      tags: [Comments]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: block_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: start_cursor
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 100
+      responses:
+        '200':
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Comment'
+
+    post:
+      summary: Create a comment
+      operationId: createComment
+      tags: [Comments]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - parent
+                - rich_text
+              properties:
+                parent:
+                  type: object
+                rich_text:
+                  type: array
+                  items:
+                    type: object
+                discussion_id:
+                  type: string
+      responses:
+        '200':
+          description: Created comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+
+  /comments/{comment_id}:
+    get:
+      summary: Retrieve a comment
+      operationId: retrieveComment
+      tags: [Comments]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Comment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+
+  # File Upload Endpoints
+  /files:
+    post:
+      summary: Create a file upload
+      operationId: createFileUpload
+      tags: [Files]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - size
+              properties:
+                name:
+                  type: string
+                size:
+                  type: integer
+                mime_type:
+                  type: string
+      responses:
+        '200':
+          description: File upload created
+
+    get:
+      summary: List file uploads
+      operationId: listFileUploads
+      tags: [Files]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: start_cursor
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of file uploads
+
+  /files/{file_id}:
+    get:
+      summary: Retrieve a file upload
+      operationId: retrieveFileUpload
+      tags: [Files]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File upload details
+
+  /files/{file_id}/send:
+    post:
+      summary: Send file data
+      operationId: sendFileData
+      tags: [Files]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: File data sent
+
+  /files/{file_id}/complete:
+    post:
+      summary: Complete file upload
+      operationId: completeFileUpload
+      tags: [Files]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File upload completed
+
+  # Search Endpoint
+  /search:
+    post:
+      summary: Search by title
+      operationId: search
+      tags: [Search]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                filter:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                      enum: [page, database]
+                    property:
+                      type: string
+                      enum: [object]
+                sort:
+                  type: object
+                  properties:
+                    direction:
+                      type: string
+                      enum: [ascending, descending]
+                    timestamp:
+                      type: string
+                      enum: [last_edited_time]
+                start_cursor:
+                  type: string
+                page_size:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 100
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          oneOf:
+                            - $ref: '#/components/schemas/Page'
+                            - $ref: '#/components/schemas/Database'
+
+  # Users Endpoints
+  /users:
+    get:
+      summary: List all users
+      operationId: listUsers
+      tags: [Users]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: start_cursor
+          in: query
+          schema:
+            type: string
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 100
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/User'
+
+  /users/{user_id}:
+    get:
+      summary: Retrieve a user
+      operationId: retrieveUser
+      tags: [Users]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/me:
+    get:
+      summary: Retrieve bot user
+      operationId: retrieveBotUser
+      tags: [Users]
+      security:
+        - BearerAuth: []
+        - OAuth2: []
+      responses:
+        '200':
+          description: Bot user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'

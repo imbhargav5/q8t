@@ -1,0 +1,443 @@
+openapi: 3.0.3
+info:
+  title: TikTok User OAuth API
+  version: "2.0"
+  description: TikTok API for user-authenticated operations including Display API, Content Posting API, and Login Kit features
+
+servers:
+  - url: https://open.tiktokapis.com/v2
+    description: Production API
+
+paths:
+  # User Info API
+  /user/info/:
+    get:
+      operationId: getUserInfo
+      summary: Get user information
+      description: Retrieve information about the authenticated user
+      parameters:
+        - name: fields
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of fields (open_id,union_id,avatar_url,display_name,bio_description,profile_deep_link,is_verified,follower_count,following_count,likes_count,video_count)
+      responses:
+        "200":
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfoResponse"
+
+  # Video List API
+  /video/list/:
+    post:
+      operationId: listVideos
+      summary: List user videos
+      description: Get a paginated list of videos for the authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoListRequest"
+      responses:
+        "200":
+          description: Videos retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoListResponse"
+
+  # Video Query API
+  /video/query/:
+    post:
+      operationId: queryVideos
+      summary: Query video information
+      description: Query specific information about videos by video IDs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoQueryRequest"
+      responses:
+        "200":
+          description: Video information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoQueryResponse"
+
+  # Content Posting - Creator Info
+  /post/publish/creator_info/query/:
+    post:
+      operationId: queryCreatorInfo
+      summary: Query creator information for posting
+      description: Retrieve creator information to validate posting eligibility
+      responses:
+        "200":
+          description: Creator info retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatorInfoResponse"
+
+  # Content Posting - Direct Post (Initialize)
+  /post/publish/video/init/:
+    post:
+      operationId: initializeVideoPost
+      summary: Initialize video post
+      description: Initialize a video upload for direct posting to TikTok
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoInitRequest"
+      responses:
+        "200":
+          description: Video upload initialized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoInitResponse"
+
+  # Content Posting - Upload Video
+  /post/publish/video/upload/:
+    post:
+      operationId: uploadVideo
+      summary: Upload video content
+      description: Upload video file chunks to TikTok servers
+      requestBody:
+        required: true
+        content:
+          video/mp4:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Video uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoUploadResponse"
+
+  # Content Posting - Publish
+  /post/publish/status/fetch/:
+    post:
+      operationId: fetchPublishStatus
+      summary: Fetch publish status
+      description: Check the status of a video publish operation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublishStatusRequest"
+      responses:
+        "200":
+          description: Publish status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublishStatusResponse"
+
+components:
+  schemas:
+    # User Info Schemas
+    UserInfoResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/UserData"
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+      required:
+        - data
+        - error
+
+    UserData:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+      required:
+        - user
+
+    User:
+      type: object
+      properties:
+        open_id:
+          type: string
+        union_id:
+          type: string
+        avatar_url:
+          type: string
+        avatar_url_100:
+          type: string
+        avatar_large_url:
+          type: string
+        display_name:
+          type: string
+        bio_description:
+          type: string
+        profile_deep_link:
+          type: string
+        is_verified:
+          type: boolean
+        follower_count:
+          type: integer
+        following_count:
+          type: integer
+        likes_count:
+          type: integer
+        video_count:
+          type: integer
+
+    # Video List Schemas
+    VideoListRequest:
+      type: object
+      properties:
+        max_count:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 20
+        cursor:
+          type: integer
+        fields:
+          type: string
+          description: Comma-separated fields (id,create_time,cover_image_url,share_url,video_description,duration,height,width,title,embed_html,embed_link,like_count,comment_count,share_count,view_count)
+      required:
+        - fields
+
+    VideoListResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/VideoListData"
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+      required:
+        - data
+        - error
+
+    VideoListData:
+      type: object
+      properties:
+        videos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Video"
+        cursor:
+          type: integer
+        has_more:
+          type: boolean
+      required:
+        - videos
+        - has_more
+
+    # Video Query Schemas
+    VideoQueryRequest:
+      type: object
+      properties:
+        filters:
+          type: object
+          properties:
+            video_ids:
+              type: array
+              items:
+                type: string
+        fields:
+          type: string
+      required:
+        - filters
+        - fields
+
+    VideoQueryResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/VideoQueryData"
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+      required:
+        - data
+        - error
+
+    VideoQueryData:
+      type: object
+      properties:
+        videos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Video"
+      required:
+        - videos
+
+    Video:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        video_description:
+          type: string
+        duration:
+          type: integer
+        height:
+          type: integer
+        width:
+          type: integer
+        cover_image_url:
+          type: string
+        embed_html:
+          type: string
+        embed_link:
+          type: string
+        like_count:
+          type: integer
+        comment_count:
+          type: integer
+        share_count:
+          type: integer
+        view_count:
+          type: integer
+        create_time:
+          type: integer
+        share_url:
+          type: string
+
+    # Content Posting Schemas
+    CreatorInfoResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            creator_avatar_url:
+              type: string
+            creator_username:
+              type: string
+            creator_nickname:
+              type: string
+            privacy_level_options:
+              type: array
+              items:
+                type: string
+            comment_disabled:
+              type: boolean
+            duet_disabled:
+              type: boolean
+            stitch_disabled:
+              type: boolean
+            max_video_post_duration_sec:
+              type: integer
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+
+    VideoInitRequest:
+      type: object
+      properties:
+        post_info:
+          type: object
+          properties:
+            title:
+              type: string
+              maxLength: 150
+            privacy_level:
+              type: string
+              enum: [SELF_ONLY, MUTUAL_FOLLOW_FRIENDS, FOLLOWER_OF_CREATOR, PUBLIC_TO_EVERYONE]
+            disable_duet:
+              type: boolean
+            disable_comment:
+              type: boolean
+            disable_stitch:
+              type: boolean
+            video_cover_timestamp_ms:
+              type: integer
+        source_info:
+          type: object
+          properties:
+            source:
+              type: string
+              enum: [FILE_UPLOAD, PULL_FROM_URL]
+            video_size:
+              type: integer
+            chunk_size:
+              type: integer
+            total_chunk_count:
+              type: integer
+      required:
+        - source_info
+
+    VideoInitResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            publish_id:
+              type: string
+            upload_url:
+              type: string
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+
+    VideoUploadResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+
+    PublishStatusRequest:
+      type: object
+      properties:
+        publish_id:
+          type: string
+      required:
+        - publish_id
+
+    PublishStatusResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [PROCESSING_UPLOAD, PUBLISH_COMPLETE, FAILED, PROCESSING_DOWNLOAD]
+            publicaly_available_post_id:
+              type: array
+              items:
+                type: string
+            uploaded_bytes:
+              type: integer
+            fail_reason:
+              type: string
+        error:
+          $ref: "#/components/schemas/ErrorInfo"
+
+    # Common Error Schema
+    ErrorInfo:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        log_id:
+          type: string
+      required:
+        - code
+        - message
+        - log_id
