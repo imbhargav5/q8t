@@ -1,0 +1,432 @@
+openapi: 3.0.3
+info:
+  title: Telegram Gateway API
+  description: Telegram Gateway API for sending verification codes via Telegram instead of SMS
+  version: "1.0"
+
+servers:
+  - url: https://gatewayapi.telegram.org
+    description: Production Gateway API Server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access token obtained from @VerificationBot
+
+  schemas:
+    # Request Schemas
+    SendVerificationMessageRequest:
+      type: object
+      required:
+        - phone_number
+      properties:
+        phone_number:
+          type: string
+          description: Phone number in international format (e.g., +1234567890)
+        code_length:
+          type: integer
+          description: Length of verification code (4-8 digits)
+          minimum: 4
+          maximum: 8
+          default: 5
+        callback_url:
+          type: string
+          format: uri
+          description: URL for delivery status callback
+        ttl:
+          type: integer
+          description: Time-to-live for the code in seconds (30-3600)
+          minimum: 30
+          maximum: 3600
+          default: 300
+        sender:
+          type: string
+          description: Custom sender name (optional)
+        payload:
+          type: string
+          description: Custom payload to include in callback (optional)
+
+    CheckSendAbilityRequest:
+      type: object
+      required:
+        - phone_number
+      properties:
+        phone_number:
+          type: string
+          description: Phone number in international format
+
+    CheckVerificationStatusRequest:
+      type: object
+      required:
+        - request_id
+      properties:
+        request_id:
+          type: string
+          description: Request ID returned from sendVerificationMessage
+
+    RevokeVerificationMessageRequest:
+      type: object
+      required:
+        - request_id
+      properties:
+        request_id:
+          type: string
+          description: Request ID of the verification message to revoke
+
+    # Response Schemas
+    SendVerificationMessageResponse:
+      type: object
+      required:
+        - ok
+      properties:
+        ok:
+          type: boolean
+        request_id:
+          type: string
+          description: Unique identifier for this verification request
+        phone_number:
+          type: string
+          description: Phone number the message was sent to
+        status:
+          type: string
+          enum: [sent, pending, failed]
+          description: Delivery status
+        sent_at:
+          type: integer
+          description: Unix timestamp when the message was sent
+        code_length:
+          type: integer
+          description: Length of the verification code
+        ttl:
+          type: integer
+          description: Time-to-live for the code in seconds
+        error:
+          type: string
+          description: Error description if status is failed
+
+    CheckSendAbilityResponse:
+      type: object
+      required:
+        - ok
+      properties:
+        ok:
+          type: boolean
+        phone_number:
+          type: string
+        can_send:
+          type: boolean
+          description: Whether verification messages can be sent to this number
+        reason:
+          type: string
+          description: Reason why messages cannot be sent (if can_send is false)
+
+    CheckVerificationStatusResponse:
+      type: object
+      required:
+        - ok
+      properties:
+        ok:
+          type: boolean
+        request_id:
+          type: string
+        phone_number:
+          type: string
+        status:
+          type: string
+          enum: [sent, delivered, read, expired, revoked, failed]
+        delivery_status:
+          type: object
+          properties:
+            sent_at:
+              type: integer
+            delivered_at:
+              type: integer
+            read_at:
+              type: integer
+            expired_at:
+              type: integer
+        verification_status:
+          type: object
+          properties:
+            verified:
+              type: boolean
+            verified_at:
+              type: integer
+            attempts:
+              type: integer
+
+    RevokeVerificationMessageResponse:
+      type: object
+      required:
+        - ok
+      properties:
+        ok:
+          type: boolean
+        request_id:
+          type: string
+        revoked:
+          type: boolean
+        revoked_at:
+          type: integer
+
+    # Report Schema
+    ReportDeliveryRequest:
+      type: object
+      required:
+        - request_id
+        - status
+      properties:
+        request_id:
+          type: string
+        status:
+          type: string
+          enum: [delivered, failed]
+        timestamp:
+          type: integer
+
+    ReportDeliveryResponse:
+      type: object
+      required:
+        - ok
+      properties:
+        ok:
+          type: boolean
+
+    # Callback Payload (sent to callback_url)
+    DeliveryStatusCallback:
+      type: object
+      required:
+        - request_id
+        - phone_number
+        - status
+      properties:
+        request_id:
+          type: string
+        phone_number:
+          type: string
+        status:
+          type: string
+          enum: [sent, delivered, read, expired, failed]
+        timestamp:
+          type: integer
+        payload:
+          type: string
+          description: Custom payload provided in original request
+
+    # Error Response
+    ErrorResponse:
+      type: object
+      required:
+        - ok
+        - error
+      properties:
+        ok:
+          type: boolean
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum: [
+                INVALID_PHONE_NUMBER,
+                PHONE_NUMBER_BANNED,
+                RATE_LIMIT_EXCEEDED,
+                INVALID_REQUEST_ID,
+                REQUEST_NOT_FOUND,
+                INSUFFICIENT_BALANCE,
+                INVALID_ACCESS_TOKEN,
+                INVALID_TTL,
+                INVALID_CODE_LENGTH
+              ]
+            message:
+              type: string
+
+paths:
+  /sendVerificationMessage:
+    post:
+      operationId: sendVerificationMessage
+      summary: Send verification code
+      description: Send a verification code to a Telegram user via the Gateway API
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendVerificationMessageRequest"
+      responses:
+        "200":
+          description: Verification message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendVerificationMessageResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized - invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /checkSendAbility:
+    post:
+      operationId: checkSendAbility
+      summary: Check if messages can be sent
+      description: Check if verification messages can be sent to a specific phone number
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckSendAbilityRequest"
+      responses:
+        "200":
+          description: Send ability check result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckSendAbilityResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized - invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /checkVerificationStatus:
+    post:
+      operationId: checkVerificationStatus
+      summary: Check verification status
+      description: Check the delivery and verification status of a sent verification message
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckVerificationStatusRequest"
+      responses:
+        "200":
+          description: Verification status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckVerificationStatusResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized - invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /revokeVerificationMessage:
+    post:
+      operationId: revokeVerificationMessage
+      summary: Revoke verification message
+      description: Revoke a previously sent verification message
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RevokeVerificationMessageRequest"
+      responses:
+        "200":
+          description: Revocation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RevokeVerificationMessageResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized - invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /reportDelivery:
+    post:
+      operationId: reportDelivery
+      summary: Report delivery status
+      description: Report delivery status (for internal use)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportDeliveryRequest"
+      responses:
+        "200":
+          description: Report received
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportDeliveryResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized - invalid access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+security:
+  - BearerAuth: []
