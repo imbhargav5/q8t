@@ -1,0 +1,807 @@
+openapi: 3.0.3
+info:
+  title: Dribbble API
+  description: Official Dribbble API v2
+  version: v2
+  contact:
+    name: Dribbble
+    url: https://developer.dribbble.com
+
+servers:
+  - url: https://api.dribbble.com/v2
+    description: Production API
+  - url: https://dribbble.com/oauth
+    description: OAuth Authorization
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://dribbble.com/oauth/authorize
+          tokenUrl: https://dribbble.com/oauth/token
+          scopes:
+            public: Read-only access to public information
+            upload: Full access to create, update, and delete shots and attachments
+
+  schemas:
+    # User Schemas
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User ID
+        name:
+          type: string
+          description: Display name
+        login:
+          type: string
+          description: Username
+        html_url:
+          type: string
+          format: uri
+          description: Profile URL
+        avatar_url:
+          type: string
+          format: uri
+          description: Avatar image URL
+        bio:
+          type: string
+          description: User biography
+        location:
+          type: string
+          description: User location
+        links:
+          type: object
+          properties:
+            web:
+              type: string
+              format: uri
+            twitter:
+              type: string
+              format: uri
+        can_upload_shot:
+          type: boolean
+          description: Whether user can upload shots
+        pro:
+          type: boolean
+          description: Whether user has pro account
+        followers_count:
+          type: integer
+          description: Number of followers
+        created_at:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+        type:
+          type: string
+          description: User type (Player, Team)
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
+
+    Team:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        login:
+          type: string
+        html_url:
+          type: string
+          format: uri
+        avatar_url:
+          type: string
+          format: uri
+        bio:
+          type: string
+        location:
+          type: string
+        links:
+          type: object
+          properties:
+            web:
+              type: string
+              format: uri
+            twitter:
+              type: string
+              format: uri
+        can_upload_shot:
+          type: boolean
+        pro:
+          type: boolean
+        followers_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        type:
+          type: string
+
+    # Shot Schemas
+    Shot:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Shot ID
+        title:
+          type: string
+          description: Shot title
+        description:
+          type: string
+          description: Shot description (HTML)
+        width:
+          type: integer
+          description: Image width
+        height:
+          type: integer
+          description: Image height
+        images:
+          $ref: '#/components/schemas/ShotImages'
+        published_at:
+          type: string
+          format: date-time
+          description: Publication timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        html_url:
+          type: string
+          format: uri
+          description: Shot page URL
+        animated:
+          type: boolean
+          description: Whether shot is animated
+        tags:
+          type: array
+          items:
+            type: string
+          description: Shot tags
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectReference'
+        video:
+          type: object
+          nullable: true
+          properties:
+            url:
+              type: string
+              format: uri
+            width:
+              type: integer
+            height:
+              type: integer
+        low_profile:
+          type: boolean
+          description: Whether shot is low profile
+        scheduled_for:
+          type: string
+          format: date-time
+          nullable: true
+          description: Scheduled publication time
+
+    ShotImages:
+      type: object
+      properties:
+        hidpi:
+          type: string
+          format: uri
+          nullable: true
+        normal:
+          type: string
+          format: uri
+        teaser:
+          type: string
+          format: uri
+
+    CreateShotRequest:
+      type: object
+      required:
+        - title
+        - image
+      properties:
+        title:
+          type: string
+          description: Shot title
+        description:
+          type: string
+          description: Shot description
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 12
+          description: Up to 12 tags
+        team_id:
+          type: integer
+          description: Team ID to publish under
+        rebound_source_id:
+          type: integer
+          description: Original shot ID if this is a rebound
+        low_profile:
+          type: boolean
+          description: Publish as low profile
+        scheduled_for:
+          type: string
+          format: date-time
+          description: Schedule publication time
+
+    UpdateShotRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 12
+        team_id:
+          type: integer
+        low_profile:
+          type: boolean
+        scheduled_for:
+          type: string
+          format: date-time
+
+    # Attachment Schemas
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+          format: uri
+        thumbnail_url:
+          type: string
+          format: uri
+        size:
+          type: integer
+          description: File size in bytes
+        content_type:
+          type: string
+          description: MIME type
+        created_at:
+          type: string
+          format: date-time
+
+    # Project Schemas
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        shots_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ProjectReference:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    CreateProjectRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Project name
+        description:
+          type: string
+          description: Project description
+
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    # Error Schema
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+
+# API Endpoints
+paths:
+  # User Endpoints
+  /user:
+    get:
+      summary: Get authenticated user
+      description: Get the authenticated user's profile
+      operationId: getAuthenticatedUser
+      security:
+        - oauth2: [public]
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Shot Endpoints
+  /user/shots:
+    get:
+      summary: List user's shots
+      description: List the authenticated user's shots
+      operationId: listUserShots
+      security:
+        - oauth2: [public]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 30
+            maximum: 100
+      responses:
+        '200':
+          description: List of shots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Shot'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /shots/{id}:
+    get:
+      summary: Get a shot
+      description: Get a single shot by ID (must be owned by authenticated user)
+      operationId: getShot
+      security:
+        - oauth2: [public]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Shot ID
+      responses:
+        '200':
+          description: Shot details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shot'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Shot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update a shot
+      description: Update a shot owned by the authenticated user
+      operationId: updateShot
+      security:
+        - oauth2: [upload]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateShotRequest'
+      responses:
+        '200':
+          description: Updated shot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shot'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - requires upload scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Shot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete a shot
+      description: Delete a shot owned by the authenticated user
+      operationId: deleteShot
+      security:
+        - oauth2: [upload]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Shot deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - requires upload scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Shot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /shots:
+    post:
+      summary: Create a shot
+      description: Create a new shot (requires upload scope, user must be a player or team)
+      operationId: createShot
+      security:
+        - oauth2: [upload]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - image
+              properties:
+                title:
+                  type: string
+                image:
+                  type: string
+                  format: binary
+                  description: Image file (400x300 or 800x600, max 8MB)
+                description:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 12
+                team_id:
+                  type: integer
+                rebound_source_id:
+                  type: integer
+                low_profile:
+                  type: boolean
+                scheduled_for:
+                  type: string
+                  format: date-time
+      responses:
+        '202':
+          description: Shot creation accepted (asynchronous)
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: URL to check shot status
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - requires upload scope or player/team status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Attachment Endpoints
+  /shots/{shot_id}/attachments:
+    post:
+      summary: Create an attachment
+      description: Create an attachment for a shot (asynchronous processing)
+      operationId: createAttachment
+      security:
+        - oauth2: [upload]
+      parameters:
+        - name: shot_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Attachment file (max 10MB)
+      responses:
+        '202':
+          description: Attachment creation accepted (asynchronous)
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - requires upload scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Shot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /shots/{shot_id}/attachments/{id}:
+    delete:
+      summary: Delete an attachment
+      description: Delete an attachment (must own the attachment)
+      operationId: deleteAttachment
+      security:
+        - oauth2: [upload]
+      parameters:
+        - name: shot_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Attachment deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - must own attachment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Attachment not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Project Endpoints
+  /user/projects:
+    get:
+      summary: List user's projects
+      description: List the authenticated user's projects
+      operationId: listUserProjects
+      security:
+        - oauth2: [public]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 30
+            maximum: 100
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /projects:
+    post:
+      summary: Create a project
+      description: Create a new project
+      operationId: createProject
+      security:
+        - oauth2: [upload]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /projects/{id}:
+    put:
+      summary: Update a project
+      description: Update a project owned by the authenticated user
+      operationId: updateProject
+      security:
+        - oauth2: [upload]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectRequest'
+      responses:
+        '200':
+          description: Updated project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete a project
+      description: Delete a project owned by the authenticated user
+      operationId: deleteProject
+      security:
+        - oauth2: [upload]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Project deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
