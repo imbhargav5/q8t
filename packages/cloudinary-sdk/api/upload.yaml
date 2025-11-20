@@ -1,0 +1,560 @@
+openapi: 3.0.3
+info:
+  title: Cloudinary Upload API
+  description: Rate-unlimited Upload API for uploading and managing assets
+  version: v1.1
+
+servers:
+  - url: https://api.cloudinary.com/v1_1/{cloud_name}
+    variables:
+      cloud_name:
+        default: demo
+        description: Your Cloudinary cloud name
+
+components:
+  schemas:
+    UploadResponse:
+      type: object
+      properties:
+        public_id:
+          type: string
+        version:
+          type: integer
+        signature:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        format:
+          type: string
+        resource_type:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+        bytes:
+          type: integer
+        type:
+          type: string
+        etag:
+          type: string
+        url:
+          type: string
+        secure_url:
+          type: string
+        asset_id:
+          type: string
+        original_filename:
+          type: string
+
+    UploadRequest:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          description: The file to upload (URL, base64, or file path)
+        public_id:
+          type: string
+        folder:
+          type: string
+        asset_folder:
+          type: string
+        use_filename:
+          type: boolean
+        unique_filename:
+          type: boolean
+        overwrite:
+          type: boolean
+        tags:
+          type: string
+        context:
+          type: string
+        metadata:
+          type: string
+        transformation:
+          type: string
+        format:
+          type: string
+        resource_type:
+          type: string
+          enum: [image, video, raw, auto]
+        type:
+          type: string
+          enum: [upload, private, authenticated]
+
+    ExplicitRequest:
+      type: object
+      required:
+        - public_id
+      properties:
+        public_id:
+          type: string
+        type:
+          type: string
+        eager:
+          type: string
+        headers:
+          type: string
+        tags:
+          type: string
+        context:
+          type: string
+        metadata:
+          type: string
+        face_coordinates:
+          type: string
+        custom_coordinates:
+          type: string
+        background_removal:
+          type: string
+        notification_url:
+          type: string
+        eager_notification_url:
+          type: string
+        invalidate:
+          type: boolean
+        moderation:
+          type: string
+        access_control:
+          type: string
+
+    DestroyRequest:
+      type: object
+      required:
+        - public_id
+      properties:
+        public_id:
+          type: string
+        resource_type:
+          type: string
+          enum: [image, video, raw]
+        type:
+          type: string
+        invalidate:
+          type: boolean
+
+    DestroyResponse:
+      type: object
+      properties:
+        result:
+          type: string
+          enum: [ok, not found]
+
+    RenameRequest:
+      type: object
+      required:
+        - from_public_id
+        - to_public_id
+      properties:
+        from_public_id:
+          type: string
+        to_public_id:
+          type: string
+        resource_type:
+          type: string
+        type:
+          type: string
+        to_type:
+          type: string
+        overwrite:
+          type: boolean
+        invalidate:
+          type: boolean
+
+    ExplodeRequest:
+      type: object
+      required:
+        - public_id
+      properties:
+        public_id:
+          type: string
+        transformation:
+          type: string
+        format:
+          type: string
+        notification_url:
+          type: string
+
+    ExplodeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        batch_id:
+          type: string
+
+    GenerateArchiveRequest:
+      type: object
+      properties:
+        public_ids:
+          type: array
+          items:
+            type: string
+        prefixes:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        target_format:
+          type: string
+          enum: [zip, tar, tar.gz]
+        flatten_folders:
+          type: boolean
+        flatten_transformations:
+          type: boolean
+        use_original_filename:
+          type: boolean
+        async:
+          type: boolean
+        notification_url:
+          type: string
+        target_public_id:
+          type: string
+        transformations:
+          type: string
+
+    GenerateArchiveResponse:
+      type: object
+      properties:
+        resource_type:
+          type: string
+        type:
+          type: string
+        public_id:
+          type: string
+        version:
+          type: integer
+        url:
+          type: string
+        secure_url:
+          type: string
+        created_at:
+          type: string
+        asset_id:
+          type: string
+        bytes:
+          type: integer
+        file_count:
+          type: integer
+
+    TagsRequest:
+      type: object
+      required:
+        - public_ids
+      properties:
+        public_ids:
+          type: array
+          items:
+            type: string
+        tag:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        resource_type:
+          type: string
+        type:
+          type: string
+        command:
+          type: string
+          enum: [add, remove, replace, set_exclusive]
+
+    ContextRequest:
+      type: object
+      required:
+        - public_ids
+      properties:
+        public_ids:
+          type: array
+          items:
+            type: string
+        context:
+          type: string
+        resource_type:
+          type: string
+        type:
+          type: string
+        command:
+          type: string
+          enum: [add, remove]
+
+    MetadataRequest:
+      type: object
+      required:
+        - public_ids
+      properties:
+        public_ids:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: string
+        resource_type:
+          type: string
+        type:
+          type: string
+        clear_invalid:
+          type: boolean
+
+    SuccessResponse:
+      type: object
+      properties:
+        public_ids:
+          type: array
+          items:
+            type: string
+
+paths:
+  /{resource_type}/upload:
+    post:
+      operationId: upload
+      summary: Upload a new asset
+      description: Upload image, video, or raw file to Cloudinary
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw, auto]
+            default: image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadRequest"
+      responses:
+        "200":
+          description: Upload successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+
+  /{resource_type}/destroy:
+    post:
+      operationId: destroy
+      summary: Delete an asset
+      description: Permanently delete a single asset
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw]
+            default: image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DestroyRequest"
+      responses:
+        "200":
+          description: Destroy successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DestroyResponse"
+
+  /{resource_type}/explicit:
+    post:
+      operationId: explicit
+      summary: Apply actions to uploaded asset
+      description: Modify attributes or apply transformations to already uploaded asset
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw]
+            default: image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExplicitRequest"
+      responses:
+        "200":
+          description: Explicit successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+
+  /{resource_type}/rename:
+    post:
+      operationId: rename
+      summary: Rename an asset
+      description: Change the public ID of an existing asset
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw]
+            default: image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RenameRequest"
+      responses:
+        "200":
+          description: Rename successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+
+  /{resource_type}/explode:
+    post:
+      operationId: explode
+      summary: Generate pages from multi-page file
+      description: Create derived images for each page/frame in PDF or animated image
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video]
+            default: image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExplodeRequest"
+      responses:
+        "200":
+          description: Explode initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExplodeResponse"
+
+  /{resource_type}/generate_archive:
+    post:
+      operationId: generateArchive
+      summary: Create archive file
+      description: Generate ZIP/TAR archive of multiple assets
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw]
+            default: image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateArchiveRequest"
+      responses:
+        "200":
+          description: Archive generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateArchiveResponse"
+
+  /{resource_type}/tags:
+    post:
+      operationId: manageTags
+      summary: Manage asset tags
+      description: Add, remove, or replace tags on assets
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw]
+            default: image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagsRequest"
+      responses:
+        "200":
+          description: Tags updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /{resource_type}/context:
+    post:
+      operationId: manageContext
+      summary: Manage asset context metadata
+      description: Add or remove contextual metadata from assets
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw]
+            default: image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContextRequest"
+      responses:
+        "200":
+          description: Context updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /{resource_type}/metadata:
+    post:
+      operationId: updateMetadata
+      summary: Update structured metadata
+      description: Populate or update structured metadata fields
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw]
+            default: image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MetadataRequest"
+      responses:
+        "200":
+          description: Metadata updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"

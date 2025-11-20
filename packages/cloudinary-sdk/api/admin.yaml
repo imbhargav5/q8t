@@ -1,0 +1,892 @@
+openapi: 3.0.3
+info:
+  title: Cloudinary Admin API
+  description: Rate-limited Admin API for managing assets, transformations, presets, and more
+  version: v1.1
+
+servers:
+  - url: https://api.cloudinary.com/v1_1/{cloud_name}
+    variables:
+      cloud_name:
+        default: demo
+        description: Your Cloudinary cloud name
+
+components:
+  schemas:
+    Resource:
+      type: object
+      properties:
+        public_id:
+          type: string
+        asset_id:
+          type: string
+        folder:
+          type: string
+        asset_folder:
+          type: string
+        display_name:
+          type: string
+        format:
+          type: string
+        version:
+          type: integer
+        resource_type:
+          type: string
+        type:
+          type: string
+        created_at:
+          type: string
+        uploaded_at:
+          type: string
+        bytes:
+          type: integer
+        backup_bytes:
+          type: integer
+        width:
+          type: integer
+        height:
+          type: integer
+        aspect_ratio:
+          type: number
+        pixels:
+          type: integer
+        pages:
+          type: integer
+        url:
+          type: string
+        secure_url:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        context:
+          type: object
+        metadata:
+          type: object
+
+    ResourcesResponse:
+      type: object
+      properties:
+        resources:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resource"
+        next_cursor:
+          type: string
+        rate_limit_allowed:
+          type: integer
+        rate_limit_remaining:
+          type: integer
+        rate_limit_reset_at:
+          type: string
+
+    ResourceResponse:
+      type: object
+      properties:
+        asset_id:
+          type: string
+        public_id:
+          type: string
+        format:
+          type: string
+        version:
+          type: integer
+        resource_type:
+          type: string
+        type:
+          type: string
+        created_at:
+          type: string
+        bytes:
+          type: integer
+        width:
+          type: integer
+        height:
+          type: integer
+        url:
+          type: string
+        secure_url:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        context:
+          type: object
+        metadata:
+          type: object
+        derived:
+          type: array
+          items:
+            type: object
+
+    DeleteResourcesResponse:
+      type: object
+      properties:
+        deleted:
+          type: object
+          additionalProperties:
+            type: string
+        deleted_counts:
+          type: object
+        partial:
+          type: boolean
+        rate_limit_allowed:
+          type: integer
+        rate_limit_remaining:
+          type: integer
+        rate_limit_reset_at:
+          type: string
+
+    RestoreResponse:
+      type: object
+      properties:
+        public_id:
+          type: string
+        asset_id:
+          type: string
+        version:
+          type: integer
+        format:
+          type: string
+        resource_type:
+          type: string
+        created_at:
+          type: string
+        bytes:
+          type: integer
+
+    UpdateRequest:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        context:
+          type: object
+        metadata:
+          type: object
+        display_name:
+          type: string
+        asset_folder:
+          type: string
+        access_control:
+          type: array
+        moderation_status:
+          type: string
+        background_removal:
+          type: string
+        raw_convert:
+          type: string
+        categorization:
+          type: string
+        detection:
+          type: string
+        ocr:
+          type: string
+        auto_tagging:
+          type: number
+        notification_url:
+          type: string
+
+    Transformation:
+      type: object
+      properties:
+        name:
+          type: string
+        allowed_for_strict:
+          type: boolean
+        used:
+          type: boolean
+        named:
+          type: boolean
+
+    TransformationsResponse:
+      type: object
+      properties:
+        transformations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transformation"
+        next_cursor:
+          type: string
+
+    UploadPreset:
+      type: object
+      properties:
+        name:
+          type: string
+        unsigned:
+          type: boolean
+        settings:
+          type: object
+
+    UploadPresetsResponse:
+      type: object
+      properties:
+        presets:
+          type: array
+          items:
+            $ref: "#/components/schemas/UploadPreset"
+        next_cursor:
+          type: string
+
+    UploadPresetRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        unsigned:
+          type: boolean
+        disallow_public_id:
+          type: boolean
+        folder:
+          type: string
+        tags:
+          type: string
+        context:
+          type: object
+        metadata:
+          type: object
+        transformation:
+          type: string
+        format:
+          type: string
+        eager:
+          type: string
+        allowed_formats:
+          type: string
+        access_mode:
+          type: string
+
+    TagsResponse:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        next_cursor:
+          type: string
+
+    FoldersResponse:
+      type: object
+      properties:
+        folders:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              path:
+                type: string
+        total_count:
+          type: integer
+
+    SearchRequest:
+      type: object
+      required:
+        - expression
+      properties:
+        expression:
+          type: string
+        max_results:
+          type: integer
+        next_cursor:
+          type: string
+        sort_by:
+          type: array
+          items:
+            type: object
+        aggregate:
+          type: string
+        with_field:
+          type: array
+          items:
+            type: string
+
+    SearchResponse:
+      type: object
+      properties:
+        total_count:
+          type: integer
+        resources:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resource"
+        next_cursor:
+          type: string
+        aggregations:
+          type: object
+        rate_limit_allowed:
+          type: integer
+        rate_limit_remaining:
+          type: integer
+
+    MetadataField:
+      type: object
+      properties:
+        external_id:
+          type: string
+        type:
+          type: string
+        label:
+          type: string
+        mandatory:
+          type: boolean
+        default_value:
+          type: string
+        validation:
+          type: object
+        datasource:
+          type: object
+
+    MetadataFieldsResponse:
+      type: object
+      properties:
+        metadata_fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/MetadataField"
+
+paths:
+  /resources/{resource_type}:
+    get:
+      operationId: getResources
+      summary: List assets
+      description: Get a list of all uploaded assets
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [image, video, raw]
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: prefix
+          in: query
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: next_cursor
+          in: query
+          schema:
+            type: string
+        - name: tags
+          in: query
+          schema:
+            type: boolean
+        - name: context
+          in: query
+          schema:
+            type: boolean
+        - name: metadata
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of resources
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourcesResponse"
+
+  /resources/{resource_type}/upload/{public_id}:
+    get:
+      operationId: getResource
+      summary: Get asset details
+      description: Get details of a single asset by public ID
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: public_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: colors
+          in: query
+          schema:
+            type: boolean
+        - name: derived
+          in: query
+          schema:
+            type: boolean
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Resource details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceResponse"
+
+    post:
+      operationId: updateResource
+      summary: Update asset attributes
+      description: Update tags, context, metadata and other attributes
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: public_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRequest"
+      responses:
+        "200":
+          description: Resource updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceResponse"
+
+  /resources/{resource_type}/upload:
+    delete:
+      operationId: deleteResources
+      summary: Delete multiple assets
+      description: Delete assets by public IDs, prefix, or tag
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: public_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: prefix
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: keep_original
+          in: query
+          schema:
+            type: boolean
+        - name: invalidate
+          in: query
+          schema:
+            type: boolean
+        - name: next_cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deletion results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteResourcesResponse"
+
+  /resources/{resource_type}/upload/{public_id}/restore:
+    post:
+      operationId: restoreResource
+      summary: Restore deleted asset
+      description: Restore a previously deleted backed-up asset
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: public_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Asset restored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestoreResponse"
+
+  /transformations:
+    get:
+      operationId: listTransformations
+      summary: List transformations
+      description: Get all named transformations
+      parameters:
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+        - name: next_cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of transformations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransformationsResponse"
+
+  /transformations/{transformation}:
+    get:
+      operationId: getTransformation
+      summary: Get transformation details
+      description: Get details of a single named transformation
+      parameters:
+        - name: transformation
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transformation details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transformation"
+
+    delete:
+      operationId: deleteTransformation
+      summary: Delete transformation
+      description: Delete a named transformation
+      parameters:
+        - name: transformation
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transformation deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /upload_presets:
+    get:
+      operationId: listUploadPresets
+      summary: List upload presets
+      description: Get all upload presets
+      parameters:
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+        - name: next_cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of upload presets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadPresetsResponse"
+
+    post:
+      operationId: createUploadPreset
+      summary: Create upload preset
+      description: Create a new upload preset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadPresetRequest"
+      responses:
+        "200":
+          description: Upload preset created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadPreset"
+
+  /upload_presets/{name}:
+    get:
+      operationId: getUploadPreset
+      summary: Get upload preset
+      description: Get details of a specific upload preset
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Upload preset details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadPreset"
+
+    put:
+      operationId: updateUploadPreset
+      summary: Update upload preset
+      description: Update an existing upload preset
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadPresetRequest"
+      responses:
+        "200":
+          description: Upload preset updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadPreset"
+
+    delete:
+      operationId: deleteUploadPreset
+      summary: Delete upload preset
+      description: Delete an upload preset
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Upload preset deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /tags/{resource_type}:
+    get:
+      operationId: listTags
+      summary: List tags
+      description: Get all tags for a resource type
+      parameters:
+        - name: resource_type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+        - name: next_cursor
+          in: query
+          schema:
+            type: string
+        - name: prefix
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagsResponse"
+
+  /folders/{asset_folder}:
+    get:
+      operationId: listSubFolders
+      summary: List subfolders
+      description: Get subfolders in a specified folder
+      parameters:
+        - name: asset_folder
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of folders
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FoldersResponse"
+
+    delete:
+      operationId: deleteFolder
+      summary: Delete folder
+      description: Delete a folder and all its assets
+      parameters:
+        - name: asset_folder
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Folder deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: array
+                    items:
+                      type: string
+
+  /resources/search:
+    post:
+      operationId: search
+      summary: Search assets
+      description: Search for assets using query expressions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchRequest"
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+
+  /metadata_fields:
+    get:
+      operationId: listMetadataFields
+      summary: List metadata fields
+      description: Get all structured metadata field definitions
+      responses:
+        "200":
+          description: List of metadata fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataFieldsResponse"
+
+    post:
+      operationId: createMetadataField
+      summary: Create metadata field
+      description: Create a new structured metadata field
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MetadataField"
+      responses:
+        "200":
+          description: Metadata field created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataField"
+
+  /metadata_fields/{field_external_id}:
+    get:
+      operationId: getMetadataField
+      summary: Get metadata field
+      description: Get a specific metadata field definition
+      parameters:
+        - name: field_external_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Metadata field details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataField"
+
+    put:
+      operationId: updateMetadataField
+      summary: Update metadata field
+      description: Update a metadata field definition
+      parameters:
+        - name: field_external_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MetadataField"
+      responses:
+        "200":
+          description: Metadata field updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataField"
+
+    delete:
+      operationId: deleteMetadataField
+      summary: Delete metadata field
+      description: Delete a metadata field definition
+      parameters:
+        - name: field_external_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Metadata field deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
