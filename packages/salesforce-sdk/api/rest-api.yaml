@@ -1,0 +1,958 @@
+openapi: "3.0.0"
+info:
+  title: Salesforce REST API
+  version: "65.0"
+  description: Salesforce REST API for CRUD operations, queries, searches, and composite operations
+
+servers:
+  - url: https://{instance}.my.salesforce.com/services/data/v65.0
+    variables:
+      instance:
+        default: MyDomainName
+        description: Your Salesforce instance domain
+
+paths:
+  # Root endpoint - remove this as it's redundant with the server URL
+
+  # Resources for this version
+  /:
+    get:
+      operationId: getResources
+      summary: Get available resources
+      description: Lists available resources for the specified API version
+      responses:
+        "200":
+          description: Available resources
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resources"
+
+  # Limits
+  /limits:
+    get:
+      operationId: getLimits
+      summary: Get organization limits
+      description: Lists information about limits in your org
+      responses:
+        "200":
+          description: Organization limits
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Limits"
+
+  # Describe Global
+  /sobjects:
+    get:
+      operationId: describeGlobal
+      summary: List all available objects
+      description: Lists the available objects and their metadata for your organization's data
+      responses:
+        "200":
+          description: List of sObjects
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlobalDescribe"
+
+  # Describe sObject
+  /sobjects/{sobjectType}/describe:
+    get:
+      operationId: describeSObject
+      summary: Describe an sObject
+      description: Completely describes the individual metadata at all levels for the specified object
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: sObject metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SObjectDescribe"
+
+  # Get sObject by ID
+  /sobjects/{sobjectType}/{id}:
+    get:
+      operationId: getSObject
+      summary: Get sObject by ID
+      description: Retrieves individual records for an object
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated list of fields to retrieve
+      responses:
+        "200":
+          description: sObject record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SObjectRecord"
+
+    # Update sObject
+    patch:
+      operationId: updateSObject
+      summary: Update sObject
+      description: Updates an existing record
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "204":
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    # Delete sObject
+    delete:
+      operationId: deleteSObject
+      summary: Delete sObject
+      description: Deletes an existing record
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # Create sObject
+  /sobjects/{sobjectType}:
+    post:
+      operationId: createSObject
+      summary: Create sObject
+      description: Creates a new record
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "201":
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+
+  # Get sObject by External ID
+  /sobjects/{sobjectType}/{fieldName}/{fieldValue}:
+    get:
+      operationId: getSObjectByExternalId
+      summary: Get sObject by external ID
+      description: Retrieves a record using an external ID field
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fieldName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fieldValue
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: sObject record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SObjectRecord"
+
+    # Upsert sObject
+    patch:
+      operationId: upsertSObject
+      summary: Upsert sObject by external ID
+      description: Creates or updates a record using an external ID
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fieldName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fieldValue
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "200":
+          description: Updated existing record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpsertResponse"
+        "201":
+          description: Created new record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+
+  # Query
+  /query:
+    get:
+      operationId: query
+      summary: Execute SOQL query
+      description: Executes the specified SOQL query
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: SOQL query string
+      responses:
+        "200":
+          description: Query results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryResult"
+
+  # Query More
+  /query/{queryLocator}:
+    get:
+      operationId: queryMore
+      summary: Get next batch of query results
+      description: Retrieves the next batch of results from a query
+      parameters:
+        - name: queryLocator
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Query results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryResult"
+
+  # Query All (including deleted)
+  /queryAll:
+    get:
+      operationId: queryAll
+      summary: Execute SOQL query including deleted and archived records
+      description: Executes a query including deleted and archived records
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Query results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryResult"
+
+  # Search (SOSL)
+  /search:
+    get:
+      operationId: search
+      summary: Execute SOSL search
+      description: Executes the specified SOSL search
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: SOSL search string
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResult"
+
+  # Composite
+  /composite:
+    post:
+      operationId: composite
+      summary: Execute composite request
+      description: Executes multiple requests in a single call
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompositeRequest"
+      responses:
+        "200":
+          description: Composite results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompositeResponse"
+
+  # Composite Batch
+  /composite/batch:
+    post:
+      operationId: compositeBatch
+      summary: Execute batch request
+      description: Executes up to 25 subrequests in a single request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompositeBatchRequest"
+      responses:
+        "200":
+          description: Batch results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompositeBatchResponse"
+
+  # Composite Graph
+  /composite/graph:
+    post:
+      operationId: compositeGraph
+      summary: Execute graph request
+      description: Executes composite graph request with complex dependencies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompositeGraphRequest"
+      responses:
+        "200":
+          description: Graph results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompositeGraphResponse"
+
+  # sObject Collections - All operations on same path
+  /composite/sobjects:
+    post:
+      operationId: createSObjectCollection
+      summary: Create multiple records
+      description: Creates up to 200 records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SObjectCollectionCreateRequest"
+      responses:
+        "200":
+          description: Create results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SaveResult"
+
+    patch:
+      operationId: updateSObjectCollection
+      summary: Update multiple records
+      description: Updates up to 200 records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SObjectCollectionUpdateRequest"
+      responses:
+        "200":
+          description: Update results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SaveResult"
+
+    delete:
+      operationId: deleteSObjectCollection
+      summary: Delete multiple records
+      description: Deletes up to 200 records
+      parameters:
+        - name: ids
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Comma-separated list of record IDs
+        - name: allOrNone
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Delete results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DeleteResult"
+
+  # sObject Collections - Get by IDs (separate endpoint)
+  /composite/sobjects/retrieve:
+    post:
+      operationId: getSObjectCollection
+      summary: Get multiple records by ID
+      description: Retrieves one or more records of the same object type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SObjectCollectionRequest"
+      responses:
+        "200":
+          description: Collection of records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SObjectRecord"
+
+  # sObject Collections - Upsert
+  /composite/sobjects/{sobjectType}/{externalIdField}:
+    patch:
+      operationId: upsertSObjectCollection
+      summary: Upsert multiple records
+      description: Creates or updates up to 200 records based on external ID
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: externalIdField
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SObjectCollectionUpsertRequest"
+      responses:
+        "200":
+          description: Upsert results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UpsertResult"
+
+  # Composite Tree
+  /composite/tree/{sobjectType}:
+    post:
+      operationId: compositeTree
+      summary: Create record tree
+      description: Creates up to 200 records with parent-child relationships
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompositeTreeRequest"
+      responses:
+        "200":
+          description: Tree creation results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompositeTreeResponse"
+
+  # Recent Items
+  /recent:
+    get:
+      operationId: getRecentItems
+      summary: Get recently viewed items
+      description: Gets the most recently accessed items for the user
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Recent items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecentItem"
+
+  # Parameterized Search
+  /parameterizedSearch:
+    get:
+      operationId: parameterizedSearch
+      summary: Execute parameterized search
+      description: Executes a search with parameters
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: sobject
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ParameterizedSearchResult"
+
+components:
+  schemas:
+    Version:
+      type: object
+      properties:
+        label:
+          type: string
+        url:
+          type: string
+        version:
+          type: string
+
+    Resources:
+      type: object
+      additionalProperties:
+        type: string
+
+    Limits:
+      type: object
+      additionalProperties: true
+
+    GlobalDescribe:
+      type: object
+      properties:
+        encoding:
+          type: string
+        maxBatchSize:
+          type: integer
+        sobjects:
+          type: array
+          items:
+            $ref: "#/components/schemas/SObjectBasicInfo"
+
+    SObjectBasicInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        custom:
+          type: boolean
+        keyPrefix:
+          type: string
+        updateable:
+          type: boolean
+        createable:
+          type: boolean
+        deletable:
+          type: boolean
+        queryable:
+          type: boolean
+
+    SObjectDescribe:
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+        recordTypeInfos:
+          type: array
+          items:
+            type: object
+        childRelationships:
+          type: array
+          items:
+            type: object
+
+    Field:
+      type: object
+      properties:
+        name:
+          type: string
+        label:
+          type: string
+        type:
+          type: string
+        length:
+          type: integer
+        updateable:
+          type: boolean
+        createable:
+          type: boolean
+        required:
+          type: boolean
+
+    SObjectRecord:
+      type: object
+      properties:
+        Id:
+          type: string
+        attributes:
+          type: object
+          properties:
+            type:
+              type: string
+            url:
+              type: string
+      additionalProperties: true
+
+    CreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+
+    UpsertResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        success:
+          type: boolean
+        created:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+    QueryResult:
+      type: object
+      properties:
+        totalSize:
+          type: integer
+        done:
+          type: boolean
+        nextRecordsUrl:
+          type: string
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/SObjectRecord"
+
+    SearchResult:
+      type: object
+      properties:
+        searchRecords:
+          type: array
+          items:
+            $ref: "#/components/schemas/SObjectRecord"
+
+    CompositeRequest:
+      type: object
+      required:
+        - allOrNone
+        - compositeRequest
+      properties:
+        allOrNone:
+          type: boolean
+        compositeRequest:
+          type: array
+          items:
+            type: object
+
+    CompositeResponse:
+      type: object
+      properties:
+        compositeResponse:
+          type: array
+          items:
+            type: object
+
+    CompositeBatchRequest:
+      type: object
+      required:
+        - batchRequests
+      properties:
+        haltOnError:
+          type: boolean
+        batchRequests:
+          type: array
+          items:
+            type: object
+
+    CompositeBatchResponse:
+      type: object
+      properties:
+        hasErrors:
+          type: boolean
+        results:
+          type: array
+          items:
+            type: object
+
+    CompositeGraphRequest:
+      type: object
+      required:
+        - graphs
+      properties:
+        graphs:
+          type: array
+          items:
+            type: object
+
+    CompositeGraphResponse:
+      type: object
+      properties:
+        graphs:
+          type: array
+          items:
+            type: object
+
+    SObjectCollectionRequest:
+      type: object
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        fields:
+          type: array
+          items:
+            type: string
+
+    SObjectCollectionCreateRequest:
+      type: object
+      required:
+        - records
+      properties:
+        allOrNone:
+          type: boolean
+        records:
+          type: array
+          items:
+            type: object
+
+    SObjectCollectionUpdateRequest:
+      type: object
+      required:
+        - records
+      properties:
+        allOrNone:
+          type: boolean
+        records:
+          type: array
+          items:
+            type: object
+
+    SObjectCollectionUpsertRequest:
+      type: object
+      required:
+        - records
+      properties:
+        allOrNone:
+          type: boolean
+        records:
+          type: array
+          items:
+            type: object
+
+    SaveResult:
+      type: object
+      properties:
+        id:
+          type: string
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+
+    UpsertResult:
+      type: object
+      properties:
+        id:
+          type: string
+        success:
+          type: boolean
+        created:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+
+    DeleteResult:
+      type: object
+      properties:
+        id:
+          type: string
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+
+    CompositeTreeRequest:
+      type: object
+      required:
+        - records
+      properties:
+        records:
+          type: array
+          items:
+            type: object
+
+    CompositeTreeResponse:
+      type: object
+      properties:
+        hasErrors:
+          type: boolean
+        results:
+          type: array
+          items:
+            type: object
+
+    RecentItem:
+      type: object
+      properties:
+        Id:
+          type: string
+        Name:
+          type: string
+        attributes:
+          type: object
+
+    ParameterizedSearchResult:
+      type: object
+      properties:
+        searchRecords:
+          type: array
+          items:
+            $ref: "#/components/schemas/SObjectRecord"
+        metadata:
+          type: object

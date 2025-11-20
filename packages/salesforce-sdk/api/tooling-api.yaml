@@ -1,0 +1,318 @@
+openapi: "3.0.0"
+info:
+  title: Salesforce Tooling API
+  version: "65.0"
+  description: Salesforce Tooling API for building custom development tools
+
+servers:
+  - url: https://{instance}.my.salesforce.com/services/data/v65.0/tooling
+    variables:
+      instance:
+        default: MyDomainName
+        description: Your Salesforce instance domain
+
+paths:
+  # Query
+  /query:
+    get:
+      operationId: toolingQuery
+      summary: Execute Tooling API query
+      description: Executes a SOQL query against Tooling API objects
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Query results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryResult"
+
+  # sObject operations
+  /sobjects/{sobjectType}/{id}:
+    get:
+      operationId: getToolingSObject
+      summary: Get Tooling sObject by ID
+      description: Retrieves a Tooling API object
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tooling sObject record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolingSObjectRecord"
+
+    patch:
+      operationId: updateToolingSObject
+      summary: Update Tooling sObject
+      description: Updates a Tooling API object
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "204":
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      operationId: deleteToolingSObject
+      summary: Delete Tooling sObject
+      description: Deletes a Tooling API object
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /sobjects/{sobjectType}:
+    post:
+      operationId: createToolingSObject
+      summary: Create Tooling sObject
+      description: Creates a new Tooling API object
+      parameters:
+        - name: sobjectType
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "201":
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+
+  # Execute Anonymous
+  /executeAnonymous:
+    get:
+      operationId: executeAnonymous
+      summary: Execute Anonymous Apex
+      description: Executes anonymous Apex code
+      parameters:
+        - name: anonymousBody
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Execution result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecuteAnonymousResult"
+
+  # Run Tests
+  /runTestsAsynchronous:
+    post:
+      operationId: runTestsAsynchronous
+      summary: Run Apex tests asynchronously
+      description: Runs Apex tests asynchronously
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunTestsRequest"
+      responses:
+        "200":
+          description: Test run ID
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /runTestsSynchronous:
+    post:
+      operationId: runTestsSynchronous
+      summary: Run Apex tests synchronously
+      description: Runs Apex tests synchronously
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunTestsRequest"
+      responses:
+        "200":
+          description: Test results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunTestsResult"
+
+  # Completions
+  /completions:
+    get:
+      operationId: getCompletions
+      summary: Get code completions
+      description: Returns a list of Apex symbols for auto-completion
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [apex]
+      responses:
+        "200":
+          description: Completions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletionsResult"
+
+components:
+  schemas:
+    QueryResult:
+      type: object
+      properties:
+        totalSize:
+          type: integer
+        done:
+          type: boolean
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToolingSObjectRecord"
+
+    ToolingSObjectRecord:
+      type: object
+      properties:
+        Id:
+          type: string
+        attributes:
+          type: object
+      additionalProperties: true
+
+    CreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+    ExecuteAnonymousResult:
+      type: object
+      properties:
+        compiled:
+          type: boolean
+        success:
+          type: boolean
+        line:
+          type: integer
+        column:
+          type: integer
+        compileProblem:
+          type: string
+        exceptionMessage:
+          type: string
+        exceptionStackTrace:
+          type: string
+
+    RunTestsRequest:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            type: object
+            properties:
+              classId:
+                type: string
+              testMethods:
+                type: array
+                items:
+                  type: string
+
+    RunTestsResult:
+      type: object
+      properties:
+        numFailures:
+          type: integer
+        numTestsRun:
+          type: integer
+        successes:
+          type: array
+          items:
+            type: object
+        failures:
+          type: array
+          items:
+            type: object
+        codeCoverage:
+          type: array
+          items:
+            type: object
+
+    CompletionsResult:
+      type: object
+      properties:
+        publicDeclarations:
+          type: object
+          additionalProperties: true

@@ -1,0 +1,529 @@
+openapi: "3.0.0"
+info:
+  title: Salesforce Bulk API 2.0
+  version: "65.0"
+  description: Salesforce Bulk API 2.0 for asynchronous processing of large data sets
+
+servers:
+  - url: https://{instance}.my.salesforce.com/services/data/v65.0
+    variables:
+      instance:
+        default: MyDomainName
+        description: Your Salesforce instance domain
+
+paths:
+  # Ingest Jobs
+  /jobs/ingest:
+    post:
+      operationId: createIngestJob
+      summary: Create an ingest job
+      description: Creates a job to insert, update, upsert, or delete records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateIngestJobRequest"
+      responses:
+        "200":
+          description: Job created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngestJob"
+
+    get:
+      operationId: getAllIngestJobs
+      summary: Get all ingest jobs
+      description: Retrieves detailed information about all ingest jobs in the org
+      parameters:
+        - name: isPkChunkingEnabled
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: jobType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [BigObjectIngest, Classic, V2Ingest]
+        - name: queryLocator
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of ingest jobs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngestJobList"
+
+  /jobs/ingest/{jobId}:
+    get:
+      operationId: getIngestJob
+      summary: Get ingest job details
+      description: Retrieves detailed information about an ingest job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngestJob"
+
+    patch:
+      operationId: updateIngestJobState
+      summary: Update ingest job state
+      description: Changes the state of an ingest job (e.g., to UploadComplete or Aborted)
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateIngestJobStateRequest"
+      responses:
+        "200":
+          description: Job state updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngestJob"
+
+    delete:
+      operationId: deleteIngestJob
+      summary: Delete an ingest job
+      description: Deletes an ingest job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Job deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /jobs/ingest/{jobId}/batches:
+    put:
+      operationId: uploadJobData
+      summary: Upload job data
+      description: Uploads CSV data for an ingest job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          text/csv:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: Data uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /jobs/ingest/{jobId}/successfulResults:
+    get:
+      operationId: getSuccessfulResults
+      summary: Get successful results
+      description: Retrieves successful records from a completed ingest job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful results (CSV)
+          content:
+            text/csv:
+              schema:
+                type: string
+
+  /jobs/ingest/{jobId}/failedResults:
+    get:
+      operationId: getFailedResults
+      summary: Get failed results
+      description: Retrieves failed records from a completed ingest job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Failed results (CSV)
+          content:
+            text/csv:
+              schema:
+                type: string
+
+  /jobs/ingest/{jobId}/unprocessedrecords:
+    get:
+      operationId: getUnprocessedRecords
+      summary: Get unprocessed records
+      description: Retrieves unprocessed records from a failed ingest job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Unprocessed records (CSV)
+          content:
+            text/csv:
+              schema:
+                type: string
+
+  # Query Jobs
+  /jobs/query:
+    post:
+      operationId: createQueryJob
+      summary: Create a query job
+      description: Creates a job to query records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQueryJobRequest"
+      responses:
+        "200":
+          description: Query job created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryJob"
+
+    get:
+      operationId: getAllQueryJobs
+      summary: Get all query jobs
+      description: Retrieves information about all query jobs in the org
+      parameters:
+        - name: isPkChunkingEnabled
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: jobType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: queryLocator
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of query jobs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryJobList"
+
+  /jobs/query/{jobId}:
+    get:
+      operationId: getQueryJob
+      summary: Get query job details
+      description: Retrieves detailed information about a query job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Query job details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryJob"
+
+    patch:
+      operationId: abortQueryJob
+      summary: Abort a query job
+      description: Aborts a query job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AbortJobRequest"
+      responses:
+        "200":
+          description: Job aborted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryJob"
+
+    delete:
+      operationId: deleteQueryJob
+      summary: Delete a query job
+      description: Deletes a query job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Job deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /jobs/query/{jobId}/results:
+    get:
+      operationId: getQueryResults
+      summary: Get query results
+      description: Retrieves query results from a completed query job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: locator
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Locator for paginated results
+        - name: maxRecords
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Maximum number of records to return
+      responses:
+        "200":
+          description: Query results (CSV)
+          content:
+            text/csv:
+              schema:
+                type: string
+
+components:
+  schemas:
+    CreateIngestJobRequest:
+      type: object
+      required:
+        - object
+        - operation
+      properties:
+        object:
+          type: string
+          description: The sObject type for the job
+        operation:
+          type: string
+          enum: [insert, update, upsert, delete, hardDelete]
+          description: The processing operation for the job
+        externalIdFieldName:
+          type: string
+          description: The external ID field for upsert operations
+        contentType:
+          type: string
+          enum: [CSV]
+          default: CSV
+        lineEnding:
+          type: string
+          enum: [LF, CRLF]
+          description: Line ending used in the CSV data
+        columnDelimiter:
+          type: string
+          enum: [BACKQUOTE, CARET, COMMA, PIPE, SEMICOLON, TAB]
+          default: COMMA
+        assignmentRuleId:
+          type: string
+          description: Assignment rule ID for lead/case assignment
+
+    IngestJob:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        operation:
+          type: string
+        state:
+          type: string
+          enum: [Open, UploadComplete, InProgress, Aborted, JobComplete, Failed]
+        createdDate:
+          type: string
+          format: date-time
+        systemModstamp:
+          type: string
+          format: date-time
+        createdById:
+          type: string
+        numberRecordsProcessed:
+          type: integer
+        numberRecordsFailed:
+          type: integer
+        retries:
+          type: integer
+        totalProcessingTime:
+          type: integer
+        apiVersion:
+          type: number
+        contentType:
+          type: string
+        lineEnding:
+          type: string
+        columnDelimiter:
+          type: string
+        externalIdFieldName:
+          type: string
+
+    IngestJobList:
+      type: object
+      properties:
+        done:
+          type: boolean
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/IngestJob"
+        nextRecordsUrl:
+          type: string
+
+    UpdateIngestJobStateRequest:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          type: string
+          enum: [UploadComplete, Aborted]
+
+    CreateQueryJobRequest:
+      type: object
+      required:
+        - operation
+        - query
+      properties:
+        operation:
+          type: string
+          enum: [query, queryAll]
+          description: The type of query operation
+        query:
+          type: string
+          description: SOQL query for the job
+        contentType:
+          type: string
+          enum: [CSV]
+          default: CSV
+        columnDelimiter:
+          type: string
+          enum: [BACKQUOTE, CARET, COMMA, PIPE, SEMICOLON, TAB]
+          default: COMMA
+        lineEnding:
+          type: string
+          enum: [LF, CRLF]
+
+    QueryJob:
+      type: object
+      properties:
+        id:
+          type: string
+        operation:
+          type: string
+        object:
+          type: string
+        createdById:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        systemModstamp:
+          type: string
+          format: date-time
+        state:
+          type: string
+          enum: [UploadComplete, InProgress, Aborted, JobComplete, Failed]
+        query:
+          type: string
+        numberRecordsProcessed:
+          type: integer
+        retries:
+          type: integer
+        totalProcessingTime:
+          type: integer
+        apiVersion:
+          type: number
+        contentType:
+          type: string
+        columnDelimiter:
+          type: string
+        lineEnding:
+          type: string
+
+    QueryJobList:
+      type: object
+      properties:
+        done:
+          type: boolean
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueryJob"
+        nextRecordsUrl:
+          type: string
+
+    AbortJobRequest:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          type: string
+          enum: [Aborted]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
