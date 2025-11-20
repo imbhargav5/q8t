@@ -1,0 +1,305 @@
+openapi: 3.0.0
+info:
+  title: Airtable Webhooks API
+  version: 1.0.0
+  description: Airtable Webhooks API for real-time base change notifications
+
+servers:
+  - url: https://api.airtable.com/v0
+    description: Airtable API v0
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Personal Access Token (PAT) or OAuth token with webhook:manage scope
+
+  schemas:
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+        macSecretBase64:
+          type: string
+          description: Secret for verifying webhook payloads
+        expirationTime:
+          type: string
+          format: date-time
+        areNotificationsEnabled:
+          type: boolean
+        cursorForNextPayload:
+          type: integer
+        lastSuccessfulNotificationTime:
+          type: string
+          format: date-time
+        lastNotificationResult:
+          type: object
+          properties:
+            success:
+              type: boolean
+            completionTimestamp:
+              type: string
+              format: date-time
+            durationMs:
+              type: number
+            errorMessage:
+              type: string
+        specification:
+          $ref: '#/components/schemas/WebhookSpecification'
+
+    WebhookSpecification:
+      type: object
+      properties:
+        options:
+          type: object
+          properties:
+            filters:
+              type: object
+              properties:
+                dataTypes:
+                  type: array
+                  items:
+                    type: string
+                    enum: [tableData, tableFields, tableMetadata]
+                recordChangeScope:
+                  type: string
+                watchDataInFieldIds:
+                  type: array
+                  items:
+                    type: string
+                fromSources:
+                  type: array
+                  items:
+                    type: string
+                    enum: [client, publicApi, formSubmission, automation, system, sync, anonymousUser]
+
+    CreateWebhookRequest:
+      type: object
+      properties:
+        notificationUrl:
+          type: string
+          format: uri
+        specification:
+          $ref: '#/components/schemas/WebhookSpecification'
+      required:
+        - notificationUrl
+
+    WebhookList:
+      type: object
+      properties:
+        webhooks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webhook'
+
+    WebhookPayload:
+      type: object
+      properties:
+        base:
+          type: object
+          properties:
+            id:
+              type: string
+        webhook:
+          type: object
+          properties:
+            id:
+              type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    WebhookPayloadList:
+      type: object
+      properties:
+        cursor:
+          type: integer
+        mightHaveMore:
+          type: boolean
+        payloads:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookPayload'
+
+    EnableNotificationsRequest:
+      type: object
+      properties:
+        enable:
+          type: boolean
+      required:
+        - enable
+
+paths:
+  /bases/{baseId}/webhooks:
+    get:
+      summary: List webhooks
+      operationId: listWebhooks
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of webhooks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookList'
+
+    post:
+      summary: Create webhook
+      operationId: createWebhook
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebhookRequest'
+      responses:
+        '200':
+          description: Created webhook
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+
+  /bases/{baseId}/webhooks/{webhookId}:
+    get:
+      summary: Get webhook
+      operationId: getWebhook
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Webhook details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+
+    delete:
+      summary: Delete webhook
+      operationId: deleteWebhook
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Webhook deleted
+
+  /bases/{baseId}/webhooks/{webhookId}/enableNotifications:
+    post:
+      summary: Enable or disable webhook notifications
+      operationId: enableWebhookNotifications
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnableNotificationsRequest'
+      responses:
+        '200':
+          description: Updated webhook
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+
+  /bases/{baseId}/webhooks/{webhookId}/payloads:
+    get:
+      summary: List webhook payloads
+      operationId: listWebhookPayloads
+      description: Retrieve webhook payloads for testing and debugging
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          schema:
+            type: integer
+          description: Pagination cursor
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+      responses:
+        '200':
+          description: List of webhook payloads
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookPayloadList'
+
+  /bases/{baseId}/webhooks/{webhookId}/refresh:
+    post:
+      summary: Refresh webhook expiration
+      operationId: refreshWebhook
+      description: Extend webhook expiration time
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Refreshed webhook
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'

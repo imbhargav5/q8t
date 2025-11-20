@@ -1,0 +1,4293 @@
+openapi: "3.0.0"
+info:
+  title: Mastodon API
+  version: "4.3"
+  description: Comprehensive Mastodon API SDK covering all endpoints with OAuth 2.0 PKCE authentication
+
+servers:
+  - url: https://{instanceUrl}/api
+    variables:
+      instanceUrl:
+        default: mastodon.social
+        description: Mastodon instance domain (e.g., mastodon.social, mas.to, mastodon.online)
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: OAuth2
+
+  schemas:
+    # Core Account Schema
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The account ID
+        username:
+          type: string
+          description: The username of the account, not including domain
+        acct:
+          type: string
+          description: The Webfinger account URI (username@domain)
+        display_name:
+          type: string
+          description: The account's display name
+        locked:
+          type: boolean
+          description: Whether the account manually approves follow requests
+        bot:
+          type: boolean
+          description: Whether the account is a bot
+        discoverable:
+          type: boolean
+          description: Whether the account is discoverable
+        group:
+          type: boolean
+          description: Whether the account is a group
+        created_at:
+          type: string
+          format: date-time
+        note:
+          type: string
+          description: Bio/description of the account (HTML)
+        url:
+          type: string
+          description: The profile URL
+        avatar:
+          type: string
+          description: Avatar image URL
+        avatar_static:
+          type: string
+          description: Static avatar image URL
+        header:
+          type: string
+          description: Header image URL
+        header_static:
+          type: string
+          description: Static header image URL
+        followers_count:
+          type: integer
+        following_count:
+          type: integer
+        statuses_count:
+          type: integer
+        last_status_at:
+          type: string
+          format: date
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+
+    # Status Schema (Post)
+    Status:
+      type: object
+      properties:
+        id:
+          type: string
+        uri:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        account:
+          $ref: "#/components/schemas/Account"
+        content:
+          type: string
+          description: HTML content
+        visibility:
+          type: string
+          enum: [public, unlisted, private, direct]
+        sensitive:
+          type: boolean
+        spoiler_text:
+          type: string
+        media_attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaAttachment"
+        mentions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Mention"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        reblogs_count:
+          type: integer
+        favourites_count:
+          type: integer
+        replies_count:
+          type: integer
+        url:
+          type: string
+        in_reply_to_id:
+          type: string
+        in_reply_to_account_id:
+          type: string
+        reblog:
+          $ref: "#/components/schemas/Status"
+        poll:
+          $ref: "#/components/schemas/Poll"
+        card:
+          $ref: "#/components/schemas/PreviewCard"
+        language:
+          type: string
+        text:
+          type: string
+          description: Plain text source
+        edited_at:
+          type: string
+          format: date-time
+        favourited:
+          type: boolean
+        reblogged:
+          type: boolean
+        muted:
+          type: boolean
+        bookmarked:
+          type: boolean
+        pinned:
+          type: boolean
+
+    # Notification Schema
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - mention
+            - status
+            - reblog
+            - follow
+            - favourite
+            - poll
+            - update
+            - admin.sign_up
+            - admin.report
+        created_at:
+          type: string
+          format: date-time
+        account:
+          $ref: "#/components/schemas/Account"
+        status:
+          $ref: "#/components/schemas/Status"
+
+    # Media Attachment Schema
+    MediaAttachment:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [image, video, gifv, audio, unknown]
+        url:
+          type: string
+        preview_url:
+          type: string
+        remote_url:
+          type: string
+        text_url:
+          type: string
+        meta:
+          type: object
+        description:
+          type: string
+        blurhash:
+          type: string
+
+    # Poll Schema
+    Poll:
+      type: object
+      properties:
+        id:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+        expired:
+          type: boolean
+        multiple:
+          type: boolean
+        votes_count:
+          type: integer
+        voters_count:
+          type: integer
+        voted:
+          type: boolean
+        own_votes:
+          type: array
+          items:
+            type: integer
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/PollOption"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+
+    PollOption:
+      type: object
+      properties:
+        title:
+          type: string
+        votes_count:
+          type: integer
+
+    # Custom Emoji Schema
+    CustomEmoji:
+      type: object
+      properties:
+        shortcode:
+          type: string
+        url:
+          type: string
+        static_url:
+          type: string
+        visible_in_picker:
+          type: boolean
+        category:
+          type: string
+
+    # Field Schema (Profile Metadata)
+    Field:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        verified_at:
+          type: string
+          format: date-time
+
+    # Mention Schema
+    Mention:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        url:
+          type: string
+        acct:
+          type: string
+
+    # Tag Schema (Hashtag)
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/TagHistory"
+
+    TagHistory:
+      type: object
+      properties:
+        day:
+          type: string
+        uses:
+          type: string
+        accounts:
+          type: string
+
+    # Preview Card Schema
+    PreviewCard:
+      type: object
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [link, photo, video, rich]
+        author_name:
+          type: string
+        author_url:
+          type: string
+        provider_name:
+          type: string
+        provider_url:
+          type: string
+        html:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        image:
+          type: string
+        embed_url:
+          type: string
+        blurhash:
+          type: string
+
+    # Relationship Schema
+    Relationship:
+      type: object
+      properties:
+        id:
+          type: string
+        following:
+          type: boolean
+        showing_reblogs:
+          type: boolean
+        notifying:
+          type: boolean
+        followed_by:
+          type: boolean
+        blocking:
+          type: boolean
+        blocked_by:
+          type: boolean
+        muting:
+          type: boolean
+        muting_notifications:
+          type: boolean
+        requested:
+          type: boolean
+        domain_blocking:
+          type: boolean
+        endorsed:
+          type: boolean
+        note:
+          type: string
+
+    # List Schema
+    List:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        replies_policy:
+          type: string
+          enum: [followed, list, none]
+
+    # Conversation Schema
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+        unread:
+          type: boolean
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+        last_status:
+          $ref: "#/components/schemas/Status"
+
+    # Filter Schema (v2)
+    Filter:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        context:
+          type: array
+          items:
+            type: string
+            enum: [home, notifications, public, thread, account]
+        expires_at:
+          type: string
+          format: date-time
+        filter_action:
+          type: string
+          enum: [warn, hide]
+        keywords:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterKeyword"
+        statuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilterStatus"
+
+    FilterKeyword:
+      type: object
+      properties:
+        id:
+          type: string
+        keyword:
+          type: string
+        whole_word:
+          type: boolean
+
+    FilterStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        status_id:
+          type: string
+
+    # Instance Schema
+    Instance:
+      type: object
+      properties:
+        uri:
+          type: string
+        title:
+          type: string
+        short_description:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        version:
+          type: string
+        languages:
+          type: array
+          items:
+            type: string
+        registrations:
+          type: boolean
+        approval_required:
+          type: boolean
+        invites_enabled:
+          type: boolean
+        urls:
+          type: object
+        stats:
+          type: object
+        thumbnail:
+          type: string
+        contact_account:
+          $ref: "#/components/schemas/Account"
+
+    # Marker Schema
+    Marker:
+      type: object
+      properties:
+        last_read_id:
+          type: string
+        version:
+          type: integer
+        updated_at:
+          type: string
+          format: date-time
+
+    # Search Results Schema
+    SearchResults:
+      type: object
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+        statuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Status"
+        hashtags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+
+    # Admin Schemas
+    AdminAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        domain:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        email:
+          type: string
+        ip:
+          type: string
+        role:
+          type: string
+        confirmed:
+          type: boolean
+        suspended:
+          type: boolean
+        silenced:
+          type: boolean
+        disabled:
+          type: boolean
+        approved:
+          type: boolean
+        account:
+          $ref: "#/components/schemas/Account"
+
+    AdminReport:
+      type: object
+      properties:
+        id:
+          type: string
+        action_taken:
+          type: boolean
+        comment:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        account:
+          $ref: "#/components/schemas/Account"
+        target_account:
+          $ref: "#/components/schemas/Account"
+        assigned_account:
+          $ref: "#/components/schemas/Account"
+        action_taken_by_account:
+          $ref: "#/components/schemas/Account"
+        statuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Status"
+
+    # Scheduled Status Schema
+    ScheduledStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        scheduled_at:
+          type: string
+          format: date-time
+        params:
+          type: object
+        media_attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaAttachment"
+
+    # Featured Tag Schema
+    FeaturedTag:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        statuses_count:
+          type: integer
+        last_status_at:
+          type: string
+          format: date-time
+
+    # Preferences Schema
+    Preferences:
+      type: object
+      properties:
+        posting:default:visibility:
+          type: string
+        posting:default:sensitive:
+          type: boolean
+        posting:default:language:
+          type: string
+        reading:expand:media:
+          type: string
+        reading:expand:spoilers:
+          type: boolean
+
+    # Announcement Schema
+    Announcement:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        starts_at:
+          type: string
+          format: date-time
+        ends_at:
+          type: string
+          format: date-time
+        all_day:
+          type: boolean
+        published_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        read:
+          type: boolean
+        mentions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Mention"
+        statuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Status"
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        emojis:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomEmoji"
+        reactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reaction"
+
+    Reaction:
+      type: object
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+        me:
+          type: boolean
+        url:
+          type: string
+        static_url:
+          type: string
+
+paths:
+  # ============================================================
+  # ACCOUNTS API - Account Management and Social Interactions
+  # ============================================================
+
+  /v1/accounts/{id}:
+    get:
+      operationId: getAccount
+      summary: View account information
+      description: Get account information by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+
+  /v1/accounts/verify_credentials:
+    get:
+      operationId: verifyCredentials
+      summary: Verify account credentials
+      description: Get the authenticated user's account
+      responses:
+        "200":
+          description: Credentials verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+
+  /v1/accounts/update_credentials:
+    patch:
+      operationId: updateCredentials
+      summary: Update account credentials
+      description: Update the authenticated user's profile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                display_name:
+                  type: string
+                note:
+                  type: string
+                avatar:
+                  type: string
+                  format: binary
+                header:
+                  type: string
+                  format: binary
+                locked:
+                  type: boolean
+                bot:
+                  type: boolean
+                discoverable:
+                  type: boolean
+                fields_attributes:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        "200":
+          description: Account updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+
+  /v1/accounts/lookup:
+    get:
+      operationId: lookupAccount
+      summary: Lookup account by username
+      description: Find an account by username@domain
+      parameters:
+        - name: acct
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The username@domain to lookup
+      responses:
+        "200":
+          description: Account found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+
+  /v1/accounts/search:
+    get:
+      operationId: searchAccounts
+      summary: Search for accounts
+      description: Search for matching accounts by username or display name
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: resolve
+          in: query
+          schema:
+            type: boolean
+          description: Attempt WebFinger lookup
+        - name: following
+          in: query
+          schema:
+            type: boolean
+          description: Only accounts the user follows
+      responses:
+        "200":
+          description: Accounts found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/accounts/{id}/statuses:
+    get:
+      operationId: getAccountStatuses
+      summary: Get account statuses
+      description: Get statuses from an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: only_media
+          in: query
+          schema:
+            type: boolean
+        - name: exclude_replies
+          in: query
+          schema:
+            type: boolean
+        - name: exclude_reblogs
+          in: query
+          schema:
+            type: boolean
+        - name: pinned
+          in: query
+          schema:
+            type: boolean
+        - name: tagged
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Statuses retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /v1/accounts/{id}/followers:
+    get:
+      operationId: getAccountFollowers
+      summary: Get account followers
+      description: Get accounts following this account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: Followers retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/accounts/{id}/following:
+    get:
+      operationId: getAccountFollowing
+      summary: Get accounts followed
+      description: Get accounts this account is following
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: Following retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/accounts/{id}/follow:
+    post:
+      operationId: followAccount
+      summary: Follow an account
+      description: Follow an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reblogs:
+                  type: boolean
+                  description: Show reblogs from this account
+                notify:
+                  type: boolean
+                  description: Notify on new posts
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/unfollow:
+    post:
+      operationId: unfollowAccount
+      summary: Unfollow an account
+      description: Unfollow an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/block:
+    post:
+      operationId: blockAccount
+      summary: Block an account
+      description: Block an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/unblock:
+    post:
+      operationId: unblockAccount
+      summary: Unblock an account
+      description: Unblock an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/mute:
+    post:
+      operationId: muteAccount
+      summary: Mute an account
+      description: Mute an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notifications:
+                  type: boolean
+                  description: Mute notifications
+                duration:
+                  type: integer
+                  description: Duration in seconds (0 = indefinite)
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/unmute:
+    post:
+      operationId: unmuteAccount
+      summary: Unmute an account
+      description: Unmute an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/pin:
+    post:
+      operationId: pinAccount
+      summary: Feature account on profile
+      description: Add account to featured profiles (endorsements)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/unpin:
+    post:
+      operationId: unpinAccount
+      summary: Unfeature account
+      description: Remove account from featured profiles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/note:
+    post:
+      operationId: setAccountNote
+      summary: Set private note on account
+      description: Add a private note to an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/remove_from_followers:
+    post:
+      operationId: removeFollower
+      summary: Remove follower
+      description: Remove an account from your followers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/relationships:
+    get:
+      operationId: getAccountRelationships
+      summary: Check relationships with accounts
+      description: Get relationship information for multiple accounts
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+          description: Array of account IDs
+      responses:
+        "200":
+          description: Relationships retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Relationship"
+
+  /v1/accounts/{id}/lists:
+    get:
+      operationId: getAccountLists
+      summary: Get lists containing account
+      description: Get lists that contain this account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lists retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/List"
+
+  /v1/accounts/{id}/featured_tags:
+    get:
+      operationId: getAccountFeaturedTags
+      summary: Get account featured tags
+      description: Get featured tags for an account
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Featured tags retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FeaturedTag"
+
+  /v1/bookmarks:
+    get:
+      operationId: getBookmarks
+      summary: Get bookmarked statuses
+      description: Get statuses bookmarked by the authenticated user
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Bookmarks retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /v1/favourites:
+    get:
+      operationId: getFavourites
+      summary: Get favourited statuses
+      description: Get statuses favourited by the authenticated user
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Favourites retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /v1/blocks:
+    get:
+      operationId: getBlocks
+      summary: Get blocked accounts
+      description: Get accounts blocked by the authenticated user
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: Blocks retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/mutes:
+    get:
+      operationId: getMutes
+      summary: Get muted accounts
+      description: Get accounts muted by the authenticated user
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: Mutes retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/follow_requests:
+    get:
+      operationId: getFollowRequests
+      summary: Get pending follow requests
+      description: Get accounts that have requested to follow the authenticated user
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: Follow requests retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/follow_requests/{id}/authorize:
+    post:
+      operationId: authorizeFollowRequest
+      summary: Accept follow request
+      description: Accept a follow request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Follow request accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/follow_requests/{id}/reject:
+    post:
+      operationId: rejectFollowRequest
+      summary: Reject follow request
+      description: Reject a follow request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Follow request rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+
+  /v1/endorsements:
+    get:
+      operationId: getEndorsements
+      summary: Get featured accounts
+      description: Get accounts featured on the authenticated user's profile
+      responses:
+        "200":
+          description: Endorsements retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  # ============================================================
+  # STATUSES API - Posts and Interactions
+  # ============================================================
+
+  /v1/statuses:
+    post:
+      operationId: createStatus
+      summary: Create a status
+      description: Post a new status (toot)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: Text content
+                media_ids:
+                  type: array
+                  items:
+                    type: string
+                poll:
+                  type: object
+                  properties:
+                    options:
+                      type: array
+                      items:
+                        type: string
+                    expires_in:
+                      type: integer
+                    multiple:
+                      type: boolean
+                    hide_totals:
+                      type: boolean
+                in_reply_to_id:
+                  type: string
+                sensitive:
+                  type: boolean
+                spoiler_text:
+                  type: string
+                visibility:
+                  type: string
+                  enum: [public, unlisted, private, direct]
+                language:
+                  type: string
+                scheduled_at:
+                  type: string
+                  format: date-time
+      responses:
+        "200":
+          description: Status created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}:
+    get:
+      operationId: getStatus
+      summary: Get a status
+      description: Get a single status by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+    put:
+      operationId: updateStatus
+      summary: Edit a status
+      description: Edit an existing status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                media_ids:
+                  type: array
+                  items:
+                    type: string
+                sensitive:
+                  type: boolean
+                spoiler_text:
+                  type: string
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+    delete:
+      operationId: deleteStatus
+      summary: Delete a status
+      description: Delete one of your statuses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/context:
+    get:
+      operationId: getStatusContext
+      summary: Get status context
+      description: Get parent and child statuses in a thread
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Context retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ancestors:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Status"
+                  descendants:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/card:
+    get:
+      operationId: getStatusCard
+      summary: Get preview card
+      description: Get preview card for a status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Card retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PreviewCard"
+
+  /v1/statuses/{id}/history:
+    get:
+      operationId: getStatusHistory
+      summary: Get edit history
+      description: Get edit history for a status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: History retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/source:
+    get:
+      operationId: getStatusSource
+      summary: Get status source
+      description: Get the original source text for a status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Source retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  text:
+                    type: string
+                  spoiler_text:
+                    type: string
+
+  /v1/statuses/{id}/translate:
+    post:
+      operationId: translateStatus
+      summary: Translate status
+      description: Translate a status to another language
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lang:
+                  type: string
+      responses:
+        "200":
+          description: Translation retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: string
+                  detected_source_language:
+                    type: string
+                  provider:
+                    type: string
+
+  /v1/statuses/{id}/favourite:
+    post:
+      operationId: favouriteStatus
+      summary: Favourite a status
+      description: Add a status to your favourites
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status favourited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/unfavourite:
+    post:
+      operationId: unfavouriteStatus
+      summary: Unfavourite a status
+      description: Remove a status from your favourites
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status unfavourited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/reblog:
+    post:
+      operationId: reblogStatus
+      summary: Boost a status
+      description: Reshare a status to your followers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visibility:
+                  type: string
+                  enum: [public, unlisted, private]
+      responses:
+        "200":
+          description: Status reblogged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/unreblog:
+    post:
+      operationId: unreblogStatus
+      summary: Undo boost
+      description: Remove a reblog
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status unreblogged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/bookmark:
+    post:
+      operationId: bookmarkStatus
+      summary: Bookmark a status
+      description: Add a status to your bookmarks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status bookmarked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/unbookmark:
+    post:
+      operationId: unbookmarkStatus
+      summary: Remove bookmark
+      description: Remove a status from your bookmarks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status unbookmarked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/pin:
+    post:
+      operationId: pinStatus
+      summary: Pin status to profile
+      description: Pin a status to your profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status pinned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/unpin:
+    post:
+      operationId: unpinStatus
+      summary: Unpin status from profile
+      description: Remove a pinned status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status unpinned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/mute:
+    post:
+      operationId: muteStatus
+      summary: Mute conversation
+      description: Mute notifications for a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status muted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/unmute:
+    post:
+      operationId: unmuteStatus
+      summary: Unmute conversation
+      description: Unmute notifications for a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Status unmuted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  /v1/statuses/{id}/favourited_by:
+    get:
+      operationId: getStatusFavouritedBy
+      summary: Get who favourited
+      description: Get accounts that favourited a status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: Accounts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/statuses/{id}/reblogged_by:
+    get:
+      operationId: getStatusRebloggedBy
+      summary: Get who reblogged
+      description: Get accounts that reblogged a status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: Accounts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/scheduled_statuses:
+    get:
+      operationId: getScheduledStatuses
+      summary: Get scheduled statuses
+      description: Get statuses scheduled to be posted
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Scheduled statuses retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScheduledStatus"
+
+  /v1/scheduled_statuses/{id}:
+    get:
+      operationId: getScheduledStatus
+      summary: Get scheduled status
+      description: Get a single scheduled status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Scheduled status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScheduledStatus"
+
+    put:
+      operationId: updateScheduledStatus
+      summary: Update scheduled status
+      description: Update the scheduled time for a status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scheduled_at:
+                  type: string
+                  format: date-time
+      responses:
+        "200":
+          description: Scheduled status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScheduledStatus"
+
+    delete:
+      operationId: cancelScheduledStatus
+      summary: Cancel scheduled status
+      description: Cancel a scheduled status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Scheduled status cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # ============================================================
+  # TIMELINES API - View Posts in Various Timelines
+  # ============================================================
+
+  /v1/timelines/home:
+    get:
+      operationId: getHomeTimeline
+      summary: Get home timeline
+      description: Get statuses from followed accounts
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Timeline retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /v1/timelines/public:
+    get:
+      operationId: getPublicTimeline
+      summary: Get public timeline
+      description: Get public statuses
+      parameters:
+        - name: local
+          in: query
+          schema:
+            type: boolean
+          description: Only local statuses
+        - name: remote
+          in: query
+          schema:
+            type: boolean
+          description: Only remote statuses
+        - name: only_media
+          in: query
+          schema:
+            type: boolean
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Timeline retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /v1/timelines/tag/{hashtag}:
+    get:
+      operationId: getHashtagTimeline
+      summary: Get hashtag timeline
+      description: Get public statuses with a specific hashtag
+      parameters:
+        - name: hashtag
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: local
+          in: query
+          schema:
+            type: boolean
+        - name: only_media
+          in: query
+          schema:
+            type: boolean
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Timeline retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /v1/timelines/list/{list_id}:
+    get:
+      operationId: getListTimeline
+      summary: Get list timeline
+      description: Get statuses from a list
+      parameters:
+        - name: list_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Timeline retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  # ============================================================
+  # NOTIFICATIONS API - User Notifications
+  # ============================================================
+
+  /v1/notifications:
+    get:
+      operationId: getNotifications
+      summary: Get notifications
+      description: Get notifications for the authenticated user
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: types
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: Filter by notification types
+        - name: exclude_types
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: account_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notifications retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /v1/notifications/{id}:
+    get:
+      operationId: getNotification
+      summary: Get single notification
+      description: Get a single notification by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notification retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+    post:
+      operationId: dismissNotification
+      summary: Dismiss notification
+      description: Dismiss a single notification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notification dismissed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/notifications/clear:
+    post:
+      operationId: clearNotifications
+      summary: Clear all notifications
+      description: Clear all notifications for the authenticated user
+      responses:
+        "200":
+          description: Notifications cleared
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/notifications/unread_count:
+    get:
+      operationId: getUnreadNotificationsCount
+      summary: Get unread count
+      description: Get count of unread notifications
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: Max unread to count
+        - name: since_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Count retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+
+  # ============================================================
+  # SEARCH API - Search Across Instance
+  # ============================================================
+
+  /v2/search:
+    get:
+      operationId: search
+      summary: Search
+      description: Search for accounts, hashtags, and statuses
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [accounts, hashtags, statuses]
+          description: Filter by type
+        - name: resolve
+          in: query
+          schema:
+            type: boolean
+          description: Attempt WebFinger lookup
+        - name: following
+          in: query
+          schema:
+            type: boolean
+          description: Only accounts the user follows
+        - name: account_id
+          in: query
+          schema:
+            type: string
+          description: Filter statuses by author
+        - name: exclude_unreviewed
+          in: query
+          schema:
+            type: boolean
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResults"
+
+  # ============================================================
+  # MEDIA API - Upload and Manage Media
+  # ============================================================
+
+  /v2/media:
+    post:
+      operationId: uploadMedia
+      summary: Upload media
+      description: Upload media attachment (images, videos, audio)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Media file
+                description:
+                  type: string
+                  description: Alt text
+                focus:
+                  type: string
+                  description: Focal point (x,y coordinates)
+      responses:
+        "200":
+          description: Media uploaded (synchronous for images)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAttachment"
+        "202":
+          description: Media processing (async for video/audio)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAttachment"
+
+  /v1/media/{id}:
+    get:
+      operationId: getMedia
+      summary: Get media attachment
+      description: Get media attachment details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Media retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAttachment"
+
+    put:
+      operationId: updateMedia
+      summary: Update media attachment
+      description: Update media description or focus point
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                focus:
+                  type: string
+      responses:
+        "200":
+          description: Media updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAttachment"
+
+  # ============================================================
+  # POLLS API - Create and Vote on Polls
+  # ============================================================
+
+  /v1/polls/{id}:
+    get:
+      operationId: getPoll
+      summary: Get poll
+      description: Get a poll by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Poll retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poll"
+
+  /v1/polls/{id}/votes:
+    post:
+      operationId: votePoll
+      summary: Vote on poll
+      description: Vote on a poll
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - choices
+              properties:
+                choices:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of option indices
+      responses:
+        "200":
+          description: Vote recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poll"
+
+  # ============================================================
+  # LISTS API - Manage User Lists
+  # ============================================================
+
+  /v1/lists:
+    get:
+      operationId: getLists
+      summary: Get lists
+      description: Get all lists owned by the authenticated user
+      responses:
+        "200":
+          description: Lists retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/List"
+
+    post:
+      operationId: createList
+      summary: Create list
+      description: Create a new list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                replies_policy:
+                  type: string
+                  enum: [followed, list, none]
+      responses:
+        "200":
+          description: List created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+
+  /v1/lists/{id}:
+    get:
+      operationId: getList
+      summary: Get list
+      description: Get a single list by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+
+    put:
+      operationId: updateList
+      summary: Update list
+      description: Update a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                replies_policy:
+                  type: string
+                  enum: [followed, list, none]
+      responses:
+        "200":
+          description: List updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+
+    delete:
+      operationId: deleteList
+      summary: Delete list
+      description: Delete a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List deleted
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/lists/{id}/accounts:
+    get:
+      operationId: getListAccounts
+      summary: Get list members
+      description: Get accounts in a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: List members retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+    post:
+      operationId: addAccountsToList
+      summary: Add accounts to list
+      description: Add accounts to a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - account_ids
+              properties:
+                account_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: Accounts added
+          content:
+            application/json:
+              schema:
+                type: object
+
+    delete:
+      operationId: removeAccountsFromList
+      summary: Remove accounts from list
+      description: Remove accounts from a list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - account_ids
+              properties:
+                account_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: Accounts removed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # ============================================================
+  # CONVERSATIONS API - Direct Message Conversations
+  # ============================================================
+
+  /v1/conversations:
+    get:
+      operationId: getConversations
+      summary: Get conversations
+      description: Get direct message conversations
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: min_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Conversations retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+
+  /v1/conversations/{id}:
+    delete:
+      operationId: deleteConversation
+      summary: Delete conversation
+      description: Delete a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Conversation deleted
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/conversations/{id}/read:
+    post:
+      operationId: markConversationAsRead
+      summary: Mark conversation as read
+      description: Mark a conversation as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Conversation marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+
+  # ============================================================
+  # FILTERS API (v2) - Content Filtering
+  # ============================================================
+
+  /v2/filters:
+    get:
+      operationId: getFilters
+      summary: Get filters
+      description: Get all filters for the authenticated user
+      responses:
+        "200":
+          description: Filters retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Filter"
+
+    post:
+      operationId: createFilter
+      summary: Create filter
+      description: Create a new content filter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - context
+              properties:
+                title:
+                  type: string
+                context:
+                  type: array
+                  items:
+                    type: string
+                    enum: [home, notifications, public, thread, account]
+                filter_action:
+                  type: string
+                  enum: [warn, hide]
+                expires_in:
+                  type: integer
+                  description: Duration in seconds
+                keywords_attributes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      keyword:
+                        type: string
+                      whole_word:
+                        type: boolean
+      responses:
+        "200":
+          description: Filter created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+
+  /v2/filters/{id}:
+    get:
+      operationId: getFilter
+      summary: Get filter
+      description: Get a single filter by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Filter retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+
+    put:
+      operationId: updateFilter
+      summary: Update filter
+      description: Update a filter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                context:
+                  type: array
+                  items:
+                    type: string
+                filter_action:
+                  type: string
+                  enum: [warn, hide]
+                expires_in:
+                  type: integer
+      responses:
+        "200":
+          description: Filter updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+
+    delete:
+      operationId: deleteFilter
+      summary: Delete filter
+      description: Delete a filter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Filter deleted
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v2/filters/{filter_id}/keywords:
+    get:
+      operationId: getFilterKeywords
+      summary: Get filter keywords
+      description: Get keywords for a filter
+      parameters:
+        - name: filter_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Keywords retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FilterKeyword"
+
+    post:
+      operationId: addFilterKeyword
+      summary: Add filter keyword
+      description: Add a keyword to a filter
+      parameters:
+        - name: filter_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - keyword
+              properties:
+                keyword:
+                  type: string
+                whole_word:
+                  type: boolean
+      responses:
+        "200":
+          description: Keyword added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+  /v2/filters/keywords/{id}:
+    get:
+      operationId: getFilterKeyword
+      summary: Get filter keyword
+      description: Get a single filter keyword
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Keyword retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+    put:
+      operationId: updateFilterKeyword
+      summary: Update filter keyword
+      description: Update a filter keyword
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keyword:
+                  type: string
+                whole_word:
+                  type: boolean
+      responses:
+        "200":
+          description: Keyword updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterKeyword"
+
+    delete:
+      operationId: deleteFilterKeyword
+      summary: Delete filter keyword
+      description: Remove a keyword from a filter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Keyword deleted
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # ============================================================
+  # MARKERS API - Save Timeline Positions
+  # ============================================================
+
+  /v1/markers:
+    get:
+      operationId: getMarkers
+      summary: Get timeline markers
+      description: Get saved positions in timelines
+      parameters:
+        - name: timeline
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [home, notifications]
+          description: Timelines to get markers for
+      responses:
+        "200":
+          description: Markers retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  home:
+                    $ref: "#/components/schemas/Marker"
+                  notifications:
+                    $ref: "#/components/schemas/Marker"
+
+    post:
+      operationId: saveMarkers
+      summary: Save timeline markers
+      description: Save position in timelines
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                home:
+                  type: object
+                  properties:
+                    last_read_id:
+                      type: string
+                notifications:
+                  type: object
+                  properties:
+                    last_read_id:
+                      type: string
+      responses:
+        "200":
+          description: Markers saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  home:
+                    $ref: "#/components/schemas/Marker"
+                  notifications:
+                    $ref: "#/components/schemas/Marker"
+
+  # ============================================================
+  # INSTANCE API - Instance Information and Discovery
+  # ============================================================
+
+  /v1/instance:
+    get:
+      operationId: getInstance
+      summary: Get instance information
+      description: Get general information about the instance
+      responses:
+        "200":
+          description: Instance info retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instance"
+
+  /v1/instance/peers:
+    get:
+      operationId: getInstancePeers
+      summary: Get connected instances
+      description: Get list of connected instances
+      responses:
+        "200":
+          description: Peers retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /v1/instance/activity:
+    get:
+      operationId: getInstanceActivity
+      summary: Get instance activity
+      description: Get instance activity statistics
+      responses:
+        "200":
+          description: Activity retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /v1/instance/rules:
+    get:
+      operationId: getInstanceRules
+      summary: Get instance rules
+      description: Get instance rules
+      responses:
+        "200":
+          description: Rules retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    text:
+                      type: string
+
+  /v1/instance/domain_blocks:
+    get:
+      operationId: getInstanceDomainBlocks
+      summary: Get domain blocks
+      description: Get domains blocked by the instance (if public)
+      responses:
+        "200":
+          description: Domain blocks retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /v1/instance/extended_description:
+    get:
+      operationId: getInstanceExtendedDescription
+      summary: Get extended description
+      description: Get extended description of the instance
+      responses:
+        "200":
+          description: Description retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated_at:
+                    type: string
+                    format: date-time
+                  content:
+                    type: string
+
+  /v1/custom_emojis:
+    get:
+      operationId: getCustomEmojis
+      summary: Get custom emojis
+      description: Get custom emojis available on the instance
+      responses:
+        "200":
+          description: Emojis retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CustomEmoji"
+
+  /v1/directory:
+    get:
+      operationId: getDirectory
+      summary: Get profile directory
+      description: Get accounts listed in the profile directory
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [active, new]
+        - name: local
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Directory retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+
+  /v1/trends/tags:
+    get:
+      operationId: getTrendingTags
+      summary: Get trending hashtags
+      description: Get hashtags that are trending
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Trending tags retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+
+  /v1/trends/statuses:
+    get:
+      operationId: getTrendingStatuses
+      summary: Get trending statuses
+      description: Get statuses that are trending
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Trending statuses retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+
+  /v1/trends/links:
+    get:
+      operationId: getTrendingLinks
+      summary: Get trending links
+      description: Get links that are trending
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Trending links retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PreviewCard"
+
+  /v1/announcements:
+    get:
+      operationId: getAnnouncements
+      summary: Get announcements
+      description: Get server announcements
+      responses:
+        "200":
+          description: Announcements retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Announcement"
+
+  /v1/announcements/{id}/dismiss:
+    post:
+      operationId: dismissAnnouncement
+      summary: Dismiss announcement
+      description: Dismiss a server announcement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Announcement dismissed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/announcements/{id}/reactions/{name}:
+    put:
+      operationId: addAnnouncementReaction
+      summary: Add reaction to announcement
+      description: React to a server announcement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reaction added
+          content:
+            application/json:
+              schema:
+                type: object
+
+    delete:
+      operationId: removeAnnouncementReaction
+      summary: Remove reaction from announcement
+      description: Remove a reaction from an announcement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reaction removed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # ============================================================
+  # FEATURED TAGS API - Feature Hashtags on Profile
+  # ============================================================
+
+  /v1/featured_tags:
+    get:
+      operationId: getFeaturedTags
+      summary: Get featured tags
+      description: Get hashtags featured on the authenticated user's profile
+      responses:
+        "200":
+          description: Featured tags retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FeaturedTag"
+
+    post:
+      operationId: featureTag
+      summary: Feature a tag
+      description: Add a hashtag to featured tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+      responses:
+        "200":
+          description: Tag featured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeaturedTag"
+
+  /v1/featured_tags/{id}:
+    delete:
+      operationId: unfeatureTag
+      summary: Unfeature a tag
+      description: Remove a hashtag from featured tags
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tag unfeatured
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/featured_tags/suggestions:
+    get:
+      operationId: getFeaturedTagSuggestions
+      summary: Get tag suggestions
+      description: Get suggested hashtags to feature
+      responses:
+        "200":
+          description: Suggestions retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+
+  # ============================================================
+  # PREFERENCES API - User Preferences
+  # ============================================================
+
+  /v1/preferences:
+    get:
+      operationId: getPreferences
+      summary: Get user preferences
+      description: Get preferences for the authenticated user
+      responses:
+        "200":
+          description: Preferences retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Preferences"
+
+  # ============================================================
+  # SUGGESTIONS API - Account Suggestions
+  # ============================================================
+
+  /v2/suggestions:
+    get:
+      operationId: getSuggestions
+      summary: Get account suggestions
+      description: Get suggested accounts to follow
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+      responses:
+        "200":
+          description: Suggestions retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    source:
+                      type: string
+                    account:
+                      $ref: "#/components/schemas/Account"
+
+  /v1/suggestions/{account_id}:
+    delete:
+      operationId: dismissSuggestion
+      summary: Dismiss suggestion
+      description: Dismiss an account suggestion
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Suggestion dismissed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # ============================================================
+  # REPORTS API - Submit Moderation Reports
+  # ============================================================
+
+  /v1/reports:
+    post:
+      operationId: submitReport
+      summary: Submit a report
+      description: Report an account or status for moderation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - account_id
+              properties:
+                account_id:
+                  type: string
+                status_ids:
+                  type: array
+                  items:
+                    type: string
+                comment:
+                  type: string
+                forward:
+                  type: boolean
+                  description: Forward to remote instance
+                category:
+                  type: string
+                  enum: [spam, violation, other]
+                rule_ids:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        "200":
+          description: Report submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+
+  # ============================================================
+  # PUSH SUBSCRIPTIONS API - Web Push Notifications
+  # ============================================================
+
+  /v1/push/subscription:
+    get:
+      operationId: getPushSubscription
+      summary: Get push subscription
+      description: Get current Web Push subscription
+      responses:
+        "200":
+          description: Subscription retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+
+    post:
+      operationId: createPushSubscription
+      summary: Create push subscription
+      description: Subscribe to Web Push notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - subscription
+              properties:
+                subscription:
+                  type: object
+                  properties:
+                    endpoint:
+                      type: string
+                    keys:
+                      type: object
+                data:
+                  type: object
+                  properties:
+                    alerts:
+                      type: object
+      responses:
+        "200":
+          description: Subscription created
+          content:
+            application/json:
+              schema:
+                type: object
+
+    put:
+      operationId: updatePushSubscription
+      summary: Update push subscription
+      description: Update Web Push subscription settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    alerts:
+                      type: object
+      responses:
+        "200":
+          description: Subscription updated
+          content:
+            application/json:
+              schema:
+                type: object
+
+    delete:
+      operationId: deletePushSubscription
+      summary: Delete push subscription
+      description: Unsubscribe from Web Push notifications
+      responses:
+        "200":
+          description: Subscription deleted
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # ============================================================
+  # ADMIN ACCOUNTS API - Moderate Accounts (Admin Only)
+  # ============================================================
+
+  /v1/admin/accounts:
+    get:
+      operationId: adminGetAccounts
+      summary: Get accounts (admin)
+      description: Get list of accounts with moderation info
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: local
+          in: query
+          schema:
+            type: boolean
+        - name: remote
+          in: query
+          schema:
+            type: boolean
+        - name: active
+          in: query
+          schema:
+            type: boolean
+        - name: pending
+          in: query
+          schema:
+            type: boolean
+        - name: disabled
+          in: query
+          schema:
+            type: boolean
+        - name: silenced
+          in: query
+          schema:
+            type: boolean
+        - name: suspended
+          in: query
+          schema:
+            type: boolean
+        - name: username
+          in: query
+          schema:
+            type: string
+        - name: display_name
+          in: query
+          schema:
+            type: string
+        - name: by_domain
+          in: query
+          schema:
+            type: string
+        - name: email
+          in: query
+          schema:
+            type: string
+        - name: ip
+          in: query
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        "200":
+          description: Accounts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminAccount"
+
+  /v1/admin/accounts/{id}:
+    get:
+      operationId: adminGetAccount
+      summary: Get account details (admin)
+      description: Get detailed account information
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAccount"
+
+  /v1/admin/accounts/{id}/action:
+    post:
+      operationId: adminPerformAccountAction
+      summary: Perform account action (admin)
+      description: Perform moderation action on account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+              properties:
+                type:
+                  type: string
+                  enum: [none, disable, silence, suspend]
+                report_id:
+                  type: string
+                warning_preset_id:
+                  type: string
+                text:
+                  type: string
+                send_email_notification:
+                  type: boolean
+      responses:
+        "200":
+          description: Action performed
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/admin/accounts/{id}/approve:
+    post:
+      operationId: adminApproveAccount
+      summary: Approve account (admin)
+      description: Approve a pending account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAccount"
+
+  /v1/admin/accounts/{id}/reject:
+    post:
+      operationId: adminRejectAccount
+      summary: Reject account (admin)
+      description: Reject a pending account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAccount"
+
+  /v1/admin/accounts/{id}/enable:
+    post:
+      operationId: adminEnableAccount
+      summary: Enable account (admin)
+      description: Re-enable a disabled account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account enabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAccount"
+
+  /v1/admin/accounts/{id}/unsilence:
+    post:
+      operationId: adminUnsilenceAccount
+      summary: Unsilence account (admin)
+      description: Remove silence from account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account unsilenced
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAccount"
+
+  /v1/admin/accounts/{id}/unsuspend:
+    post:
+      operationId: adminUnsuspendAccount
+      summary: Unsuspend account (admin)
+      description: Remove suspension from account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account unsuspended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAccount"
+
+  # ============================================================
+  # ADMIN REPORTS API - Manage Reports (Admin Only)
+  # ============================================================
+
+  /v1/admin/reports:
+    get:
+      operationId: adminGetReports
+      summary: Get reports (admin)
+      description: Get moderation reports
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: resolved
+          in: query
+          schema:
+            type: boolean
+        - name: account_id
+          in: query
+          schema:
+            type: string
+        - name: target_account_id
+          in: query
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        "200":
+          description: Reports retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminReport"
+
+  /v1/admin/reports/{id}:
+    get:
+      operationId: adminGetReport
+      summary: Get report (admin)
+      description: Get details of a report
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Report retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminReport"
+
+  /v1/admin/reports/{id}/assign_to_self:
+    post:
+      operationId: adminAssignReport
+      summary: Assign report (admin)
+      description: Assign a report to yourself
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Report assigned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminReport"
+
+  /v1/admin/reports/{id}/unassign:
+    post:
+      operationId: adminUnassignReport
+      summary: Unassign report (admin)
+      description: Unassign a report
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Report unassigned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminReport"
+
+  /v1/admin/reports/{id}/reopen:
+    post:
+      operationId: adminReopenReport
+      summary: Reopen report (admin)
+      description: Reopen a resolved report
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Report reopened
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminReport"
+
+  /v1/admin/reports/{id}/resolve:
+    post:
+      operationId: adminResolveReport
+      summary: Resolve report (admin)
+      description: Mark a report as resolved
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Report resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminReport"
+
+  # ============================================================
+  # ADMIN DOMAIN BLOCKS API - Manage Domain Blocks (Admin Only)
+  # ============================================================
+
+  /v1/admin/domain_blocks:
+    get:
+      operationId: adminGetDomainBlocks
+      summary: Get domain blocks (admin)
+      description: Get list of blocked domains
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: max_id
+          in: query
+          schema:
+            type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        "200":
+          description: Domain blocks retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+    post:
+      operationId: adminCreateDomainBlock
+      summary: Block domain (admin)
+      description: Block a domain
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - domain
+              properties:
+                domain:
+                  type: string
+                severity:
+                  type: string
+                  enum: [silence, suspend, noop]
+                reject_media:
+                  type: boolean
+                reject_reports:
+                  type: boolean
+                private_comment:
+                  type: string
+                public_comment:
+                  type: string
+                obfuscate:
+                  type: boolean
+      responses:
+        "200":
+          description: Domain blocked
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /v1/admin/domain_blocks/{id}:
+    get:
+      operationId: adminGetDomainBlock
+      summary: Get domain block (admin)
+      description: Get details of a domain block
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Domain block retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+
+    put:
+      operationId: adminUpdateDomainBlock
+      summary: Update domain block (admin)
+      description: Update a domain block
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                severity:
+                  type: string
+                  enum: [silence, suspend, noop]
+                reject_media:
+                  type: boolean
+                reject_reports:
+                  type: boolean
+                private_comment:
+                  type: string
+                public_comment:
+                  type: string
+                obfuscate:
+                  type: boolean
+      responses:
+        "200":
+          description: Domain block updated
+          content:
+            application/json:
+              schema:
+                type: object
+
+    delete:
+      operationId: adminDeleteDomainBlock
+      summary: Unblock domain (admin)
+      description: Remove a domain block
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Domain unblocked
+          content:
+            application/json:
+              schema:
+                type: object

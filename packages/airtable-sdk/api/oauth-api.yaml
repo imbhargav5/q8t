@@ -1,0 +1,384 @@
+openapi: 3.0.0
+info:
+  title: Airtable OAuth API
+  version: 1.0.0
+  description: Airtable OAuth 2.0 authentication and Web API with OAuth tokens
+
+servers:
+  - url: https://api.airtable.com/v0
+    description: Airtable API v0
+
+security:
+  - OAuth2: []
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://airtable.com/oauth2/v1/authorize
+          tokenUrl: https://airtable.com/oauth2/v1/token
+          scopes:
+            data.records:read: Read records from bases
+            data.records:write: Write and modify records
+            data.recordComments:read: Read record comments
+            data.recordComments:write: Write record comments
+            schema.bases:read: Read base schema information
+            schema.bases:write: Modify base schema
+            webhook:manage: Manage webhooks
+            user.email:read: Read user email address
+
+  schemas:
+    # Reuse schemas from web-api.yaml
+    AirtableRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        createdTime:
+          type: string
+          format: date-time
+        fields:
+          type: object
+          additionalProperties: true
+
+    RecordList:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/AirtableRecord"
+        offset:
+          type: string
+
+    CreateRecordsRequest:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            type: object
+            properties:
+              fields:
+                type: object
+                additionalProperties: true
+        typecast:
+          type: boolean
+      required:
+        - records
+
+    UpdateRecordsRequest:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              fields:
+                type: object
+                additionalProperties: true
+        performUpsert:
+          type: object
+          properties:
+            fieldsToMergeOn:
+              type: array
+              items:
+                type: string
+        typecast:
+          type: boolean
+      required:
+        - records
+
+    DeleteRecordsResponse:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              deleted:
+                type: boolean
+
+    Base:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        permissionLevel:
+          type: string
+
+    BaseList:
+      type: object
+      properties:
+        bases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Base'
+        offset:
+          type: string
+
+    Table:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        primaryFieldId:
+          type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+        views:
+          type: array
+          items:
+            $ref: '#/components/schemas/View'
+
+    Field:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        options:
+          type: object
+          additionalProperties: true
+
+    View:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+
+    UserInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        email:
+          type: string
+
+paths:
+  # User info endpoint
+  /meta/whoami:
+    get:
+      summary: Get current user info
+      operationId: whoami
+      responses:
+        '200':
+          description: Current user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+
+  # Records endpoints (same as web-api.yaml)
+  /{baseId}/{tableIdOrName}:
+    get:
+      summary: List records
+      operationId: listRecords
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: filterByFormula
+          in: query
+          schema:
+            type: string
+        - name: maxRecords
+          in: query
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+        - name: sort
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: view
+          in: query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecordList"
+
+    post:
+      summary: Create records
+      operationId: createRecords
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AirtableRecordsRequest"
+      responses:
+        '200':
+          description: Created records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecordList"
+
+    patch:
+      summary: Update records
+      operationId: updateRecords
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AirtableRecordsRequest"
+      responses:
+        '200':
+          description: Updated records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecordList"
+
+    delete:
+      summary: Delete records
+      operationId: deleteRecords
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableIdOrName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: records
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+      responses:
+        '200':
+          description: Deleted records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirtableRecordsResponse"
+
+  # Metadata endpoints
+  /meta/bases:
+    get:
+      summary: List bases
+      operationId: listBases
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of bases
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseList'
+
+  /meta/bases/{baseId}/tables:
+    get:
+      summary: List tables
+      operationId: listTables
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tables
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tables:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Table'

@@ -1,0 +1,11 @@
+# Generated code
+lib/
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+
+# TypeScript
+*.tsbuildinfo

@@ -1,0 +1,210 @@
+openapi: "3.0.0"
+info:
+  title: Farcaster Signer API
+  version: "2.0"
+  description: |
+    Farcaster Signer API for managing signer requests and approvals.
+    Used for the OAuth-like signer request flow.
+
+servers:
+  - url: https://api.warpcast.com
+    description: Warpcast API
+
+paths:
+  # ============= Signer Request API =============
+
+  /v2/signed-key-request:
+    post:
+      operationId: createSignerRequest
+      summary: Create signer request
+      description: |
+        Create a new signer request for approval.
+        User must approve via deeplink: farcaster://signed-key-request?token=...
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                  description: Public key (hex string)
+                requestFid:
+                  type: integer
+                  description: FID requesting the signer
+                signature:
+                  type: string
+                  description: EIP-712 signature
+                deadline:
+                  type: integer
+                  description: Unix timestamp when request expires
+              required:
+                - key
+                - requestFid
+                - signature
+                - deadline
+      responses:
+        "200":
+          description: Signer request created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignerRequest"
+
+    get:
+      operationId: getSignerRequest
+      summary: Get signer request status
+      description: |
+        Poll the status of a signer request.
+        Use this to check if the user has approved the signer.
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Signer request token from create response
+      responses:
+        "200":
+          description: Signer request status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignerRequestStatus"
+
+  # ============= Frame Notifications API =============
+
+  /v1/frame-notifications:
+    post:
+      operationId: sendFrameNotification
+      summary: Send frame notification
+      description: |
+        Send a notification to users who have enabled notifications for a frame.
+        Requires frame to be registered and users to have opted in.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notificationId:
+                  type: string
+                  description: Unique identifier for this notification
+                title:
+                  type: string
+                  description: Notification title
+                body:
+                  type: string
+                  description: Notification body text
+                targetUrl:
+                  type: string
+                  description: URL to open when notification is tapped
+                tokens:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of notification tokens for target users
+              required:
+                - notificationId
+                - title
+                - body
+      responses:
+        "200":
+          description: Notification sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationResponse"
+
+components:
+  schemas:
+    # ============= Signer Request Types =============
+
+    SignerRequest:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            signedKeyRequest:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token to use for polling status
+                deeplinkUrl:
+                  type: string
+                  description: Deeplink URL for user approval
+                key:
+                  type: string
+                  description: Public key
+                requestFid:
+                  type: integer
+                  description: FID that requested the signer
+                state:
+                  type: string
+                  description: Current state (pending, approved, completed)
+                isSponsored:
+                  type: boolean
+                  description: Whether this is a sponsored signer
+
+    SignerRequestStatus:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            signedKeyRequest:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Signer request token
+                deeplinkUrl:
+                  type: string
+                  description: Deeplink URL for user approval
+                key:
+                  type: string
+                  description: Public key
+                requestFid:
+                  type: integer
+                  description: FID that requested the signer
+                state:
+                  type: string
+                  description: Current state (pending, approved, completed)
+                  enum:
+                    - pending
+                    - approved
+                    - completed
+                isSponsored:
+                  type: boolean
+                  description: Whether this is a sponsored signer
+                userFid:
+                  type: integer
+                  description: FID of user who approved (if approved)
+                metadata:
+                  type: object
+                  description: Additional metadata
+
+    # ============= Frame Notification Types =============
+
+    NotificationResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            successCount:
+              type: integer
+              description: Number of notifications sent successfully
+            failureCount:
+              type: integer
+              description: Number of notifications that failed
+            rateLimitedCount:
+              type: integer
+              description: Number of notifications rate limited
+            invalidTokensCount:
+              type: integer
+              description: Number of invalid tokens
