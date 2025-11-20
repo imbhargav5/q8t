@@ -1,0 +1,110 @@
+openapi: 3.0.3
+info:
+  title: Cloudinary Unsigned Upload API
+  description: Unsigned upload API for client-side uploads without authentication signatures
+  version: v1.1
+
+servers:
+  - url: https://api.cloudinary.com/v1_1/{cloud_name}
+    variables:
+      cloud_name:
+        default: demo
+        description: Your Cloudinary cloud name
+
+components:
+  schemas:
+    UnsignedUploadRequest:
+      type: object
+      required:
+        - file
+        - upload_preset
+      properties:
+        file:
+          type: string
+          description: The file to upload (URL, base64, or file path)
+        upload_preset:
+          type: string
+          description: The name of an unsigned upload preset
+        public_id:
+          type: string
+        public_id_prefix:
+          type: string
+        folder:
+          type: string
+        asset_folder:
+          type: string
+        tags:
+          type: string
+        context:
+          type: string
+        metadata:
+          type: string
+        face_coordinates:
+          type: string
+        custom_coordinates:
+          type: string
+        regions:
+          type: string
+        source:
+          type: string
+        filename_override:
+          type: string
+
+    UploadResponse:
+      type: object
+      properties:
+        public_id:
+          type: string
+        version:
+          type: integer
+        signature:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        format:
+          type: string
+        resource_type:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+        bytes:
+          type: integer
+        type:
+          type: string
+        etag:
+          type: string
+        url:
+          type: string
+        secure_url:
+          type: string
+        asset_id:
+          type: string
+        original_filename:
+          type: string
+
+paths:
+  /upload:
+    post:
+      operationId: unsignedUpload
+      summary: Upload without signature
+      description: Upload assets using an unsigned upload preset
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UnsignedUploadRequest"
+      responses:
+        "200":
+          description: Upload successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"

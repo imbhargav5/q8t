@@ -1,0 +1,676 @@
+openapi: 3.0.3
+info:
+  title: Cloudinary Provisioning API
+  description: Provisioning API for managing users, user groups, sub-accounts, and access keys (Enterprise only)
+  version: v1.0
+
+servers:
+  - url: https://api.cloudinary.com/v1_1/provisioning/accounts/{account_id}
+    variables:
+      account_id:
+        default: ""
+        description: Your Cloudinary account ID
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Basic authentication using provisioning_key:provisioning_secret
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        enabled:
+          type: boolean
+        sub_account_ids:
+          type: array
+          items:
+            type: string
+        user_group_ids:
+          type: array
+          items:
+            type: string
+
+    UsersResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total:
+          type: integer
+
+    CreateUserRequest:
+      type: object
+      required:
+        - name
+        - email
+        - role
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [master_admin, admin, billing, technical_admin, reports, media_library_admin, media_library_user]
+        sub_account_ids:
+          type: array
+          items:
+            type: string
+        enabled:
+          type: boolean
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        sub_account_ids:
+          type: array
+          items:
+            type: string
+        enabled:
+          type: boolean
+
+    UserGroup:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        sub_account_ids:
+          type: array
+          items:
+            type: string
+
+    UserGroupsResponse:
+      type: object
+      properties:
+        user_groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserGroup"
+        total:
+          type: integer
+
+    CreateUserGroupRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        sub_account_ids:
+          type: array
+          items:
+            type: string
+
+    SubAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        cloud_name:
+          type: string
+        name:
+          type: string
+        enabled:
+          type: boolean
+        custom_attributes:
+          type: object
+
+    SubAccountsResponse:
+      type: object
+      properties:
+        sub_accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubAccount"
+        total:
+          type: integer
+
+    CreateSubAccountRequest:
+      type: object
+      required:
+        - name
+        - cloud_name
+      properties:
+        name:
+          type: string
+        cloud_name:
+          type: string
+        custom_attributes:
+          type: object
+        enabled:
+          type: boolean
+        base_sub_account_id:
+          type: string
+
+    UpdateSubAccountRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        custom_attributes:
+          type: object
+        enabled:
+          type: boolean
+
+    AccessKey:
+      type: object
+      properties:
+        key:
+          type: string
+        secret:
+          type: string
+        name:
+          type: string
+        enabled:
+          type: boolean
+        sub_account_id:
+          type: string
+
+    AccessKeysResponse:
+      type: object
+      properties:
+        access_keys:
+          type: array
+          items:
+            $ref: "#/components/schemas/AccessKey"
+        total:
+          type: integer
+
+    GenerateAccessKeyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        enabled:
+          type: boolean
+
+    UpdateAccessKeyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        enabled:
+          type: boolean
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+security:
+  - basicAuth: []
+
+paths:
+  /users:
+    get:
+      operationId: listUsers
+      summary: List users
+      description: Get a list of all users in the account
+      parameters:
+        - name: pending
+          in: query
+          schema:
+            type: boolean
+        - name: user_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: prefix
+          in: query
+          schema:
+            type: string
+        - name: sub_account_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersResponse"
+
+    post:
+      operationId: createUser
+      summary: Create user
+      description: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "200":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{user_id}:
+    get:
+      operationId: getUser
+      summary: Get user
+      description: Get details of a specific user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+    put:
+      operationId: updateUser
+      summary: Update user
+      description: Update an existing user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+    delete:
+      operationId: deleteUser
+      summary: Delete user
+      description: Delete a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /user_groups:
+    get:
+      operationId: listUserGroups
+      summary: List user groups
+      description: Get all user groups
+      responses:
+        "200":
+          description: List of user groups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGroupsResponse"
+
+    post:
+      operationId: createUserGroup
+      summary: Create user group
+      description: Create a new user group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserGroupRequest"
+      responses:
+        "200":
+          description: User group created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGroup"
+
+  /user_groups/{group_id}:
+    get:
+      operationId: getUserGroup
+      summary: Get user group
+      description: Get details of a specific user group
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User group details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGroup"
+
+    put:
+      operationId: updateUserGroup
+      summary: Update user group
+      description: Update an existing user group
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserGroupRequest"
+      responses:
+        "200":
+          description: User group updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGroup"
+
+    delete:
+      operationId: deleteUserGroup
+      summary: Delete user group
+      description: Delete a user group
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User group deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /user_groups/{group_id}/users/{user_id}:
+    post:
+      operationId: addUserToGroup
+      summary: Add user to group
+      description: Add an existing user to a user group
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User added to group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+    delete:
+      operationId: removeUserFromGroup
+      summary: Remove user from group
+      description: Remove a user from a user group
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User removed from group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /sub_accounts:
+    get:
+      operationId: listSubAccounts
+      summary: List sub-accounts
+      description: Get all sub-accounts (product environments)
+      parameters:
+        - name: enabled
+          in: query
+          schema:
+            type: boolean
+        - name: ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: prefix
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of sub-accounts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubAccountsResponse"
+
+    post:
+      operationId: createSubAccount
+      summary: Create sub-account
+      description: Create a new sub-account (product environment)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubAccountRequest"
+      responses:
+        "200":
+          description: Sub-account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubAccount"
+
+  /sub_accounts/{sub_account_id}:
+    get:
+      operationId: getSubAccount
+      summary: Get sub-account
+      description: Get details of a specific sub-account
+      parameters:
+        - name: sub_account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Sub-account details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubAccount"
+
+    put:
+      operationId: updateSubAccount
+      summary: Update sub-account
+      description: Update an existing sub-account
+      parameters:
+        - name: sub_account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSubAccountRequest"
+      responses:
+        "200":
+          description: Sub-account updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubAccount"
+
+    delete:
+      operationId: deleteSubAccount
+      summary: Delete sub-account
+      description: Delete a sub-account
+      parameters:
+        - name: sub_account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Sub-account deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /sub_accounts/{sub_account_id}/access_keys:
+    get:
+      operationId: listAccessKeys
+      summary: List access keys
+      description: Get access keys for a sub-account
+      parameters:
+        - name: sub_account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of access keys
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessKeysResponse"
+
+    post:
+      operationId: generateAccessKey
+      summary: Generate access key
+      description: Generate a new access key for a sub-account
+      parameters:
+        - name: sub_account_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateAccessKeyRequest"
+      responses:
+        "200":
+          description: Access key generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessKey"
+
+  /sub_accounts/{sub_account_id}/access_keys/{key}:
+    put:
+      operationId: updateAccessKey
+      summary: Update access key
+      description: Update an access key
+      parameters:
+        - name: sub_account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAccessKeyRequest"
+      responses:
+        "200":
+          description: Access key updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessKey"
+
+    delete:
+      operationId: deleteAccessKey
+      summary: Delete access key
+      description: Delete an access key
+      parameters:
+        - name: sub_account_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Access key deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
