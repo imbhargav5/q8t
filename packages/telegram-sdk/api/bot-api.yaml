@@ -1,0 +1,2731 @@
+openapi: 3.0.3
+info:
+  title: Telegram Bot API
+  description: Official Telegram Bot API - HTTP-based interface for creating Telegram bots
+  version: "9.2"
+
+servers:
+  - url: https://api.telegram.org
+    description: Production Bot API Server
+
+components:
+  securitySchemes:
+    BotToken:
+      type: apiKey
+      in: path
+      name: token
+      description: Bot token obtained from @BotFather
+
+  schemas:
+    # Common Response Wrapper
+    Response:
+      type: object
+      required:
+        - ok
+      properties:
+        ok:
+          type: boolean
+        result:
+          type: object
+        description:
+          type: string
+        error_code:
+          type: integer
+
+    # User and Chat Types
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        is_bot:
+          type: boolean
+        first_name:
+          type: string
+        last_name:
+          type: string
+        username:
+          type: string
+        language_code:
+          type: string
+
+    Chat:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+          enum: [private, group, supergroup, channel]
+        title:
+          type: string
+        username:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+
+    # Message Types
+    Message:
+      type: object
+      required:
+        - message_id
+        - date
+        - chat
+      properties:
+        message_id:
+          type: integer
+        from:
+          $ref: "#/components/schemas/User"
+        sender_chat:
+          $ref: "#/components/schemas/Chat"
+        date:
+          type: integer
+        chat:
+          $ref: "#/components/schemas/Chat"
+        text:
+          type: string
+        caption:
+          type: string
+        entities:
+          type: array
+          items:
+            $ref: "#/components/schemas/MessageEntity"
+        photo:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhotoSize"
+        video:
+          $ref: "#/components/schemas/Video"
+        document:
+          $ref: "#/components/schemas/Document"
+        audio:
+          $ref: "#/components/schemas/Audio"
+        voice:
+          $ref: "#/components/schemas/Voice"
+        sticker:
+          $ref: "#/components/schemas/Sticker"
+        reply_markup:
+          $ref: "#/components/schemas/InlineKeyboardMarkup"
+
+    MessageEntity:
+      type: object
+      required:
+        - type
+        - offset
+        - length
+      properties:
+        type:
+          type: string
+          enum: [mention, hashtag, cashtag, bot_command, url, email, phone_number, bold, italic, underline, strikethrough, spoiler, code, pre, text_link, text_mention]
+        offset:
+          type: integer
+        length:
+          type: integer
+        url:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        language:
+          type: string
+
+    # Media Types
+    PhotoSize:
+      type: object
+      required:
+        - file_id
+        - file_unique_id
+        - width
+        - height
+      properties:
+        file_id:
+          type: string
+        file_unique_id:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        file_size:
+          type: integer
+
+    Video:
+      type: object
+      required:
+        - file_id
+        - file_unique_id
+        - width
+        - height
+        - duration
+      properties:
+        file_id:
+          type: string
+        file_unique_id:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        duration:
+          type: integer
+        thumb:
+          $ref: "#/components/schemas/PhotoSize"
+        file_name:
+          type: string
+        mime_type:
+          type: string
+        file_size:
+          type: integer
+
+    Document:
+      type: object
+      required:
+        - file_id
+        - file_unique_id
+      properties:
+        file_id:
+          type: string
+        file_unique_id:
+          type: string
+        thumb:
+          $ref: "#/components/schemas/PhotoSize"
+        file_name:
+          type: string
+        mime_type:
+          type: string
+        file_size:
+          type: integer
+
+    Audio:
+      type: object
+      required:
+        - file_id
+        - file_unique_id
+        - duration
+      properties:
+        file_id:
+          type: string
+        file_unique_id:
+          type: string
+        duration:
+          type: integer
+        performer:
+          type: string
+        title:
+          type: string
+        file_name:
+          type: string
+        mime_type:
+          type: string
+        file_size:
+          type: integer
+
+    Voice:
+      type: object
+      required:
+        - file_id
+        - file_unique_id
+        - duration
+      properties:
+        file_id:
+          type: string
+        file_unique_id:
+          type: string
+        duration:
+          type: integer
+        mime_type:
+          type: string
+        file_size:
+          type: integer
+
+    Sticker:
+      type: object
+      required:
+        - file_id
+        - file_unique_id
+        - type
+        - width
+        - height
+        - is_animated
+        - is_video
+      properties:
+        file_id:
+          type: string
+        file_unique_id:
+          type: string
+        type:
+          type: string
+          enum: [regular, mask, custom_emoji]
+        width:
+          type: integer
+        height:
+          type: integer
+        is_animated:
+          type: boolean
+        is_video:
+          type: boolean
+        thumb:
+          $ref: "#/components/schemas/PhotoSize"
+        emoji:
+          type: string
+        set_name:
+          type: string
+        file_size:
+          type: integer
+
+    # Keyboard Types
+    InlineKeyboardMarkup:
+      type: object
+      required:
+        - inline_keyboard
+      properties:
+        inline_keyboard:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: "#/components/schemas/InlineKeyboardButton"
+
+    InlineKeyboardButton:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+        url:
+          type: string
+        callback_data:
+          type: string
+        web_app:
+          $ref: "#/components/schemas/WebAppInfo"
+        switch_inline_query:
+          type: string
+        switch_inline_query_current_chat:
+          type: string
+        pay:
+          type: boolean
+
+    ReplyKeyboardMarkup:
+      type: object
+      required:
+        - keyboard
+      properties:
+        keyboard:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: "#/components/schemas/KeyboardButton"
+        is_persistent:
+          type: boolean
+        resize_keyboard:
+          type: boolean
+        one_time_keyboard:
+          type: boolean
+        input_field_placeholder:
+          type: string
+        selective:
+          type: boolean
+
+    KeyboardButton:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+        request_users:
+          type: object
+        request_chat:
+          type: object
+        request_contact:
+          type: boolean
+        request_location:
+          type: boolean
+        request_poll:
+          type: object
+        web_app:
+          $ref: "#/components/schemas/WebAppInfo"
+
+    ReplyKeyboardRemove:
+      type: object
+      required:
+        - remove_keyboard
+      properties:
+        remove_keyboard:
+          type: boolean
+        selective:
+          type: boolean
+
+    # Update Types
+    Update:
+      type: object
+      required:
+        - update_id
+      properties:
+        update_id:
+          type: integer
+        message:
+          $ref: "#/components/schemas/Message"
+        edited_message:
+          $ref: "#/components/schemas/Message"
+        channel_post:
+          $ref: "#/components/schemas/Message"
+        edited_channel_post:
+          $ref: "#/components/schemas/Message"
+        callback_query:
+          $ref: "#/components/schemas/CallbackQuery"
+        inline_query:
+          $ref: "#/components/schemas/InlineQuery"
+        chosen_inline_result:
+          $ref: "#/components/schemas/ChosenInlineResult"
+        my_chat_member:
+          $ref: "#/components/schemas/ChatMemberUpdated"
+        chat_member:
+          $ref: "#/components/schemas/ChatMemberUpdated"
+
+    CallbackQuery:
+      type: object
+      required:
+        - id
+        - from
+      properties:
+        id:
+          type: string
+        from:
+          $ref: "#/components/schemas/User"
+        message:
+          $ref: "#/components/schemas/Message"
+        inline_message_id:
+          type: string
+        chat_instance:
+          type: string
+        data:
+          type: string
+        game_short_name:
+          type: string
+
+    InlineQuery:
+      type: object
+      required:
+        - id
+        - from
+        - query
+        - offset
+      properties:
+        id:
+          type: string
+        from:
+          $ref: "#/components/schemas/User"
+        query:
+          type: string
+        offset:
+          type: string
+        chat_type:
+          type: string
+        location:
+          $ref: "#/components/schemas/Location"
+
+    ChosenInlineResult:
+      type: object
+      required:
+        - result_id
+        - from
+        - query
+      properties:
+        result_id:
+          type: string
+        from:
+          $ref: "#/components/schemas/User"
+        location:
+          $ref: "#/components/schemas/Location"
+        inline_message_id:
+          type: string
+        query:
+          type: string
+
+    ChatMemberUpdated:
+      type: object
+      required:
+        - chat
+        - from
+        - date
+        - old_chat_member
+        - new_chat_member
+      properties:
+        chat:
+          $ref: "#/components/schemas/Chat"
+        from:
+          $ref: "#/components/schemas/User"
+        date:
+          type: integer
+        old_chat_member:
+          $ref: "#/components/schemas/ChatMember"
+        new_chat_member:
+          $ref: "#/components/schemas/ChatMember"
+
+    ChatMember:
+      type: object
+      required:
+        - user
+        - status
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        status:
+          type: string
+          enum: [creator, administrator, member, restricted, left, kicked]
+
+    # Webhook
+    WebhookInfo:
+      type: object
+      required:
+        - url
+        - has_custom_certificate
+        - pending_update_count
+      properties:
+        url:
+          type: string
+        has_custom_certificate:
+          type: boolean
+        pending_update_count:
+          type: integer
+        ip_address:
+          type: string
+        last_error_date:
+          type: integer
+        last_error_message:
+          type: string
+        last_synchronization_error_date:
+          type: integer
+        max_connections:
+          type: integer
+        allowed_updates:
+          type: array
+          items:
+            type: string
+
+    # File
+    File:
+      type: object
+      required:
+        - file_id
+        - file_unique_id
+      properties:
+        file_id:
+          type: string
+        file_unique_id:
+          type: string
+        file_size:
+          type: integer
+        file_path:
+          type: string
+
+    # Location
+    Location:
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+        horizontal_accuracy:
+          type: number
+        live_period:
+          type: integer
+        heading:
+          type: integer
+        proximity_alert_radius:
+          type: integer
+
+    # WebApp
+    WebAppInfo:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+
+    # Poll
+    Poll:
+      type: object
+      required:
+        - id
+        - question
+        - options
+        - total_voter_count
+        - is_closed
+        - is_anonymous
+        - type
+        - allows_multiple_answers
+      properties:
+        id:
+          type: string
+        question:
+          type: string
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/PollOption"
+        total_voter_count:
+          type: integer
+        is_closed:
+          type: boolean
+        is_anonymous:
+          type: boolean
+        type:
+          type: string
+          enum: [regular, quiz]
+        allows_multiple_answers:
+          type: boolean
+        correct_option_id:
+          type: integer
+
+    PollOption:
+      type: object
+      required:
+        - text
+        - voter_count
+      properties:
+        text:
+          type: string
+        voter_count:
+          type: integer
+
+    # Sticker Set
+    StickerSet:
+      type: object
+      required:
+        - name
+        - title
+        - sticker_type
+        - stickers
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        sticker_type:
+          type: string
+          enum: [regular, mask, custom_emoji]
+        stickers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Sticker"
+        thumbnail:
+          $ref: "#/components/schemas/PhotoSize"
+
+    # Bot Command
+    BotCommand:
+      type: object
+      required:
+        - command
+        - description
+      properties:
+        command:
+          type: string
+        description:
+          type: string
+
+    # Chat Administration
+    ChatPermissions:
+      type: object
+      properties:
+        can_send_messages:
+          type: boolean
+        can_send_audios:
+          type: boolean
+        can_send_documents:
+          type: boolean
+        can_send_photos:
+          type: boolean
+        can_send_videos:
+          type: boolean
+        can_send_video_notes:
+          type: boolean
+        can_send_voice_notes:
+          type: boolean
+        can_send_polls:
+          type: boolean
+        can_send_other_messages:
+          type: boolean
+        can_add_web_page_previews:
+          type: boolean
+        can_change_info:
+          type: boolean
+        can_invite_users:
+          type: boolean
+        can_pin_messages:
+          type: boolean
+        can_manage_topics:
+          type: boolean
+
+    ChatAdministratorRights:
+      type: object
+      properties:
+        is_anonymous:
+          type: boolean
+        can_manage_chat:
+          type: boolean
+        can_delete_messages:
+          type: boolean
+        can_manage_video_chats:
+          type: boolean
+        can_restrict_members:
+          type: boolean
+        can_promote_members:
+          type: boolean
+        can_change_info:
+          type: boolean
+        can_invite_users:
+          type: boolean
+        can_post_messages:
+          type: boolean
+        can_edit_messages:
+          type: boolean
+        can_pin_messages:
+          type: boolean
+        can_post_stories:
+          type: boolean
+        can_edit_stories:
+          type: boolean
+        can_delete_stories:
+          type: boolean
+        can_manage_topics:
+          type: boolean
+
+paths:
+  # Getting Updates
+  /bot{token}/getUpdates:
+    post:
+      operationId: getUpdates
+      summary: Get updates via long polling
+      description: Use this method to receive incoming updates using long polling
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                offset:
+                  type: integer
+                limit:
+                  type: integer
+                  default: 100
+                timeout:
+                  type: integer
+                  default: 0
+                allowed_updates:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: Array of Update objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Update"
+
+  /bot{token}/setWebhook:
+    post:
+      operationId: setWebhook
+      summary: Set webhook URL
+      description: Use this method to specify a URL and receive incoming updates via an outgoing webhook
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                certificate:
+                  type: string
+                ip_address:
+                  type: string
+                max_connections:
+                  type: integer
+                allowed_updates:
+                  type: array
+                  items:
+                    type: string
+                drop_pending_updates:
+                  type: boolean
+                secret_token:
+                  type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/deleteWebhook:
+    post:
+      operationId: deleteWebhook
+      summary: Remove webhook integration
+      description: Use this method to remove webhook integration if you decide to switch back to getUpdates
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                drop_pending_updates:
+                  type: boolean
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/getWebhookInfo:
+    get:
+      operationId: getWebhookInfo
+      summary: Get current webhook status
+      description: Use this method to get current webhook status
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns a WebhookInfo object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/WebhookInfo"
+
+  # Sending Messages
+  /bot{token}/sendMessage:
+    post:
+      operationId: sendMessage
+      summary: Send text message
+      description: Use this method to send text messages
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - text
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                text:
+                  type: string
+                parse_mode:
+                  type: string
+                  enum: [Markdown, MarkdownV2, HTML]
+                entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                disable_web_page_preview:
+                  type: boolean
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/sendPhoto:
+    post:
+      operationId: sendPhoto
+      summary: Send photo
+      description: Use this method to send photos
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - photo
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                photo:
+                  type: string
+                caption:
+                  type: string
+                parse_mode:
+                  type: string
+                caption_entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                has_spoiler:
+                  type: boolean
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/sendVideo:
+    post:
+      operationId: sendVideo
+      summary: Send video
+      description: Use this method to send video files
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - video
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                video:
+                  type: string
+                duration:
+                  type: integer
+                width:
+                  type: integer
+                height:
+                  type: integer
+                caption:
+                  type: string
+                parse_mode:
+                  type: string
+                caption_entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                has_spoiler:
+                  type: boolean
+                supports_streaming:
+                  type: boolean
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/sendDocument:
+    post:
+      operationId: sendDocument
+      summary: Send document
+      description: Use this method to send general files
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - document
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                document:
+                  type: string
+                caption:
+                  type: string
+                parse_mode:
+                  type: string
+                caption_entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                disable_content_type_detection:
+                  type: boolean
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/sendAudio:
+    post:
+      operationId: sendAudio
+      summary: Send audio
+      description: Use this method to send audio files
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - audio
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                audio:
+                  type: string
+                caption:
+                  type: string
+                parse_mode:
+                  type: string
+                caption_entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                duration:
+                  type: integer
+                performer:
+                  type: string
+                title:
+                  type: string
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/sendVoice:
+    post:
+      operationId: sendVoice
+      summary: Send voice message
+      description: Use this method to send audio files as voice messages
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - voice
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                voice:
+                  type: string
+                caption:
+                  type: string
+                parse_mode:
+                  type: string
+                caption_entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                duration:
+                  type: integer
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/sendLocation:
+    post:
+      operationId: sendLocation
+      summary: Send location
+      description: Use this method to send point on the map
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - latitude
+                - longitude
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+                horizontal_accuracy:
+                  type: number
+                live_period:
+                  type: integer
+                heading:
+                  type: integer
+                proximity_alert_radius:
+                  type: integer
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/sendPoll:
+    post:
+      operationId: sendPoll
+      summary: Send poll
+      description: Use this method to send a native poll
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - question
+                - options
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                question:
+                  type: string
+                options:
+                  type: array
+                  items:
+                    type: string
+                is_anonymous:
+                  type: boolean
+                type:
+                  type: string
+                  enum: [regular, quiz]
+                allows_multiple_answers:
+                  type: boolean
+                correct_option_id:
+                  type: integer
+                explanation:
+                  type: string
+                explanation_parse_mode:
+                  type: string
+                open_period:
+                  type: integer
+                close_date:
+                  type: integer
+                is_closed:
+                  type: boolean
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/sendSticker:
+    post:
+      operationId: sendSticker
+      summary: Send sticker
+      description: Use this method to send static .WEBP, animated .TGS, or video .WEBM stickers
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - sticker
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                sticker:
+                  type: string
+                emoji:
+                  type: string
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  # Message Management
+  /bot{token}/forwardMessage:
+    post:
+      operationId: forwardMessage
+      summary: Forward message
+      description: Use this method to forward messages of any kind
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - from_chat_id
+                - message_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                from_chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                message_id:
+                  type: integer
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+      responses:
+        "200":
+          description: Returns sent Message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Message"
+
+  /bot{token}/copyMessage:
+    post:
+      operationId: copyMessage
+      summary: Copy message
+      description: Use this method to copy messages of any kind
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - from_chat_id
+                - message_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                from_chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                message_id:
+                  type: integer
+                caption:
+                  type: string
+                parse_mode:
+                  type: string
+                caption_entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                disable_notification:
+                  type: boolean
+                protect_content:
+                  type: boolean
+                reply_to_message_id:
+                  type: integer
+                allow_sending_without_reply:
+                  type: boolean
+                reply_markup:
+                  oneOf:
+                    - $ref: "#/components/schemas/InlineKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardMarkup"
+                    - $ref: "#/components/schemas/ReplyKeyboardRemove"
+      responses:
+        "200":
+          description: Returns MessageId of the sent message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    type: object
+                    properties:
+                      message_id:
+                        type: integer
+
+  /bot{token}/editMessageText:
+    post:
+      operationId: editMessageText
+      summary: Edit text message
+      description: Use this method to edit text and game messages
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - text
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                message_id:
+                  type: integer
+                inline_message_id:
+                  type: string
+                text:
+                  type: string
+                parse_mode:
+                  type: string
+                entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                disable_web_page_preview:
+                  type: boolean
+                reply_markup:
+                  $ref: "#/components/schemas/InlineKeyboardMarkup"
+      responses:
+        "200":
+          description: Returns edited Message or True
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    oneOf:
+                      - $ref: "#/components/schemas/Message"
+                      - type: boolean
+
+  /bot{token}/editMessageCaption:
+    post:
+      operationId: editMessageCaption
+      summary: Edit message caption
+      description: Use this method to edit captions of messages
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                message_id:
+                  type: integer
+                inline_message_id:
+                  type: string
+                caption:
+                  type: string
+                parse_mode:
+                  type: string
+                caption_entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                reply_markup:
+                  $ref: "#/components/schemas/InlineKeyboardMarkup"
+      responses:
+        "200":
+          description: Returns edited Message or True
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    oneOf:
+                      - $ref: "#/components/schemas/Message"
+                      - type: boolean
+
+  /bot{token}/editMessageReplyMarkup:
+    post:
+      operationId: editMessageReplyMarkup
+      summary: Edit message reply markup
+      description: Use this method to edit only the reply markup of messages
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                message_id:
+                  type: integer
+                inline_message_id:
+                  type: string
+                reply_markup:
+                  $ref: "#/components/schemas/InlineKeyboardMarkup"
+      responses:
+        "200":
+          description: Returns edited Message or True
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    oneOf:
+                      - $ref: "#/components/schemas/Message"
+                      - type: boolean
+
+  /bot{token}/deleteMessage:
+    post:
+      operationId: deleteMessage
+      summary: Delete message
+      description: Use this method to delete a message, including service messages
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - message_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                message_id:
+                  type: integer
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  # Chat Management
+  /bot{token}/getChat:
+    post:
+      operationId: getChat
+      summary: Get chat information
+      description: Use this method to get up to date information about the chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+      responses:
+        "200":
+          description: Returns a Chat object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/Chat"
+
+  /bot{token}/getChatAdministrators:
+    post:
+      operationId: getChatAdministrators
+      summary: Get chat administrators
+      description: Use this method to get a list of administrators in a chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+      responses:
+        "200":
+          description: Returns an Array of ChatMember objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ChatMember"
+
+  /bot{token}/getChatMemberCount:
+    post:
+      operationId: getChatMemberCount
+      summary: Get chat member count
+      description: Use this method to get the number of members in a chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+      responses:
+        "200":
+          description: Returns Int on success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    type: integer
+
+  /bot{token}/getChatMember:
+    post:
+      operationId: getChatMember
+      summary: Get chat member information
+      description: Use this method to get information about a member of a chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - user_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                user_id:
+                  type: integer
+      responses:
+        "200":
+          description: Returns a ChatMember object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/ChatMember"
+
+  /bot{token}/banChatMember:
+    post:
+      operationId: banChatMember
+      summary: Ban chat member
+      description: Use this method to ban a user in a group, a supergroup or a channel
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - user_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                user_id:
+                  type: integer
+                until_date:
+                  type: integer
+                revoke_messages:
+                  type: boolean
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/unbanChatMember:
+    post:
+      operationId: unbanChatMember
+      summary: Unban chat member
+      description: Use this method to unban a previously banned user in a supergroup or channel
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - user_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                user_id:
+                  type: integer
+                only_if_banned:
+                  type: boolean
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/restrictChatMember:
+    post:
+      operationId: restrictChatMember
+      summary: Restrict chat member
+      description: Use this method to restrict a user in a supergroup
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - user_id
+                - permissions
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                user_id:
+                  type: integer
+                permissions:
+                  $ref: "#/components/schemas/ChatPermissions"
+                use_independent_chat_permissions:
+                  type: boolean
+                until_date:
+                  type: integer
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/promoteChatMember:
+    post:
+      operationId: promoteChatMember
+      summary: Promote chat member
+      description: Use this method to promote or demote a user in a supergroup or a channel
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - user_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                user_id:
+                  type: integer
+                is_anonymous:
+                  type: boolean
+                can_manage_chat:
+                  type: boolean
+                can_post_messages:
+                  type: boolean
+                can_edit_messages:
+                  type: boolean
+                can_delete_messages:
+                  type: boolean
+                can_manage_video_chats:
+                  type: boolean
+                can_restrict_members:
+                  type: boolean
+                can_promote_members:
+                  type: boolean
+                can_change_info:
+                  type: boolean
+                can_invite_users:
+                  type: boolean
+                can_pin_messages:
+                  type: boolean
+                can_manage_topics:
+                  type: boolean
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/setChatAdministratorCustomTitle:
+    post:
+      operationId: setChatAdministratorCustomTitle
+      summary: Set chat administrator custom title
+      description: Use this method to set a custom title for an administrator in a supergroup promoted by the bot
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - user_id
+                - custom_title
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                user_id:
+                  type: integer
+                custom_title:
+                  type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/setChatPermissions:
+    post:
+      operationId: setChatPermissions
+      summary: Set chat permissions
+      description: Use this method to set default chat permissions for all members
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - permissions
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                permissions:
+                  $ref: "#/components/schemas/ChatPermissions"
+                use_independent_chat_permissions:
+                  type: boolean
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/setChatPhoto:
+    post:
+      operationId: setChatPhoto
+      summary: Set chat photo
+      description: Use this method to set a new profile photo for the chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - photo
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                photo:
+                  type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/deleteChatPhoto:
+    post:
+      operationId: deleteChatPhoto
+      summary: Delete chat photo
+      description: Use this method to delete a chat photo
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/setChatTitle:
+    post:
+      operationId: setChatTitle
+      summary: Set chat title
+      description: Use this method to change the title of a chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - title
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                title:
+                  type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/setChatDescription:
+    post:
+      operationId: setChatDescription
+      summary: Set chat description
+      description: Use this method to change the description of a group, a supergroup or a channel
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                description:
+                  type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/pinChatMessage:
+    post:
+      operationId: pinChatMessage
+      summary: Pin chat message
+      description: Use this method to add a message to the list of pinned messages in a chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+                - message_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                message_id:
+                  type: integer
+                disable_notification:
+                  type: boolean
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/unpinChatMessage:
+    post:
+      operationId: unpinChatMessage
+      summary: Unpin chat message
+      description: Use this method to remove a message from the list of pinned messages in a chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+                message_id:
+                  type: integer
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/unpinAllChatMessages:
+    post:
+      operationId: unpinAllChatMessages
+      summary: Unpin all chat messages
+      description: Use this method to clear the list of pinned messages in a chat
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/leaveChat:
+    post:
+      operationId: leaveChat
+      summary: Leave chat
+      description: Use this method for your bot to leave a group, supergroup or channel
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chat_id
+              properties:
+                chat_id:
+                  oneOf:
+                    - type: integer
+                    - type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  # File Operations
+  /bot{token}/getFile:
+    post:
+      operationId: getFile
+      summary: Get file information
+      description: Use this method to get basic info about a file and prepare it for downloading
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - file_id
+              properties:
+                file_id:
+                  type: string
+      responses:
+        "200":
+          description: Returns a File object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/File"
+
+  # Bot Information
+  /bot{token}/getMe:
+    get:
+      operationId: getMe
+      summary: Get bot information
+      description: A simple method for testing your bot's authentication token
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns basic information about the bot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/User"
+
+  /bot{token}/setMyCommands:
+    post:
+      operationId: setMyCommands
+      summary: Set bot commands
+      description: Use this method to change the list of the bot's commands
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - commands
+              properties:
+                commands:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/BotCommand"
+                scope:
+                  type: object
+                language_code:
+                  type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/getMyCommands:
+    post:
+      operationId: getMyCommands
+      summary: Get bot commands
+      description: Use this method to get the current list of the bot's commands
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scope:
+                  type: object
+                language_code:
+                  type: string
+      responses:
+        "200":
+          description: Returns Array of BotCommand on success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BotCommand"
+
+  /bot{token}/deleteMyCommands:
+    post:
+      operationId: deleteMyCommands
+      summary: Delete bot commands
+      description: Use this method to delete the list of the bot's commands
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scope:
+                  type: object
+                language_code:
+                  type: string
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  # Sticker Management
+  /bot{token}/getStickerSet:
+    post:
+      operationId: getStickerSet
+      summary: Get sticker set
+      description: Use this method to get a sticker set
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+      responses:
+        "200":
+          description: Returns a StickerSet object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    $ref: "#/components/schemas/StickerSet"
+
+  /bot{token}/getCustomEmojiStickers:
+    post:
+      operationId: getCustomEmojiStickers
+      summary: Get custom emoji stickers
+      description: Use this method to get information about custom emoji stickers by their identifiers
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - custom_emoji_ids
+              properties:
+                custom_emoji_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: Returns Array of Sticker objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Sticker"
+
+  # Inline Mode
+  /bot{token}/answerInlineQuery:
+    post:
+      operationId: answerInlineQuery
+      summary: Answer inline query
+      description: Use this method to send answers to an inline query
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - inline_query_id
+                - results
+              properties:
+                inline_query_id:
+                  type: string
+                results:
+                  type: array
+                  items:
+                    type: object
+                cache_time:
+                  type: integer
+                is_personal:
+                  type: boolean
+                next_offset:
+                  type: string
+                button:
+                  type: object
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+  /bot{token}/answerCallbackQuery:
+    post:
+      operationId: answerCallbackQuery
+      summary: Answer callback query
+      description: Use this method to send answers to callback queries sent from inline keyboards
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - callback_query_id
+              properties:
+                callback_query_id:
+                  type: string
+                text:
+                  type: string
+                show_alert:
+                  type: boolean
+                url:
+                  type: string
+                cache_time:
+                  type: integer
+      responses:
+        "200":
+          description: Returns True on success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response"
+
+security:
+  - BotToken: []
