@@ -12,17 +12,17 @@ interface EndpointInfo {
   summary?: string;
 }
 
-export function generateApi(spec: OpenAPISpec): string {
+export function generateApi(spec: OpenAPISpec, className: string = "TikTokApi"): string {
   const endpoints = extractEndpoints(spec);
 
   const lines: string[] = [
     "// AUTO-GENERATED FILE - DO NOT EDIT",
-    "// Generated from api/openapi.yaml",
+    "// Generated from OpenAPI specification",
     "",
-    'import type { HttpClient } from "../src/auth/client";',
+    'import type { HttpClient } from "../../src/auth/client";',
     'import type * as Types from "./types";',
     "",
-    "export class TikTokApi {",
+    `export class ${className} {`,
     "  private client: HttpClient;",
     "",
     "  constructor(client: HttpClient) {",
@@ -107,12 +107,56 @@ function getTypeName(schema: SchemaObject | RefObject): string {
 function generateMethod(endpoint: EndpointInfo): string {
   const lines: string[] = [];
 
-  // Generate JSDoc comment
+  // Generate TSDoc comment
+  lines.push(`  /**`);
   if (endpoint.summary) {
-    lines.push(`  /**`);
     lines.push(`   * ${endpoint.summary}`);
-    lines.push(`   */`);
+    lines.push(`   *`);
   }
+
+  // Add method description
+  lines.push(`   * @param ${endpoint.requestBodyType ? 'body - Request body data' : endpoint.pathParams.length > 0 || endpoint.queryParams.length > 0 ? 'params - Request parameters' : ''}`);
+  if (endpoint.requestBodyType) {
+    for (const param of endpoint.pathParams) {
+      lines.push(`   * @param ${param.name} - ${param.description || 'Path parameter'}`);
+    }
+    if (endpoint.queryParams.length > 0) {
+      lines.push(`   * @param params - Optional query parameters`);
+    }
+  } else if (endpoint.pathParams.length > 0 || endpoint.queryParams.length > 0) {
+    for (const param of endpoint.pathParams) {
+      lines.push(`   * @param ${param.name} - ${param.description || 'Path parameter'}`);
+    }
+    if (endpoint.queryParams.length > 0) {
+      for (const param of endpoint.queryParams) {
+        const safeName = param.name.replace(/\./g, "_");
+        lines.push(`   * @param params.${safeName} - ${param.description || param.name}`);
+      }
+    }
+  }
+
+  lines.push(`   * @returns Promise resolving to the API response`);
+  lines.push(`   *`);
+  lines.push(`   * @example`);
+  lines.push(`   * \`\`\`typescript`);
+  if (endpoint.requestBodyType) {
+    lines.push(`   * const response = await api.${endpoint.operationId}(requestData);`);
+  } else if (endpoint.pathParams.length > 0 || endpoint.queryParams.length > 0) {
+    const exampleParams: string[] = [];
+    for (const param of endpoint.pathParams) {
+      exampleParams.push(`${param.name}`);
+    }
+    if (endpoint.queryParams.length > 0) {
+      exampleParams.push(`queryParams`);
+    }
+    lines.push(`   * const response = await api.${endpoint.operationId}(${exampleParams.join(', ')});`);
+  } else {
+    lines.push(`   * const response = await api.${endpoint.operationId}();`);
+  }
+  lines.push(`   * \`\`\``);
+  lines.push(`   *`);
+  lines.push(`   * @public`);
+  lines.push(`   */`);
 
   // Generate method signature
   const params = generateMethodParams(endpoint);
@@ -135,7 +179,7 @@ function generateMethod(endpoint: EndpointInfo): string {
       lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, {`);
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_");
-        lines.push(`      "${param.name}": ${safeName},`);
+        lines.push(`      "${param.name}": params?.${safeName},`);
       }
       lines.push(`    });`);
     } else {
@@ -183,7 +227,7 @@ function generateMethodParams(endpoint: EndpointInfo): string {
       const safeName = param.name.replace(/\./g, "_");
       queryParamTypes.push(`${safeName}?: ${tsType}`);
     }
-    params.push(`{ ${queryParamTypes.join(", ")} }: { ${queryParamTypes.join("; ")} } = {}`);
+    params.push(`params?: { ${queryParamTypes.join("; ")} }`);
   }
 
   return params.join(", ");
