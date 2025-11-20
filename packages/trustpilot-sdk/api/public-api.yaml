@@ -1,0 +1,693 @@
+openapi: 3.0.3
+info:
+  title: Trustpilot Public API
+  description: Public Trustpilot API with API Key authentication
+  version: v1
+
+servers:
+  - url: https://api.trustpilot.com/v1
+    description: Production
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: apikey
+      description: API Key in format "apikey:{key}"
+
+  schemas:
+    # Business Unit Schemas
+    BusinessUnit:
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        identifyingName:
+          type: string
+        websiteUrl:
+          type: string
+          format: uri
+        numberOfReviews:
+          type: object
+          properties:
+            total:
+              type: integer
+            usedForTrustScoreCalculation:
+              type: integer
+        trustScore:
+          type: number
+        stars:
+          type: number
+        score:
+          type: object
+          properties:
+            trustScore:
+              type: number
+            stars:
+              type: number
+        profileUrl:
+          type: string
+          format: uri
+
+    # Review Schemas
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+        stars:
+          type: integer
+          minimum: 1
+          maximum: 5
+        title:
+          type: string
+        text:
+          type: string
+        language:
+          type: string
+        location:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        createdAt:
+          type: string
+          format: date-time
+        consumer:
+          type: object
+          properties:
+            id:
+              type: string
+            displayName:
+              type: string
+            numberOfReviews:
+              type: integer
+            displayLocation:
+              type: string
+            hasImage:
+              type: boolean
+        businessUnit:
+          type: object
+          properties:
+            id:
+              type: string
+            identifyingName:
+              type: string
+        companyReply:
+          type: object
+          properties:
+            text:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+        isVerified:
+          type: boolean
+        source:
+          type: string
+
+    ReviewsResponse:
+      type: object
+      properties:
+        reviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/Review"
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+              method:
+                type: string
+              rel:
+                type: string
+
+    # Consumer Schemas
+    Consumer:
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        numberOfReviews:
+          type: integer
+        displayLocation:
+          type: string
+        hasImage:
+          type: boolean
+
+    # Category Schemas
+    Category:
+      type: object
+      properties:
+        categoryId:
+          type: string
+        displayName:
+          type: string
+        parentId:
+          type: string
+        children:
+          type: array
+          items:
+            type: object
+            properties:
+              categoryId:
+                type: string
+              displayName:
+                type: string
+
+    CategoriesResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+
+    # Resource Schemas
+    Locale:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+          format: uri
+
+    Country:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+
+    ImageResources:
+      type: object
+      properties:
+        stars:
+          type: object
+        logo:
+          type: object
+        trustScore:
+          type: object
+
+    # Product Review Schemas (Public)
+    ProductReview:
+      type: object
+      properties:
+        id:
+          type: string
+        stars:
+          type: integer
+        title:
+          type: string
+        text:
+          type: string
+        consumer:
+          $ref: "#/components/schemas/Consumer"
+        createdAt:
+          type: string
+          format: date-time
+        productName:
+          type: string
+        productUrl:
+          type: string
+          format: uri
+        sku:
+          type: string
+
+    ProductReviewsResponse:
+      type: object
+      properties:
+        productReviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductReview"
+        links:
+          type: array
+          items:
+            type: object
+
+    ProductReviewSummary:
+      type: object
+      properties:
+        sku:
+          type: string
+        productUrl:
+          type: string
+        numberOfReviews:
+          type: object
+          properties:
+            total:
+              type: integer
+            fiveStars:
+              type: integer
+            fourStars:
+              type: integer
+            threeStars:
+              type: integer
+            twoStars:
+              type: integer
+            oneStar:
+              type: integer
+        starsAverage:
+          type: number
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  # Business Units API
+  /business-units/{businessUnitId}:
+    get:
+      operationId: getBusinessUnit
+      summary: Get a business unit by ID
+      description: Returns public information about a business unit
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Business unit details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessUnit"
+
+  /business-units/find:
+    get:
+      operationId: findBusinessUnit
+      summary: Find a business unit by domain
+      description: Find a business unit using domain name
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Domain name to search for
+      responses:
+        "200":
+          description: Business unit found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessUnit"
+
+  /business-units/search:
+    get:
+      operationId: searchBusinessUnits
+      summary: Search for business units
+      description: Search for business units by name
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  businessUnits:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BusinessUnit"
+
+  /business-units/{businessUnitId}/reviews:
+    get:
+      operationId: getBusinessUnitReviews
+      summary: Get reviews for a business unit
+      description: Returns public reviews for a business unit
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: stars
+          in: query
+          schema:
+            type: string
+          description: Filter by star rating (e.g., "1,2,3,4,5")
+        - name: language
+          in: query
+          schema:
+            type: string
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+            enum: [createdat.asc, createdat.desc]
+      responses:
+        "200":
+          description: Reviews list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewsResponse"
+
+  /business-units/{businessUnitId}/web-links:
+    get:
+      operationId: getBusinessUnitWebLinks
+      summary: Get web links for a business unit
+      description: Get links to the business unit's public Trustpilot profile
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Web links
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profileUrl:
+                    type: string
+
+  /business-units/{businessUnitId}/images/logo:
+    get:
+      operationId: getBusinessUnitLogo
+      summary: Get company logo
+      description: Get the company logo for a business unit
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Logo image URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logoUrl:
+                    type: string
+                    format: uri
+
+  # Consumer API
+  /consumers/{consumerId}/reviews:
+    get:
+      operationId: getConsumerReviews
+      summary: Get reviews by a consumer
+      description: Returns reviews written by an individual consumer
+      parameters:
+        - name: consumerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: stars
+          in: query
+          schema:
+            type: string
+        - name: language
+          in: query
+          schema:
+            type: string
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Consumer reviews
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewsResponse"
+
+  # Categories API
+  /categories:
+    get:
+      operationId: getCategories
+      summary: Get all categories
+      description: Returns all Trustpilot categories
+      parameters:
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: locale
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Categories list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoriesResponse"
+
+  /categories/{categoryId}:
+    get:
+      operationId: getCategory
+      summary: Get a specific category
+      description: Returns details of a specific category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+
+  /categories/{categoryId}/business-units:
+    get:
+      operationId: getCategoryBusinessUnits
+      summary: Get business units in a category
+      description: Returns business units within a specific category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Business units in category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  businessUnits:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BusinessUnit"
+
+  # Resources API
+  /resources/metadata/locales:
+    get:
+      operationId: getLocales
+      summary: Get supported locales
+      description: Returns all supported Trustpilot locales
+      responses:
+        "200":
+          description: Locales list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Locale"
+
+  /resources/metadata/countries:
+    get:
+      operationId: getCountries
+      summary: Get countries
+      description: Returns all countries supported by Trustpilot
+      parameters:
+        - name: translationLocale
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Countries list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Country"
+
+  /resources/images:
+    get:
+      operationId: getImageResources
+      summary: Get image resources
+      description: Returns links to Trustpilot image resources (stars, logos, etc.)
+      responses:
+        "200":
+          description: Image resources
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageResources"
+
+  /resources/strings/stars/{stars}:
+    get:
+      operationId: getStarRatingString
+      summary: Get localized star rating text
+      description: Returns localized text representation of star ratings
+      parameters:
+        - name: stars
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+        - name: locale
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Star rating text
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  # Product Reviews API (Public)
+  /product-reviews/business-units/{businessUnitId}/reviews:
+    get:
+      operationId: getProductReviews
+      summary: Get public product reviews
+      description: Returns public product reviews for a business unit
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sku
+          in: query
+          schema:
+            type: string
+        - name: productUrl
+          in: query
+          schema:
+            type: string
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Product reviews
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductReviewsResponse"
+
+  /product-reviews/business-units/{businessUnitId}/reviews/{reviewId}:
+    get:
+      operationId: getProductReview
+      summary: Get a specific product review
+      description: Returns a single product review by ID
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product review details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductReview"

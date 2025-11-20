@@ -87,7 +87,7 @@ export function createTikTokClient(config: TikTokClientConfig): HttpClient {
       throw new Error(`TikTok API error (${response.status}): ${errorText}`);
     }
 
-    return response.json();
+    return response.json() as Promise<T>;
   }
 
   return {

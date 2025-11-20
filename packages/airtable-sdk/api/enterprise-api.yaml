@@ -1,0 +1,740 @@
+openapi: 3.0.0
+info:
+  title: Airtable Enterprise API
+  version: 1.0.0
+  description: Airtable Enterprise API for user management, audit logs, and workspace administration
+
+servers:
+  - url: https://api.airtable.com/v0
+    description: Airtable API v0
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Enterprise Personal Access Token
+
+  schemas:
+    EnterpriseInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        createdTime:
+          type: string
+          format: date-time
+        userDomain:
+          type: string
+        workspaceIds:
+          type: array
+          items:
+            type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        state:
+          type: string
+          enum: [invited, active, deactivated]
+        email:
+          type: string
+        name:
+          type: string
+        createdTime:
+          type: string
+          format: date-time
+        lastActivityTime:
+          type: string
+          format: date-time
+        isAdmin:
+          type: boolean
+
+    UserList:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        offset:
+          type: string
+
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        createdTime:
+          type: string
+          format: date-time
+        memberUserIds:
+          type: array
+          items:
+            type: string
+
+    GroupList:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        offset:
+          type: string
+
+    AuditLogEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        action:
+          type: string
+        actor:
+          type: object
+          properties:
+            type:
+              type: string
+            id:
+              type: string
+            email:
+              type: string
+        context:
+          type: object
+          properties:
+            base:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+            workspace:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+        payload:
+          type: object
+          additionalProperties: true
+
+    AuditLogList:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogEvent'
+        pagination:
+          type: object
+          properties:
+            offset:
+              type: string
+            hasMore:
+              type: boolean
+
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        createdTime:
+          type: string
+          format: date-time
+        isPrimaryWorkspace:
+          type: boolean
+
+    WorkspaceList:
+      type: object
+      properties:
+        workspaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/Workspace'
+
+    Collaborator:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        permissionLevel:
+          type: string
+          enum: [none, read, comment, edit, create, owner]
+        createdTime:
+          type: string
+          format: date-time
+
+    CollaboratorList:
+      type: object
+      properties:
+        collaborators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Collaborator'
+
+    CreateWorkspaceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    AddCollaboratorRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        permissionLevel:
+          type: string
+          enum: [read, comment, edit, create]
+      required:
+        - email
+        - permissionLevel
+
+    UpdateCollaboratorRequest:
+      type: object
+      properties:
+        permissionLevel:
+          type: string
+          enum: [none, read, comment, edit, create]
+      required:
+        - permissionLevel
+
+    ClaimUsersRequest:
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+      required:
+        - emails
+
+    CreateGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        memberUserIds:
+          type: array
+          items:
+            type: string
+      required:
+        - name
+
+    UpdateGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        memberUserIds:
+          type: array
+          items:
+            type: string
+
+paths:
+  /meta/enterpriseAccount:
+    get:
+      summary: Get enterprise account info
+      operationId: getEnterpriseInfo
+      responses:
+        '200':
+          description: Enterprise account information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseInfo'
+
+  /meta/enterpriseAccount/users:
+    get:
+      summary: List enterprise users
+      operationId: listUsers
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+
+  /meta/enterpriseAccount/users/{userId}:
+    get:
+      summary: Get user details
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    delete:
+      summary: Remove user
+      operationId: removeUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User removed
+
+  /meta/enterpriseAccount/users/{userId}/grantAdmin:
+    post:
+      summary: Grant admin privileges
+      operationId: grantAdmin
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Admin granted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /meta/enterpriseAccount/users/{userId}/revokeAdmin:
+    post:
+      summary: Revoke admin privileges
+      operationId: revokeAdmin
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Admin revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /meta/enterpriseAccount/claimUsers:
+    post:
+      summary: Claim users to enterprise
+      operationId: claimUsers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimUsersRequest'
+      responses:
+        '200':
+          description: Users claimed
+
+  /meta/enterpriseAccount/groups:
+    get:
+      summary: List groups
+      operationId: listGroups
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+      responses:
+        '200':
+          description: List of groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupList'
+
+    post:
+      summary: Create group
+      operationId: createGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRequest'
+      responses:
+        '200':
+          description: Created group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+
+  /meta/enterpriseAccount/groups/{groupId}:
+    get:
+      summary: Get group details
+      operationId: getGroup
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Group details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+
+    patch:
+      summary: Update group
+      operationId: updateGroup
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGroupRequest'
+      responses:
+        '200':
+          description: Updated group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+
+    delete:
+      summary: Delete group
+      operationId: deleteGroup
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Group deleted
+
+  /meta/enterpriseAccount/auditLogs:
+    get:
+      summary: List audit log events
+      operationId: listAuditLogs
+      parameters:
+        - name: startTime
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: endTime
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: actionType
+          in: query
+          schema:
+            type: string
+        - name: actorId
+          in: query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            maximum: 100
+      responses:
+        '200':
+          description: Audit log events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogList'
+
+  /meta/workspaces:
+    get:
+      summary: List workspaces
+      operationId: listWorkspaces
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of workspaces
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceList'
+
+    post:
+      summary: Create workspace
+      operationId: createWorkspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkspaceRequest'
+      responses:
+        '200':
+          description: Created workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+
+  /meta/workspaces/{workspaceId}:
+    get:
+      summary: Get workspace details
+      operationId: getWorkspace
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workspace details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+
+    delete:
+      summary: Delete workspace
+      operationId: deleteWorkspace
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Workspace deleted
+
+  /meta/workspaces/{workspaceId}/collaborators:
+    get:
+      summary: List workspace collaborators
+      operationId: listWorkspaceCollaborators
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of collaborators
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollaboratorList'
+
+    post:
+      summary: Add workspace collaborator
+      operationId: addWorkspaceCollaborator
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCollaboratorRequest'
+      responses:
+        '200':
+          description: Added collaborator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collaborator'
+
+  /meta/workspaces/{workspaceId}/collaborators/{collaboratorId}:
+    patch:
+      summary: Update workspace collaborator
+      operationId: updateWorkspaceCollaborator
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: collaboratorId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCollaboratorRequest'
+      responses:
+        '200':
+          description: Updated collaborator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collaborator'
+
+    delete:
+      summary: Remove workspace collaborator
+      operationId: removeWorkspaceCollaborator
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: collaboratorId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Collaborator removed
+
+  /meta/bases/{baseId}/collaborators:
+    get:
+      summary: List base collaborators
+      operationId: listBaseCollaborators
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of collaborators
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollaboratorList'
+
+    post:
+      summary: Add base collaborator
+      operationId: addBaseCollaborator
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCollaboratorRequest'
+      responses:
+        '200':
+          description: Added collaborator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collaborator'
+
+  /meta/bases/{baseId}/collaborators/{collaboratorId}:
+    patch:
+      summary: Update base collaborator
+      operationId: updateBaseCollaborator
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: collaboratorId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCollaboratorRequest'
+      responses:
+        '200':
+          description: Updated collaborator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collaborator'
+
+    delete:
+      summary: Remove base collaborator
+      operationId: removeBaseCollaborator
+      parameters:
+        - name: baseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: collaboratorId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Collaborator removed
