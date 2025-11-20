@@ -1,0 +1,2043 @@
+openapi: 3.0.3
+info:
+  title: Telegram Client API (MTProto)
+  description: |
+    Telegram Client API for building custom Telegram clients with full access to all features.
+    This API uses the MTProto protocol and requires phone number authentication.
+    Note: This is a representative subset of the 742+ available methods.
+  version: "195"
+
+servers:
+  - url: https://api.telegram.org
+    description: Telegram API Server (use appropriate DC based on auth)
+
+components:
+  securitySchemes:
+    SessionAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Session authorization key obtained after phone verification
+
+  schemas:
+    # Common Types
+    InputPeer:
+      oneOf:
+        - $ref: "#/components/schemas/InputPeerUser"
+        - $ref: "#/components/schemas/InputPeerChat"
+        - $ref: "#/components/schemas/InputPeerChannel"
+
+    InputPeerUser:
+      type: object
+      required:
+        - user_id
+        - access_hash
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        access_hash:
+          type: integer
+          format: int64
+
+    InputPeerChat:
+      type: object
+      required:
+        - chat_id
+      properties:
+        chat_id:
+          type: integer
+          format: int64
+
+    InputPeerChannel:
+      type: object
+      required:
+        - channel_id
+        - access_hash
+      properties:
+        channel_id:
+          type: integer
+          format: int64
+        access_hash:
+          type: integer
+          format: int64
+
+    # User Types
+    User:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int64
+        access_hash:
+          type: integer
+          format: int64
+        first_name:
+          type: string
+        last_name:
+          type: string
+        username:
+          type: string
+        phone:
+          type: string
+        photo:
+          $ref: "#/components/schemas/UserProfilePhoto"
+        status:
+          $ref: "#/components/schemas/UserStatus"
+        bot:
+          type: boolean
+        bot_info_version:
+          type: integer
+        verified:
+          type: boolean
+        restricted:
+          type: boolean
+        premium:
+          type: boolean
+
+    UserFull:
+      type: object
+      required:
+        - id
+        - about
+        - settings
+        - profile_photo
+        - notify_settings
+      properties:
+        id:
+          type: integer
+          format: int64
+        about:
+          type: string
+        settings:
+          $ref: "#/components/schemas/PeerSettings"
+        profile_photo:
+          type: object
+        notify_settings:
+          $ref: "#/components/schemas/PeerNotifySettings"
+        common_chats_count:
+          type: integer
+        folder_id:
+          type: integer
+
+    UserProfilePhoto:
+      type: object
+      required:
+        - photo_id
+      properties:
+        photo_id:
+          type: integer
+          format: int64
+        dc_id:
+          type: integer
+
+    UserStatus:
+      oneOf:
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [userStatusOnline]
+            expires:
+              type: integer
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [userStatusOffline]
+            was_online:
+              type: integer
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [userStatusRecently, userStatusLastWeek, userStatusLastMonth]
+
+    # Message Types
+    Message:
+      type: object
+      required:
+        - id
+        - peer_id
+        - date
+      properties:
+        id:
+          type: integer
+        peer_id:
+          $ref: "#/components/schemas/Peer"
+        from_id:
+          $ref: "#/components/schemas/Peer"
+        date:
+          type: integer
+        message:
+          type: string
+        media:
+          $ref: "#/components/schemas/MessageMedia"
+        reply_to:
+          $ref: "#/components/schemas/MessageReplyHeader"
+        entities:
+          type: array
+          items:
+            $ref: "#/components/schemas/MessageEntity"
+        views:
+          type: integer
+        forwards:
+          type: integer
+        replies:
+          $ref: "#/components/schemas/MessageReplies"
+        edit_date:
+          type: integer
+        post_author:
+          type: string
+        grouped_id:
+          type: integer
+          format: int64
+        reactions:
+          $ref: "#/components/schemas/MessageReactions"
+
+    Peer:
+      oneOf:
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [peerUser]
+            user_id:
+              type: integer
+              format: int64
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [peerChat]
+            chat_id:
+              type: integer
+              format: int64
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [peerChannel]
+            channel_id:
+              type: integer
+              format: int64
+
+    MessageMedia:
+      oneOf:
+        - $ref: "#/components/schemas/MessageMediaPhoto"
+        - $ref: "#/components/schemas/MessageMediaDocument"
+        - $ref: "#/components/schemas/MessageMediaGeo"
+        - $ref: "#/components/schemas/MessageMediaContact"
+
+    MessageMediaPhoto:
+      type: object
+      properties:
+        photo:
+          type: object
+        ttl_seconds:
+          type: integer
+
+    MessageMediaDocument:
+      type: object
+      properties:
+        document:
+          type: object
+        ttl_seconds:
+          type: integer
+
+    MessageMediaGeo:
+      type: object
+      properties:
+        geo:
+          type: object
+
+    MessageMediaContact:
+      type: object
+      properties:
+        phone_number:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        vcard:
+          type: string
+        user_id:
+          type: integer
+          format: int64
+
+    MessageEntity:
+      type: object
+      required:
+        - offset
+        - length
+      properties:
+        offset:
+          type: integer
+        length:
+          type: integer
+        type:
+          type: string
+          enum: [mention, hashtag, bot_command, url, email, bold, italic, code, pre, text_link, text_mention, phone_number]
+
+    MessageReplyHeader:
+      type: object
+      properties:
+        reply_to_msg_id:
+          type: integer
+        reply_to_peer_id:
+          $ref: "#/components/schemas/Peer"
+        reply_to_top_id:
+          type: integer
+
+    MessageReplies:
+      type: object
+      properties:
+        replies:
+          type: integer
+        replies_pts:
+          type: integer
+        comments:
+          type: boolean
+        recent_repliers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Peer"
+        channel_id:
+          type: integer
+          format: int64
+
+    MessageReactions:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+        recent_reactions:
+          type: array
+          items:
+            type: object
+
+    # Chat Types
+    Chat:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        photo:
+          type: object
+        participants_count:
+          type: integer
+        date:
+          type: integer
+        version:
+          type: integer
+        migrated_to:
+          type: object
+        admin_rights:
+          $ref: "#/components/schemas/ChatAdminRights"
+        default_banned_rights:
+          $ref: "#/components/schemas/ChatBannedRights"
+
+    Channel:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: integer
+          format: int64
+        access_hash:
+          type: integer
+          format: int64
+        title:
+          type: string
+        username:
+          type: string
+        photo:
+          type: object
+        date:
+          type: integer
+        version:
+          type: integer
+        restriction_reason:
+          type: array
+          items:
+            type: object
+        admin_rights:
+          $ref: "#/components/schemas/ChatAdminRights"
+        banned_rights:
+          $ref: "#/components/schemas/ChatBannedRights"
+        default_banned_rights:
+          $ref: "#/components/schemas/ChatBannedRights"
+        participants_count:
+          type: integer
+        megagroup:
+          type: boolean
+        broadcast:
+          type: boolean
+        verified:
+          type: boolean
+
+    ChatAdminRights:
+      type: object
+      properties:
+        change_info:
+          type: boolean
+        post_messages:
+          type: boolean
+        edit_messages:
+          type: boolean
+        delete_messages:
+          type: boolean
+        ban_users:
+          type: boolean
+        invite_users:
+          type: boolean
+        pin_messages:
+          type: boolean
+        add_admins:
+          type: boolean
+        anonymous:
+          type: boolean
+        manage_call:
+          type: boolean
+        other:
+          type: boolean
+        manage_topics:
+          type: boolean
+
+    ChatBannedRights:
+      type: object
+      required:
+        - until_date
+      properties:
+        until_date:
+          type: integer
+        view_messages:
+          type: boolean
+        send_messages:
+          type: boolean
+        send_media:
+          type: boolean
+        send_stickers:
+          type: boolean
+        send_gifs:
+          type: boolean
+        send_games:
+          type: boolean
+        send_inline:
+          type: boolean
+        embed_links:
+          type: boolean
+        send_polls:
+          type: boolean
+        change_info:
+          type: boolean
+        invite_users:
+          type: boolean
+        pin_messages:
+          type: boolean
+        manage_topics:
+          type: boolean
+
+    # Dialog/Chat List
+    Dialog:
+      type: object
+      required:
+        - peer
+        - top_message
+        - read_inbox_max_id
+        - read_outbox_max_id
+        - unread_count
+        - notify_settings
+      properties:
+        peer:
+          $ref: "#/components/schemas/Peer"
+        top_message:
+          type: integer
+        read_inbox_max_id:
+          type: integer
+        read_outbox_max_id:
+          type: integer
+        unread_count:
+          type: integer
+        unread_mentions_count:
+          type: integer
+        unread_reactions_count:
+          type: integer
+        notify_settings:
+          $ref: "#/components/schemas/PeerNotifySettings"
+        pts:
+          type: integer
+        draft:
+          type: object
+        folder_id:
+          type: integer
+
+    PeerNotifySettings:
+      type: object
+      properties:
+        show_previews:
+          type: boolean
+        silent:
+          type: boolean
+        mute_until:
+          type: integer
+        sound:
+          type: string
+
+    PeerSettings:
+      type: object
+      properties:
+        report_spam:
+          type: boolean
+        add_contact:
+          type: boolean
+        block_contact:
+          type: boolean
+        share_contact:
+          type: boolean
+        need_contacts_exception:
+          type: boolean
+        report_geo:
+          type: boolean
+        autoarchived:
+          type: boolean
+        geo_distance:
+          type: integer
+
+    # Update Types
+    Update:
+      oneOf:
+        - $ref: "#/components/schemas/UpdateNewMessage"
+        - $ref: "#/components/schemas/UpdateMessageEdited"
+        - $ref: "#/components/schemas/UpdateReadHistoryInbox"
+        - $ref: "#/components/schemas/UpdateUserStatus"
+
+    UpdateNewMessage:
+      type: object
+      properties:
+        message:
+          $ref: "#/components/schemas/Message"
+        pts:
+          type: integer
+        pts_count:
+          type: integer
+
+    UpdateMessageEdited:
+      type: object
+      properties:
+        peer:
+          $ref: "#/components/schemas/Peer"
+        msg_id:
+          type: integer
+        pts:
+          type: integer
+        pts_count:
+          type: integer
+
+    UpdateReadHistoryInbox:
+      type: object
+      properties:
+        peer:
+          $ref: "#/components/schemas/Peer"
+        max_id:
+          type: integer
+        still_unread_count:
+          type: integer
+        pts:
+          type: integer
+        pts_count:
+          type: integer
+
+    UpdateUserStatus:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        status:
+          $ref: "#/components/schemas/UserStatus"
+
+    UpdatesState:
+      type: object
+      required:
+        - pts
+        - qts
+        - date
+        - seq
+      properties:
+        pts:
+          type: integer
+        qts:
+          type: integer
+        date:
+          type: integer
+        seq:
+          type: integer
+        unread_count:
+          type: integer
+
+    # Auth Types
+    SentCode:
+      type: object
+      required:
+        - type
+        - phone_code_hash
+      properties:
+        type:
+          $ref: "#/components/schemas/SentCodeType"
+        phone_code_hash:
+          type: string
+        next_type:
+          $ref: "#/components/schemas/CodeType"
+        timeout:
+          type: integer
+
+    SentCodeType:
+      oneOf:
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [auth.sentCodeTypeApp]
+            length:
+              type: integer
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [auth.sentCodeTypeSms]
+            length:
+              type: integer
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [auth.sentCodeTypeCall]
+            length:
+              type: integer
+        - type: object
+          properties:
+            _:
+              type: string
+              enum: [auth.sentCodeTypeFlashCall]
+            pattern:
+              type: string
+
+    CodeType:
+      type: string
+      enum: [sms, call, flash_call, missed_call]
+
+    Authorization:
+      type: object
+      required:
+        - user
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+
+    # Account Types
+    Password:
+      type: object
+      properties:
+        current_algo:
+          type: object
+        srp_B:
+          type: string
+        srp_id:
+          type: integer
+          format: int64
+        hint:
+          type: string
+        has_recovery:
+          type: boolean
+        has_secure_values:
+          type: boolean
+        has_password:
+          type: boolean
+
+    PrivacyRules:
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            type: object
+
+    # Contact Types
+    ImportedContacts:
+      type: object
+      properties:
+        imported:
+          type: array
+          items:
+            type: object
+        popular_invites:
+          type: array
+          items:
+            type: object
+        retry_contacts:
+          type: array
+          items:
+            type: integer
+            format: int64
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+
+    # Business API Types (Telegram Business features)
+    BusinessWeeklyOpen:
+      type: object
+      properties:
+        start_minute:
+          type: integer
+        end_minute:
+          type: integer
+
+    BusinessWorkHours:
+      type: object
+      properties:
+        open_now:
+          type: boolean
+        timezone_id:
+          type: string
+        weekly_open:
+          type: array
+          items:
+            $ref: "#/components/schemas/BusinessWeeklyOpen"
+
+    BusinessLocation:
+      type: object
+      properties:
+        geo_point:
+          type: object
+        address:
+          type: string
+
+    BusinessIntro:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        sticker:
+          type: object
+
+    BusinessRecipients:
+      type: object
+      properties:
+        existing_chats:
+          type: boolean
+        new_chats:
+          type: boolean
+        contacts:
+          type: boolean
+        non_contacts:
+          type: boolean
+        exclude_selected:
+          type: boolean
+
+    QuickReply:
+      type: object
+      properties:
+        shortcut_id:
+          type: integer
+        shortcut:
+          type: string
+        top_message:
+          type: integer
+        count:
+          type: integer
+
+paths:
+  # Authentication Methods
+  /auth.sendCode:
+    post:
+      operationId: authSendCode
+      summary: Send verification code
+      description: Send a code to verify a phone number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - api_id
+                - api_hash
+              properties:
+                phone_number:
+                  type: string
+                api_id:
+                  type: integer
+                api_hash:
+                  type: string
+                settings:
+                  type: object
+      responses:
+        "200":
+          description: Code sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SentCode"
+
+  /auth.signIn:
+    post:
+      operationId: authSignIn
+      summary: Sign in with code
+      description: Sign in to the account using the verification code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - phone_code_hash
+                - phone_code
+              properties:
+                phone_number:
+                  type: string
+                phone_code_hash:
+                  type: string
+                phone_code:
+                  type: string
+      responses:
+        "200":
+          description: Successfully signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Authorization"
+
+  /auth.signUp:
+    post:
+      operationId: authSignUp
+      summary: Sign up new account
+      description: Register a new account if it doesn't exist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - phone_code_hash
+                - first_name
+              properties:
+                phone_number:
+                  type: string
+                phone_code_hash:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+      responses:
+        "200":
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Authorization"
+
+  /auth.checkPassword:
+    post:
+      operationId: authCheckPassword
+      summary: Check 2FA password
+      description: Check the 2FA password (SRP protocol)
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  type: object
+                  description: SRP password object
+      responses:
+        "200":
+          description: Password correct
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Authorization"
+
+  /auth.logOut:
+    post:
+      operationId: authLogOut
+      summary: Log out
+      description: Log out from the current session
+      security:
+        - SessionAuth: []
+      responses:
+        "200":
+          description: Successfully logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /auth.resetAuthorizations:
+    post:
+      operationId: authResetAuthorizations
+      summary: Reset all authorizations
+      description: Terminate all other sessions
+      security:
+        - SessionAuth: []
+      responses:
+        "200":
+          description: Authorizations reset
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  # Account Methods
+  /account.getPassword:
+    post:
+      operationId: accountGetPassword
+      summary: Get 2FA password settings
+      description: Get information about current 2FA password
+      security:
+        - SessionAuth: []
+      responses:
+        "200":
+          description: Password settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Password"
+
+  /account.updateProfile:
+    post:
+      operationId: accountUpdateProfile
+      summary: Update profile
+      description: Update user profile information
+      security:
+        - SessionAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                about:
+                  type: string
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /account.updateStatus:
+    post:
+      operationId: accountUpdateStatus
+      summary: Update online status
+      description: Update online/offline status
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - offline
+              properties:
+                offline:
+                  type: boolean
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /account.getPrivacy:
+    post:
+      operationId: accountGetPrivacy
+      summary: Get privacy settings
+      description: Get privacy rules for specified setting
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - key
+              properties:
+                key:
+                  type: string
+                  enum: [status_timestamp, chat_invite, phone_call, phone_p2p, forwards, profile_photo, phone_number, added_by_phone]
+      responses:
+        "200":
+          description: Privacy rules
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrivacyRules"
+
+  /account.setPrivacy:
+    post:
+      operationId: accountSetPrivacy
+      summary: Set privacy settings
+      description: Set privacy rules for specified setting
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - key
+                - rules
+              properties:
+                key:
+                  type: string
+                rules:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        "200":
+          description: Privacy rules set
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrivacyRules"
+
+  # User Methods
+  /users.getUsers:
+    post:
+      operationId: usersGetUsers
+      summary: Get users
+      description: Get information about multiple users
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        "200":
+          description: Array of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /users.getFullUser:
+    post:
+      operationId: usersGetFullUser
+      summary: Get full user info
+      description: Get detailed information about a user
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  $ref: "#/components/schemas/InputPeer"
+      responses:
+        "200":
+          description: Full user information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserFull"
+
+  # Contacts Methods
+  /contacts.getContacts:
+    post:
+      operationId: contactsGetContacts
+      summary: Get contacts
+      description: Get the current user's contact list
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - hash
+              properties:
+                hash:
+                  type: integer
+                  format: int64
+      responses:
+        "200":
+          description: Contact list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contacts:
+                    type: array
+                    items:
+                      type: object
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+
+  /contacts.importContacts:
+    post:
+      operationId: contactsImportContacts
+      summary: Import contacts
+      description: Import contacts to the user's contact list
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - contacts
+              properties:
+                contacts:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        "200":
+          description: Imported contacts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportedContacts"
+
+  /contacts.deleteContacts:
+    post:
+      operationId: contactsDeleteContacts
+      summary: Delete contacts
+      description: Delete contacts from the user's contact list
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        "200":
+          description: Updates
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /contacts.block:
+    post:
+      operationId: contactsBlock
+      summary: Block user
+      description: Block a user from contacting you
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  $ref: "#/components/schemas/InputPeer"
+      responses:
+        "200":
+          description: User blocked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /contacts.unblock:
+    post:
+      operationId: contactsUnblock
+      summary: Unblock user
+      description: Unblock a previously blocked user
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  $ref: "#/components/schemas/InputPeer"
+      responses:
+        "200":
+          description: User unblocked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  # Messages Methods
+  /messages.sendMessage:
+    post:
+      operationId: messagesSendMessage
+      summary: Send message
+      description: Send a text message to a peer
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - peer
+                - message
+                - random_id
+              properties:
+                peer:
+                  $ref: "#/components/schemas/InputPeer"
+                message:
+                  type: string
+                random_id:
+                  type: integer
+                  format: int64
+                reply_to_msg_id:
+                  type: integer
+                entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                no_webpage:
+                  type: boolean
+                silent:
+                  type: boolean
+                schedule_date:
+                  type: integer
+      responses:
+        "200":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updates:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Update"
+
+  /messages.sendMedia:
+    post:
+      operationId: messagesSendMedia
+      summary: Send media
+      description: Send media to a peer
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - peer
+                - media
+                - random_id
+              properties:
+                peer:
+                  $ref: "#/components/schemas/InputPeer"
+                media:
+                  $ref: "#/components/schemas/MessageMedia"
+                random_id:
+                  type: integer
+                  format: int64
+                message:
+                  type: string
+                reply_to_msg_id:
+                  type: integer
+                entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                silent:
+                  type: boolean
+                schedule_date:
+                  type: integer
+      responses:
+        "200":
+          description: Media sent
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /messages.getHistory:
+    post:
+      operationId: messagesGetHistory
+      summary: Get message history
+      description: Get messages from a chat
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - peer
+                - offset_id
+                - offset_date
+                - add_offset
+                - limit
+                - max_id
+                - min_id
+                - hash
+              properties:
+                peer:
+                  $ref: "#/components/schemas/InputPeer"
+                offset_id:
+                  type: integer
+                offset_date:
+                  type: integer
+                add_offset:
+                  type: integer
+                limit:
+                  type: integer
+                max_id:
+                  type: integer
+                min_id:
+                  type: integer
+                hash:
+                  type: integer
+                  format: int64
+      responses:
+        "200":
+          description: Message history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Message"
+                  chats:
+                    type: array
+                    items:
+                      type: object
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+
+  /messages.getDialogs:
+    post:
+      operationId: messagesGetDialogs
+      summary: Get dialogs (chat list)
+      description: Get the user's dialogs (chat list)
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - offset_date
+                - offset_id
+                - offset_peer
+                - limit
+                - hash
+              properties:
+                exclude_pinned:
+                  type: boolean
+                folder_id:
+                  type: integer
+                offset_date:
+                  type: integer
+                offset_id:
+                  type: integer
+                offset_peer:
+                  $ref: "#/components/schemas/InputPeer"
+                limit:
+                  type: integer
+                hash:
+                  type: integer
+                  format: int64
+      responses:
+        "200":
+          description: Dialog list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dialogs:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Dialog"
+                  messages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Message"
+                  chats:
+                    type: array
+                    items:
+                      type: object
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+
+  /messages.readHistory:
+    post:
+      operationId: messagesReadHistory
+      summary: Mark messages as read
+      description: Mark messages in a chat as read
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - peer
+                - max_id
+              properties:
+                peer:
+                  $ref: "#/components/schemas/InputPeer"
+                max_id:
+                  type: integer
+      responses:
+        "200":
+          description: Messages marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /messages.deleteMessages:
+    post:
+      operationId: messagesDeleteMessages
+      summary: Delete messages
+      description: Delete messages from a chat
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: array
+                  items:
+                    type: integer
+                revoke:
+                  type: boolean
+      responses:
+        "200":
+          description: Messages deleted
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /messages.editMessage:
+    post:
+      operationId: messagesEditMessage
+      summary: Edit message
+      description: Edit a sent message
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - peer
+                - id
+              properties:
+                peer:
+                  $ref: "#/components/schemas/InputPeer"
+                id:
+                  type: integer
+                message:
+                  type: string
+                media:
+                  $ref: "#/components/schemas/MessageMedia"
+                entities:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/MessageEntity"
+                no_webpage:
+                  type: boolean
+      responses:
+        "200":
+          description: Message edited
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /messages.forwardMessages:
+    post:
+      operationId: messagesForwardMessages
+      summary: Forward messages
+      description: Forward messages to another chat
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - from_peer
+                - id
+                - random_id
+                - to_peer
+              properties:
+                from_peer:
+                  $ref: "#/components/schemas/InputPeer"
+                id:
+                  type: array
+                  items:
+                    type: integer
+                random_id:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                to_peer:
+                  $ref: "#/components/schemas/InputPeer"
+                silent:
+                  type: boolean
+                with_my_score:
+                  type: boolean
+                drop_author:
+                  type: boolean
+                drop_media_captions:
+                  type: boolean
+                schedule_date:
+                  type: integer
+      responses:
+        "200":
+          description: Messages forwarded
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /messages.sendReaction:
+    post:
+      operationId: messagesSendReaction
+      summary: Send reaction
+      description: React to a message
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - peer
+                - msg_id
+              properties:
+                peer:
+                  $ref: "#/components/schemas/InputPeer"
+                msg_id:
+                  type: integer
+                reaction:
+                  type: array
+                  items:
+                    type: object
+                big:
+                  type: boolean
+                add_to_recent:
+                  type: boolean
+      responses:
+        "200":
+          description: Reaction sent
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # Channels (Supergroups/Channels) Methods
+  /channels.getChannels:
+    post:
+      operationId: channelsGetChannels
+      summary: Get channels
+      description: Get information about channels/supergroups
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        "200":
+          description: Channel list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Channel"
+
+  /channels.getFullChannel:
+    post:
+      operationId: channelsGetFullChannel
+      summary: Get full channel info
+      description: Get detailed information about a channel
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - channel
+              properties:
+                channel:
+                  $ref: "#/components/schemas/InputPeerChannel"
+      responses:
+        "200":
+          description: Full channel information
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /channels.createChannel:
+    post:
+      operationId: channelsCreateChannel
+      summary: Create channel
+      description: Create a new channel or supergroup
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                broadcast:
+                  type: boolean
+                megagroup:
+                  type: boolean
+                title:
+                  type: string
+                about:
+                  type: string
+                geo_point:
+                  type: object
+                address:
+                  type: string
+      responses:
+        "200":
+          description: Channel created
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /channels.joinChannel:
+    post:
+      operationId: channelsJoinChannel
+      summary: Join channel
+      description: Join a channel or supergroup
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - channel
+              properties:
+                channel:
+                  $ref: "#/components/schemas/InputPeerChannel"
+      responses:
+        "200":
+          description: Channel joined
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /channels.leaveChannel:
+    post:
+      operationId: channelsLeaveChannel
+      summary: Leave channel
+      description: Leave a channel or supergroup
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - channel
+              properties:
+                channel:
+                  $ref: "#/components/schemas/InputPeerChannel"
+      responses:
+        "200":
+          description: Channel left
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # Updates Methods
+  /updates.getState:
+    post:
+      operationId: updatesGetState
+      summary: Get updates state
+      description: Get current state for receiving updates
+      security:
+        - SessionAuth: []
+      responses:
+        "200":
+          description: Current state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdatesState"
+
+  /updates.getDifference:
+    post:
+      operationId: updatesGetDifference
+      summary: Get updates difference
+      description: Get updates since the last state
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pts
+                - date
+                - qts
+              properties:
+                pts:
+                  type: integer
+                pts_limit:
+                  type: integer
+                pts_total_limit:
+                  type: integer
+                date:
+                  type: integer
+                qts:
+                  type: integer
+                qts_limit:
+                  type: integer
+      responses:
+        "200":
+          description: Updates difference
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  new_messages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Message"
+                  other_updates:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Update"
+
+  # Business API Methods (Telegram Business)
+  /account.updateBusinessWorkHours:
+    post:
+      operationId: accountUpdateBusinessWorkHours
+      summary: Update business work hours
+      description: Update business opening hours for Telegram Business
+      security:
+        - SessionAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                business_work_hours:
+                  $ref: "#/components/schemas/BusinessWorkHours"
+      responses:
+        "200":
+          description: Work hours updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /account.updateBusinessLocation:
+    post:
+      operationId: accountUpdateBusinessLocation
+      summary: Update business location
+      description: Update business location for Telegram Business
+      security:
+        - SessionAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                business_location:
+                  $ref: "#/components/schemas/BusinessLocation"
+      responses:
+        "200":
+          description: Location updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /account.updateBusinessIntro:
+    post:
+      operationId: accountUpdateBusinessIntro
+      summary: Update business intro
+      description: Update business introduction for Telegram Business
+      security:
+        - SessionAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                intro:
+                  $ref: "#/components/schemas/BusinessIntro"
+      responses:
+        "200":
+          description: Intro updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /account.getBusinessChatLinks:
+    post:
+      operationId: accountGetBusinessChatLinks
+      summary: Get business chat links
+      description: Get list of business chat links
+      security:
+        - SessionAuth: []
+      responses:
+        "200":
+          description: Business chat links
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      type: object
+
+  /messages.getQuickReplies:
+    post:
+      operationId: messagesGetQuickReplies
+      summary: Get quick replies
+      description: Get list of quick replies for Telegram Business
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - hash
+              properties:
+                hash:
+                  type: integer
+                  format: int64
+      responses:
+        "200":
+          description: Quick replies list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  quick_replies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/QuickReply"
+
+  /messages.sendQuickReplyMessages:
+    post:
+      operationId: messagesSendQuickReplyMessages
+      summary: Send quick reply
+      description: Send a quick reply message
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - peer
+                - shortcut_id
+                - random_id
+              properties:
+                peer:
+                  $ref: "#/components/schemas/InputPeer"
+                shortcut_id:
+                  type: integer
+                random_id:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+      responses:
+        "200":
+          description: Quick reply sent
+          content:
+            application/json:
+              schema:
+                type: object
+
+security:
+  - SessionAuth: []

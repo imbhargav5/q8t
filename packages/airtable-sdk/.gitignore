@@ -1,0 +1,21 @@
+# Build output
+lib/*.js
+lib/*.js.map
+lib/*.d.ts
+lib/*.d.ts.map
+
+# Dependencies
+node_modules/
+
+# Test coverage
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,908 @@
+openapi: 3.0.3
+info:
+  title: Trustpilot Business API
+  description: Private Trustpilot API with OAuth 2.0 authentication for business operations
+  version: v1
+
+servers:
+  - url: https://api.trustpilot.com/v1
+    description: Production API
+  - url: https://invitations-api.trustpilot.com/v1
+    description: Invitations API
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://authenticate.trustpilot.com
+          tokenUrl: https://api.trustpilot.com/v1/oauth/oauth-business-users-for-applications/accesstoken
+          refreshUrl: https://api.trustpilot.com/v1/oauth/oauth-business-users-for-applications/refresh
+          scopes: {}
+        clientCredentials:
+          tokenUrl: https://api.trustpilot.com/v1/oauth/oauth-business-users-for-applications/accesstoken
+          scopes: {}
+
+  schemas:
+    # Private Review Schemas
+    PrivateReview:
+      type: object
+      properties:
+        id:
+          type: string
+        consumer:
+          type: object
+          properties:
+            id:
+              type: string
+            displayName:
+              type: string
+            email:
+              type: string
+              format: email
+        stars:
+          type: integer
+          minimum: 1
+          maximum: 5
+        title:
+          type: string
+        text:
+          type: string
+        language:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        referenceId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        companyReply:
+          type: object
+          properties:
+            text:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+        state:
+          type: string
+          enum: [published, unpublished, underModeration, flagged, deleted]
+        isVerified:
+          type: boolean
+        location:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+
+    PrivateReviewsResponse:
+      type: object
+      properties:
+        reviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrivateReview"
+        links:
+          type: array
+          items:
+            type: object
+
+    # Invitation Schemas
+    EmailInvitation:
+      type: object
+      required:
+        - recipientEmail
+        - recipientName
+        - referenceId
+      properties:
+        recipientEmail:
+          type: string
+          format: email
+        recipientName:
+          type: string
+        referenceId:
+          type: string
+        locale:
+          type: string
+        senderEmail:
+          type: string
+          format: email
+        senderName:
+          type: string
+        replyTo:
+          type: string
+          format: email
+        preferredSendTime:
+          type: string
+          format: date-time
+        redirectUri:
+          type: string
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+        templateId:
+          type: string
+        serviceReviewInvitation:
+          type: object
+          properties:
+            templateId:
+              type: string
+            redirectUri:
+              type: string
+              format: uri
+        productReviewInvitation:
+          type: object
+          properties:
+            templateId:
+              type: string
+            redirectUri:
+              type: string
+              format: uri
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  productUrl:
+                    type: string
+                    format: uri
+                  imageUrl:
+                    type: string
+                    format: uri
+                  name:
+                    type: string
+                  sku:
+                    type: string
+                  brand:
+                    type: string
+                  gtin:
+                    type: string
+                  mpn:
+                    type: string
+
+    InvitationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        recipientEmail:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    InvitationLink:
+      type: object
+      required:
+        - referenceId
+      properties:
+        referenceId:
+          type: string
+        locale:
+          type: string
+        redirectUri:
+          type: string
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+
+    InvitationLinkResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        referenceId:
+          type: string
+
+    TemplatesResponse:
+      type: object
+      properties:
+        templates:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              type:
+                type: string
+
+    # Product Review Schemas (Private)
+    PrivateProductReview:
+      type: object
+      properties:
+        id:
+          type: string
+        consumer:
+          type: object
+          properties:
+            id:
+              type: string
+            displayName:
+              type: string
+            email:
+              type: string
+        stars:
+          type: integer
+        title:
+          type: string
+        text:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        sku:
+          type: string
+        productUrl:
+          type: string
+        referenceId:
+          type: string
+        state:
+          type: string
+
+    PrivateProductReviewsResponse:
+      type: object
+      properties:
+        productReviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrivateProductReview"
+        links:
+          type: array
+          items:
+            type: object
+
+    ProductReviewSummariesResponse:
+      type: object
+      properties:
+        summaries:
+          type: array
+          items:
+            type: object
+            properties:
+              sku:
+                type: string
+              productUrl:
+                type: string
+              numberOfReviews:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  fiveStars:
+                    type: integer
+                  fourStars:
+                    type: integer
+                  threeStars:
+                    type: integer
+                  twoStars:
+                    type: integer
+                  oneStar:
+                    type: integer
+              starsAverage:
+                type: number
+
+    ProductInvitationLink:
+      type: object
+      required:
+        - referenceId
+        - products
+      properties:
+        referenceId:
+          type: string
+        locale:
+          type: string
+        redirectUri:
+          type: string
+          format: uri
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              productUrl:
+                type: string
+                format: uri
+              imageUrl:
+                type: string
+                format: uri
+              name:
+                type: string
+              sku:
+                type: string
+
+    # Private Products API Schemas
+    PrivateProduct:
+      type: object
+      properties:
+        sku:
+          type: string
+        productUrl:
+          type: string
+        imageUrl:
+          type: string
+        name:
+          type: string
+        brand:
+          type: string
+        gtin:
+          type: string
+        mpn:
+          type: string
+
+    PrivateProductsResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrivateProduct"
+        links:
+          type: array
+          items:
+            type: object
+
+    # Service Review Management Schemas
+    ReplyToReview:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    ReplyResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    TagOperation:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        group:
+          type: string
+          default: generic
+
+    TagsResponse:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+
+    # Reporting and Analytics
+    ReviewReport:
+      type: object
+      properties:
+        businessUnitId:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        totalReviews:
+          type: integer
+        averageStars:
+          type: number
+
+    # Error Schema
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+security:
+  - OAuth2: []
+
+paths:
+  # Private Business Unit Reviews
+  /private/business-units/{businessUnitId}/reviews:
+    get:
+      operationId: getPrivateBusinessUnitReviews
+      summary: Get private business unit reviews
+      description: Returns private reviews including consumer email and reference ID
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: stars
+          in: query
+          schema:
+            type: string
+        - name: language
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: startDateTime
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: endDateTime
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Private reviews list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrivateReviewsResponse"
+
+  # Service Review Management
+  /private/reviews/{reviewId}/reply:
+    post:
+      operationId: replyToReview
+      summary: Post a reply to a review
+      description: Add a company reply to a service review
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReplyToReview"
+      responses:
+        "201":
+          description: Reply created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReplyResponse"
+
+    delete:
+      operationId: deleteReviewReply
+      summary: Delete a reply to a review
+      description: Remove a company reply from a service review
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Reply deleted successfully
+
+  /private/reviews/{reviewId}/tags:
+    post:
+      operationId: addReviewTags
+      summary: Add tags to a review
+      description: Add tags to a service review
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagOperation"
+      responses:
+        "200":
+          description: Tags added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagsResponse"
+
+    put:
+      operationId: setReviewTags
+      summary: Set tags on a review
+      description: Replace all tags on a service review
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagOperation"
+      responses:
+        "200":
+          description: Tags set
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagsResponse"
+
+    delete:
+      operationId: removeReviewTags
+      summary: Remove tags from a review
+      description: Remove specific tags from a service review
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TagOperation"
+      responses:
+        "200":
+          description: Tags removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagsResponse"
+
+  # Email Invitations
+  /private/business-units/{businessUnitId}/email-invitations:
+    post:
+      operationId: sendEmailInvitation
+      summary: Send review invitation email
+      description: Send an email invitation to a customer to write a review
+      servers:
+        - url: https://invitations-api.trustpilot.com/v1
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmailInvitation"
+      responses:
+        "201":
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvitationResponse"
+
+  /private/business-units/{businessUnitId}/invitation-links:
+    post:
+      operationId: createInvitationLink
+      summary: Create invitation link
+      description: Generate a unique invitation link for a customer
+      servers:
+        - url: https://invitations-api.trustpilot.com/v1
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationLink"
+      responses:
+        "201":
+          description: Invitation link created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvitationLinkResponse"
+
+  /private/business-units/{businessUnitId}/templates:
+    get:
+      operationId: getInvitationTemplates
+      summary: Get invitation templates
+      description: Get available invitation templates for the business unit
+      servers:
+        - url: https://invitations-api.trustpilot.com/v1
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Templates list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplatesResponse"
+
+  # Private Product Reviews
+  /private/product-reviews/business-units/{businessUnitId}/reviews:
+    get:
+      operationId: getPrivateProductReviews
+      summary: Get private product reviews
+      description: Returns private product reviews with consumer email and reference ID
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sku
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: productUrl
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Private product reviews
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrivateProductReviewsResponse"
+
+  /private/product-reviews/business-units/{businessUnitId}/summaries:
+    get:
+      operationId: getProductReviewSummaries
+      summary: Get product review summaries
+      description: Get review statistics and star distribution for products
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sku
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: productUrl
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: Product review summaries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductReviewSummariesResponse"
+
+  /private/product-reviews/business-units/{businessUnitId}/invitation-links:
+    post:
+      operationId: createProductInvitationLink
+      summary: Create product review invitation link
+      description: Generate invitation link for product reviews
+      servers:
+        - url: https://invitations-api.trustpilot.com/v1
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInvitationLink"
+      responses:
+        "201":
+          description: Product invitation link created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvitationLinkResponse"
+
+  # Private Products API
+  /private/business-units/{businessUnitId}/products:
+    get:
+      operationId: getPrivateProducts
+      summary: Get private products
+      description: Get all products configured for the business unit
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: perPage
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Products list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrivateProductsResponse"
+
+    post:
+      operationId: createPrivateProduct
+      summary: Create private product
+      description: Add a new product to the business unit
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrivateProduct"
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrivateProduct"
+
+  /private/business-units/{businessUnitId}/products/{productId}:
+    put:
+      operationId: updatePrivateProduct
+      summary: Update private product
+      description: Update an existing product
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrivateProduct"
+      responses:
+        "200":
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrivateProduct"
+
+    delete:
+      operationId: deletePrivateProduct
+      summary: Delete private product
+      description: Remove a product from the business unit
+      parameters:
+        - name: businessUnitId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Product deleted
+
+  # Consumer Profile
+  /private/consumers/{consumerId}:
+    get:
+      operationId: getConsumerProfile
+      summary: Get consumer profile
+      description: Get detailed consumer profile information
+      parameters:
+        - name: consumerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Consumer profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  displayName:
+                    type: string
+                  email:
+                    type: string
+                  numberOfReviews:
+                    type: integer
