@@ -19,15 +19,13 @@ export function generateApi(spec: OpenAPISpec, className: string, typesNamespace
     "// AUTO-GENERATED FILE - DO NOT EDIT",
     "// Generated from OpenAPI specification",
     "",
-    'import type { HttpClient } from "../src/auth/config";',
+    'import { Effect } from "effect";',
+    'import type { HttpClient } from "@q8t/effect-sdk-base";',
+    'import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";',
     `import type * as ${typesNamespace} from "./${typesNamespace.toLowerCase()}";`,
     "",
     `export class ${className} {`,
-    "  private client: HttpClient;",
-    "",
-    "  constructor(client: HttpClient) {",
-    "    this.client = client;",
-    "  }",
+    "  constructor() {}",
     "",
   ];
 
@@ -128,8 +126,9 @@ function generateMethod(endpoint: EndpointInfo, typesNamespace: string): string 
   const methodName = endpoint.operationId;
   const returnType =
     endpoint.responseType === "void" ? "void" : `${typesNamespace}.${endpoint.responseType}`;
+  const errorType = "HttpError | NetworkError | ParseError";
 
-  lines.push(`  async ${methodName}(${params}): Promise<${returnType}> {`);
+  lines.push(`  ${methodName}(${params}): Effect.Effect<${returnType}, ${errorType}, HttpClient> {`);
 
   // Generate path with replacements
   let pathExpr = `"${endpoint.path}"`;
@@ -142,81 +141,83 @@ function generateMethod(endpoint: EndpointInfo, typesNamespace: string): string 
   }
 
   // Generate method body
+  lines.push("    return Effect.gen(function* () {");
+  lines.push("      const client = yield* HttpClient;");
   if (endpoint.method === "GET") {
     if (endpoint.queryParams.length > 0) {
-      lines.push(`    return this.client.get<${returnType}>(${pathExpr}, {`);
+      lines.push(`    return yield* client.get<${returnType}>(${pathExpr}, {`);
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
         lines.push(`      "${param.name}": params?.${safeName},`);
       }
       lines.push(`    });`);
     } else {
-      lines.push(`    return this.client.get<${returnType}>(${pathExpr});`);
+      lines.push(`    return yield* client.get<${returnType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "POST") {
     if (endpoint.requestBodyType) {
       if (endpoint.queryParams.length > 0) {
-        lines.push(`    return this.client.post<${returnType}>(${pathExpr}, body, {`);
+        lines.push(`    return yield* client.post<${returnType}>(${pathExpr}, body, {`);
         for (const param of endpoint.queryParams) {
           const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
           lines.push(`      "${param.name}": params?.${safeName},`);
         }
         lines.push(`    });`);
       } else {
-        lines.push(`    return this.client.post<${returnType}>(${pathExpr}, body);`);
+        lines.push(`    return yield* client.post<${returnType}>(${pathExpr}, body);`);
       }
     } else {
       if (endpoint.queryParams.length > 0) {
-        lines.push(`    return this.client.post<${returnType}>(${pathExpr}, undefined, {`);
+        lines.push(`    return yield* client.post<${returnType}>(${pathExpr}, undefined, {`);
         for (const param of endpoint.queryParams) {
           const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
           lines.push(`      "${param.name}": params?.${safeName},`);
         }
         lines.push(`    });`);
       } else {
-        lines.push(`    return this.client.post<${returnType}>(${pathExpr});`);
+        lines.push(`    return yield* client.post<${returnType}>(${pathExpr});`);
       }
     }
   } else if (endpoint.method === "PUT") {
     if (endpoint.requestBodyType) {
       if (endpoint.queryParams.length > 0) {
-        lines.push(`    return this.client.put<${returnType}>(${pathExpr}, body, {`);
+        lines.push(`    return yield* client.put<${returnType}>(${pathExpr}, body, {`);
         for (const param of endpoint.queryParams) {
           const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
           lines.push(`      "${param.name}": params?.${safeName},`);
         }
         lines.push(`    });`);
       } else {
-        lines.push(`    return this.client.put<${returnType}>(${pathExpr}, body);`);
+        lines.push(`    return yield* client.put<${returnType}>(${pathExpr}, body);`);
       }
     } else {
-      lines.push(`    return this.client.put<${returnType}>(${pathExpr});`);
+      lines.push(`    return yield* client.put<${returnType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "DELETE") {
     if (endpoint.queryParams.length > 0) {
-      lines.push(`    return this.client.delete<${returnType}>(${pathExpr}, {`);
+      lines.push(`    return yield* client.delete<${returnType}>(${pathExpr}, {`);
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
         lines.push(`      "${param.name}": params?.${safeName},`);
       }
       lines.push(`    });`);
     } else {
-      lines.push(`    return this.client.delete<${returnType}>(${pathExpr});`);
+      lines.push(`    return yield* client.delete<${returnType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "PATCH") {
     if (endpoint.requestBodyType) {
       if (endpoint.queryParams.length > 0) {
-        lines.push(`    return this.client.patch<${returnType}>(${pathExpr}, body, {`);
+        lines.push(`    return yield* client.patch<${returnType}>(${pathExpr}, body, {`);
         for (const param of endpoint.queryParams) {
           const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
           lines.push(`      "${param.name}": params?.${safeName},`);
         }
         lines.push(`    });`);
       } else {
-        lines.push(`    return this.client.patch<${returnType}>(${pathExpr}, body);`);
+        lines.push(`    return yield* client.patch<${returnType}>(${pathExpr}, body);`);
       }
     } else {
-      lines.push(`    return this.client.patch<${returnType}>(${pathExpr});`);
+      lines.push(`    return yield* client.patch<${returnType}>(${pathExpr});`);
     }
   }
 
