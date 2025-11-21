@@ -1,68 +1,87 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from Airtable Webhooks API
 
-import type { PATHttpClient } from "../src/auth/pat-client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
 export class AirtableWebhooksApi {
-  private client: PATHttpClient;
-
-  constructor(client: PATHttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * List webhooks
    */
-  async listWebhooks(baseId: string): Promise<Types.WebhookList> {
-    return this.client.get<Types.WebhookList>(`/bases/${baseId}/webhooks`);
+  listWebhooks(baseId: string): Effect.Effect<Types.WebhookList, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.get<Types.WebhookList>(`/bases/${baseId}/webhooks`);
+    });
   }
 
   /**
    * Create webhook
    */
-  async createWebhook(baseId: string, body: Types.CreateWebhookRequest): Promise<Types.Webhook> {
-    return this.client.post<Types.Webhook>(`/bases/${baseId}/webhooks`, body);
+  createWebhook(baseId: string, body: Types.CreateWebhookRequest): Effect.Effect<Types.Webhook, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.post<Types.Webhook>(`/bases/${baseId}/webhooks`, { body });
+    });
   }
 
   /**
    * Get webhook
    */
-  async getWebhook(baseId: string, webhookId: string): Promise<Types.Webhook> {
-    return this.client.get<Types.Webhook>(`/bases/${baseId}/webhooks/${webhookId}`);
+  getWebhook(baseId: string, webhookId: string): Effect.Effect<Types.Webhook, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.get<Types.Webhook>(`/bases/${baseId}/webhooks/${webhookId}`);
+    });
   }
 
   /**
    * Delete webhook
    */
-  async deleteWebhook(baseId: string, webhookId: string): Promise<void> {
-    return this.client.delete<void>(`/bases/${baseId}/webhooks/${webhookId}`);
+  deleteWebhook(baseId: string, webhookId: string): Effect.Effect<void, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.delete<void>(`/bases/${baseId}/webhooks/${webhookId}`);
+    });
   }
 
   /**
    * Enable or disable webhook notifications
    */
-  async enableWebhookNotifications(baseId: string, webhookId: string, body: Types.EnableNotificationsRequest): Promise<Types.Webhook> {
-    return this.client.post<Types.Webhook>(`/bases/${baseId}/webhooks/${webhookId}/enableNotifications`, body);
+  enableWebhookNotifications(baseId: string, webhookId: string, body: Types.EnableNotificationsRequest): Effect.Effect<Types.Webhook, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.post<Types.Webhook>(`/bases/${baseId}/webhooks/${webhookId}/enableNotifications`, { body });
+    });
   }
 
   /**
    * List webhook payloads
    * Retrieve webhook payloads for testing and debugging
    */
-  async listWebhookPayloads(baseId: string, webhookId: string, queryParams?: { cursor?: number; limit?: number }): Promise<Types.WebhookPayloadList> {
-    const params: Record<string, string | number | boolean | string[] | undefined> = {};
-    if (queryParams?.cursor !== undefined) params["cursor"] = queryParams.cursor;
-    if (queryParams?.limit !== undefined) params["limit"] = queryParams.limit;
-    return this.client.get<Types.WebhookPayloadList>(`/bases/${baseId}/webhooks/${webhookId}/payloads`, params);
+  listWebhookPayloads(baseId: string, webhookId: string, queryParams?: { cursor?: number; limit?: number }): Effect.Effect<Types.WebhookPayloadList, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      const params: Record<string, string | number | boolean | string[] | undefined> = {};
+      if (queryParams?.cursor !== undefined) params["cursor"] = queryParams.cursor;
+      if (queryParams?.limit !== undefined) params["limit"] = queryParams.limit;
+      return yield* client.get<Types.WebhookPayloadList>(`/bases/${baseId}/webhooks/${webhookId}/payloads`, { queryParams: params });
+    });
   }
 
   /**
    * Refresh webhook expiration
    * Extend webhook expiration time
    */
-  async refreshWebhook(baseId: string, webhookId: string): Promise<Types.Webhook> {
-    return this.client.post<Types.Webhook>(`/bases/${baseId}/webhooks/${webhookId}/refresh`);
+  refreshWebhook(baseId: string, webhookId: string): Effect.Effect<Types.Webhook, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.post<Types.Webhook>(`/bases/${baseId}/webhooks/${webhookId}/refresh`);
+    });
   }
 
 }

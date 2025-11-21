@@ -1,124 +1,164 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from Airtable Web API
 
-import type { PATHttpClient } from "../src/auth/pat-client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
 export class AirtableWebApi {
-  private client: PATHttpClient;
-
-  constructor(client: PATHttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * List records
    */
-  async listRecords(baseId: string, tableIdOrName: string, queryParams?: { fields?: string[]; filterByFormula?: string; maxRecords?: number; pageSize?: number; sort?: string[]; view?: string; offset?: string }): Promise<Types.AirtableRecordList> {
-    const params: Record<string, string | number | boolean | string[] | undefined> = {};
-    if (queryParams?.fields !== undefined) params["fields"] = queryParams.fields;
-    if (queryParams?.filterByFormula !== undefined) params["filterByFormula"] = queryParams.filterByFormula;
-    if (queryParams?.maxRecords !== undefined) params["maxRecords"] = queryParams.maxRecords;
-    if (queryParams?.pageSize !== undefined) params["pageSize"] = queryParams.pageSize;
-    if (queryParams?.sort !== undefined) params["sort"] = queryParams.sort;
-    if (queryParams?.view !== undefined) params["view"] = queryParams.view;
-    if (queryParams?.offset !== undefined) params["offset"] = queryParams.offset;
-    return this.client.get<Types.AirtableRecordList>(`/${baseId}/${tableIdOrName}`, params);
+  listRecords(baseId: string, tableIdOrName: string, queryParams?: { fields?: string[]; filterByFormula?: string; maxRecords?: number; pageSize?: number; sort?: string[]; view?: string; offset?: string }): Effect.Effect<Types.AirtableRecordList, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      const params: Record<string, string | number | boolean | string[] | undefined> = {};
+      if (queryParams?.fields !== undefined) params["fields"] = queryParams.fields;
+      if (queryParams?.filterByFormula !== undefined) params["filterByFormula"] = queryParams.filterByFormula;
+      if (queryParams?.maxRecords !== undefined) params["maxRecords"] = queryParams.maxRecords;
+      if (queryParams?.pageSize !== undefined) params["pageSize"] = queryParams.pageSize;
+      if (queryParams?.sort !== undefined) params["sort"] = queryParams.sort;
+      if (queryParams?.view !== undefined) params["view"] = queryParams.view;
+      if (queryParams?.offset !== undefined) params["offset"] = queryParams.offset;
+      return yield* client.get<Types.AirtableRecordList>(`/${baseId}/${tableIdOrName}`, { queryParams: params });
+    });
   }
 
   /**
    * Create records
    */
-  async createRecords(baseId: string, tableIdOrName: string, body: Types.AirtableRecordsRequest): Promise<Types.AirtableRecordList> {
-    return this.client.post<Types.AirtableRecordList>(`/${baseId}/${tableIdOrName}`, body);
+  createRecords(baseId: string, tableIdOrName: string, body: Types.AirtableRecordsRequest): Effect.Effect<Types.AirtableRecordList, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.post<Types.AirtableRecordList>(`/${baseId}/${tableIdOrName}`, { body });
+    });
   }
 
   /**
    * Delete records
    */
-  async deleteRecords(baseId: string, tableIdOrName: string, queryParams?: { records?: string[] }): Promise<Types.AirtableRecordsResponse> {
-    const params: Record<string, string | number | boolean | string[] | undefined> = {};
-    if (queryParams?.records !== undefined) params["records"] = queryParams.records;
-    return this.client.delete<Types.AirtableRecordsResponse>(`/${baseId}/${tableIdOrName}`, params);
+  deleteRecords(baseId: string, tableIdOrName: string, queryParams?: { records?: string[] }): Effect.Effect<Types.AirtableRecordsResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      const params: Record<string, string | number | boolean | string[] | undefined> = {};
+      if (queryParams?.records !== undefined) params["records"] = queryParams.records;
+      return yield* client.delete<Types.AirtableRecordsResponse>(`/${baseId}/${tableIdOrName}`, { queryParams: params });
+    });
   }
 
   /**
    * Update records
    */
-  async updateRecords(baseId: string, tableIdOrName: string, body: Types.AirtableRecordsRequest): Promise<Types.AirtableRecordList> {
-    return this.client.patch<Types.AirtableRecordList>(`/${baseId}/${tableIdOrName}`, body);
+  updateRecords(baseId: string, tableIdOrName: string, body: Types.AirtableRecordsRequest): Effect.Effect<Types.AirtableRecordList, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.patch<Types.AirtableRecordList>(`/${baseId}/${tableIdOrName}`, { body });
+    });
   }
 
   /**
    * Get record
    */
-  async getAirtableRecord(baseId: string, tableIdOrName: string, recordId: string): Promise<Types.AirtableRecord> {
-    return this.client.get<Types.AirtableRecord>(`/${baseId}/${tableIdOrName}/${recordId}`);
+  getAirtableRecord(baseId: string, tableIdOrName: string, recordId: string): Effect.Effect<Types.AirtableRecord, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.get<Types.AirtableRecord>(`/${baseId}/${tableIdOrName}/${recordId}`);
+    });
   }
 
   /**
    * Delete record
    */
-  async deleteAirtableRecord(baseId: string, tableIdOrName: string, recordId: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/${baseId}/${tableIdOrName}/${recordId}`);
+  deleteAirtableRecord(baseId: string, tableIdOrName: string, recordId: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.delete<Record<string, unknown>>(`/${baseId}/${tableIdOrName}/${recordId}`);
+    });
   }
 
   /**
    * Update record
    */
-  async updateAirtableRecord(baseId: string, tableIdOrName: string, recordId: string, body: Types.AirtableRecordRequest): Promise<Types.AirtableRecord> {
-    return this.client.patch<Types.AirtableRecord>(`/${baseId}/${tableIdOrName}/${recordId}`, body);
+  updateAirtableRecord(baseId: string, tableIdOrName: string, recordId: string, body: Types.AirtableRecordRequest): Effect.Effect<Types.AirtableRecord, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.patch<Types.AirtableRecord>(`/${baseId}/${tableIdOrName}/${recordId}`, { body });
+    });
   }
 
   /**
    * List bases
    */
-  async listBases(queryParams?: { offset?: string }): Promise<Types.BaseList> {
-    const params: Record<string, string | number | boolean | string[] | undefined> = {};
-    if (queryParams?.offset !== undefined) params["offset"] = queryParams.offset;
-    return this.client.get<Types.BaseList>("/meta/bases", params);
+  listBases(queryParams?: { offset?: string }): Effect.Effect<Types.BaseList, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      const params: Record<string, string | number | boolean | string[] | undefined> = {};
+      if (queryParams?.offset !== undefined) params["offset"] = queryParams.offset;
+      return yield* client.get<Types.BaseList>("/meta/bases", { queryParams: params });
+    });
   }
 
   /**
    * List tables
    */
-  async listTables(baseId: string): Promise<Types.TableList> {
-    return this.client.get<Types.TableList>(`/meta/bases/${baseId}/tables`);
+  listTables(baseId: string): Effect.Effect<Types.TableList, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.get<Types.TableList>(`/meta/bases/${baseId}/tables`);
+    });
   }
 
   /**
    * Create table
    */
-  async createTable(baseId: string, body: Types.CreateTableRequest): Promise<Types.Table> {
-    return this.client.post<Types.Table>(`/meta/bases/${baseId}/tables`, body);
+  createTable(baseId: string, body: Types.CreateTableRequest): Effect.Effect<Types.Table, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.post<Types.Table>(`/meta/bases/${baseId}/tables`, { body });
+    });
   }
 
   /**
    * Get table schema
    */
-  async getTableSchema(baseId: string, tableIdOrName: string): Promise<Types.Table> {
-    return this.client.get<Types.Table>(`/meta/bases/${baseId}/tables/${tableIdOrName}`);
+  getTableSchema(baseId: string, tableIdOrName: string): Effect.Effect<Types.Table, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.get<Types.Table>(`/meta/bases/${baseId}/tables/${tableIdOrName}`);
+    });
   }
 
   /**
    * Update table
    */
-  async updateTable(baseId: string, tableIdOrName: string, body: Record<string, unknown>): Promise<Types.Table> {
-    return this.client.patch<Types.Table>(`/meta/bases/${baseId}/tables/${tableIdOrName}`, body);
+  updateTable(baseId: string, tableIdOrName: string, body: Record<string, unknown>): Effect.Effect<Types.Table, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.patch<Types.Table>(`/meta/bases/${baseId}/tables/${tableIdOrName}`, { body });
+    });
   }
 
   /**
    * Create field
    */
-  async createField(baseId: string, tableIdOrName: string, body: Types.CreateFieldRequest): Promise<Types.Field> {
-    return this.client.post<Types.Field>(`/meta/bases/${baseId}/tables/${tableIdOrName}/fields`, body);
+  createField(baseId: string, tableIdOrName: string, body: Types.CreateFieldRequest): Effect.Effect<Types.Field, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.post<Types.Field>(`/meta/bases/${baseId}/tables/${tableIdOrName}/fields`, { body });
+    });
   }
 
   /**
    * Update field
    */
-  async updateField(baseId: string, tableIdOrName: string, fieldId: string, body: Types.UpdateFieldRequest): Promise<Types.Field> {
-    return this.client.patch<Types.Field>(`/meta/bases/${baseId}/tables/${tableIdOrName}/fields/${fieldId}`, body);
+  updateField(baseId: string, tableIdOrName: string, fieldId: string, body: Types.UpdateFieldRequest): Effect.Effect<Types.Field, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+      return yield* client.patch<Types.Field>(`/meta/bases/${baseId}/tables/${tableIdOrName}/fields/${fieldId}`, { body });
+    });
   }
 
 }

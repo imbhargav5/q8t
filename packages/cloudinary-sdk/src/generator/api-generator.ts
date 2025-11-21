@@ -22,22 +22,17 @@ export function generateApi(
 ): string {
   const endpoints = extractEndpoints(spec);
 
-  const clientImport = getClientImport(clientType);
-  const clientTypeName = getClientTypeName(clientType);
-
   const lines: string[] = [
     "// AUTO-GENERATED FILE - DO NOT EDIT",
     `// Generated from ${sourceFile}`,
     "",
-    `import type { ${clientTypeName} } from "../src/auth";`,
+    'import { Effect } from "effect";',
+    'import { HttpClient } from "@q8t/effect-sdk-base";',
+    'import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";',
     'import type * as Types from "./types";',
     "",
     `export class ${apiClassName} {`,
-    `  private client: ${clientTypeName};`,
-    "",
-    `  constructor(client: ${clientTypeName}) {`,
-    "    this.client = client;",
-    "  }",
+    "  constructor() {}",
     "",
   ];
 
@@ -152,8 +147,9 @@ function generateMethod(endpoint: EndpointInfo, clientType: ClientType): string 
   // Generate method signature
   const params = generateMethodParams(endpoint);
   const methodName = endpoint.operationId;
+  const errorType = "HttpError | NetworkError | ParseError";
 
-  lines.push(`  async ${methodName}(${params}): Promise<${endpoint.responseType}> {`);
+  lines.push(`  ${methodName}(${params}): Effect.Effect<${endpoint.responseType}, ${errorType}, HttpClient> {`);
 
   // Generate path with replacements
   let pathExpr = `"${endpoint.path}"`;
@@ -164,35 +160,44 @@ function generateMethod(endpoint: EndpointInfo, clientType: ClientType): string 
     pathExpr = `\`${pathExpr.slice(1, -1)}\``;
   }
 
-  // Generate method body
+  // Generate method body using Effect.gen
+  lines.push("    return Effect.gen(function* () {");
+  lines.push("      const client = yield* HttpClient;");
+
+  // Generate method call
   if (endpoint.method === "GET") {
     if (endpoint.queryParams.length > 0) {
-      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, queryParams);`);
+      lines.push(`      return yield* client.get<${endpoint.responseType}>(${pathExpr}, { queryParams });`);
     } else {
-      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`      return yield* client.get<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "POST") {
     if (endpoint.requestBodyType) {
-      lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr}, body);`);
+      lines.push(`      return yield* client.post<${endpoint.responseType}>(${pathExpr}, { body });`);
     } else {
-      lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`      return yield* client.post<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "PUT") {
     if (endpoint.requestBodyType) {
-      lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr}, body);`);
+      lines.push(`      return yield* client.put<${endpoint.responseType}>(${pathExpr}, { body });`);
     } else {
-      lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`      return yield* client.put<${endpoint.responseType}>(${pathExpr});`);
+    }
+  } else if (endpoint.method === "PATCH") {
+    if (endpoint.requestBodyType) {
+      lines.push(`      return yield* client.patch<${endpoint.responseType}>(${pathExpr}, { body });`);
+    } else {
+      lines.push(`      return yield* client.patch<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "DELETE") {
     if (endpoint.queryParams.length > 0) {
-      lines.push(
-        `    return this.client.delete<${endpoint.responseType}>(${pathExpr}, queryParams);`,
-      );
+      lines.push(`      return yield* client.delete<${endpoint.responseType}>(${pathExpr}, { queryParams });`);
     } else {
-      lines.push(`    return this.client.delete<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`      return yield* client.delete<${endpoint.responseType}>(${pathExpr});`);
     }
   }
 
+  lines.push("    });");
   lines.push("  }");
 
   return lines.join("\n");

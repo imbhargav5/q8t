@@ -19,24 +19,15 @@ export function generateApi(spec: OpenAPISpec): string {
 
   const lines: string[] = [
     "// AUTO-GENERATED FILE - DO NOT EDIT",
-    "// Generated from api/asana_oas.yaml",
+    "// Generated from api/openapi.yaml",
     "",
-    'import type { HttpClient } from "../src/auth/pat-client";',
+    'import { Effect } from "effect";',
+    'import { HttpClient } from "@q8t/effect-sdk-base";',
+    'import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";',
     'import type * as Types from "./types";',
     "",
-    "/**",
-    " * Asana API client with all available endpoints",
-    " * ",
-    " * This class provides type-safe access to all Asana API endpoints.",
-    " * Use createPATClient or createOAuth2Client to create an authenticated HTTP client,",
-    " * then pass it to this class constructor.",
-    " */",
     "export class AsanaApi {",
-    "  private client: HttpClient;",
-    "",
-    "  constructor(client: HttpClient) {",
-    "    this.client = client;",
-    "  }",
+    "  constructor() {}",
     "",
   ];
 
@@ -184,7 +175,13 @@ function generateMethod(endpoint: EndpointInfo): string {
   const params = generateMethodParams(endpoint);
   const methodName = endpoint.operationId;
 
-  lines.push(`  async ${methodName}(${params}): Promise<${endpoint.responseType}> {`);
+  const errorType = "HttpError | NetworkError | ParseError";
+
+  lines.push(`  ${methodName}(${params}): Effect.Effect<${endpoint.responseType}, ${errorType}, HttpClient> {`);
+
+  // Generate method body using Effect.gen
+  lines.push("    return Effect.gen(function* () {");
+  lines.push("      const client = yield* HttpClient;");
 
   // Generate path with replacements
   let pathExpr = `"${endpoint.path}"`;
@@ -200,37 +197,37 @@ function generateMethod(endpoint: EndpointInfo): string {
   if (endpoint.method === "GET") {
     if (endpoint.queryParams.length > 0) {
       lines.push(`    if (params) {`);
-      lines.push(`      return this.client.get<${endpoint.responseType}>(${pathExpr}, {`);
+      lines.push(`      return yield* client.get<${endpoint.responseType}>(${pathExpr}, {`);
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
         lines.push(`        "${param.name}": params.${safeName},`);
       }
       lines.push("      });");
       lines.push(`    }`);
-      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`    return yield* client.get<${endpoint.responseType}>(${pathExpr});`);
     } else {
-      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`    return yield* client.get<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "POST") {
     if (endpoint.requestBodyType) {
       if (endpoint.queryParams.length > 0) {
         lines.push(`    if (params) {`);
-        lines.push(`      return this.client.post<${endpoint.responseType}>(${pathExpr}, { data: body }, {`);
+        lines.push(`      return yield* client.post<${endpoint.responseType}>(${pathExpr}, { data: body }, {`);
         for (const param of endpoint.queryParams) {
           const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
           lines.push(`        "${param.name}": params.${safeName},`);
         }
         lines.push("      });");
         lines.push(`    }`);
-        lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr}, { data: body });`);
+        lines.push(`    return yield* client.post<${endpoint.responseType}>(${pathExpr}, { data: body });`);
       } else {
-        lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr}, { data: body });`);
+        lines.push(`    return yield* client.post<${endpoint.responseType}>(${pathExpr}, { data: body });`);
       }
     } else {
       if (endpoint.queryParams.length > 0) {
         lines.push(`    if (params) {`);
         lines.push(
-          `      return this.client.post<${endpoint.responseType}>(${pathExpr}, undefined, {`,
+          `      return yield* client.post<${endpoint.responseType}>(${pathExpr}, undefined, {`,
         );
         for (const param of endpoint.queryParams) {
           const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
@@ -238,60 +235,62 @@ function generateMethod(endpoint: EndpointInfo): string {
         }
         lines.push("      });");
         lines.push(`    }`);
-        lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr});`);
+        lines.push(`    return yield* client.post<${endpoint.responseType}>(${pathExpr});`);
       } else {
-        lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr});`);
+        lines.push(`    return yield* client.post<${endpoint.responseType}>(${pathExpr});`);
       }
     }
   } else if (endpoint.method === "PUT") {
     if (endpoint.requestBodyType) {
       if (endpoint.queryParams.length > 0) {
         lines.push(`    if (params) {`);
-        lines.push(`      return this.client.put<${endpoint.responseType}>(${pathExpr}, { data: body }, {`);
+        lines.push(`      return yield* client.put<${endpoint.responseType}>(${pathExpr}, { data: body }, {`);
         for (const param of endpoint.queryParams) {
           const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
           lines.push(`        "${param.name}": params.${safeName},`);
         }
         lines.push("      });");
         lines.push(`    }`);
-        lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr}, { data: body });`);
+        lines.push(`    return yield* client.put<${endpoint.responseType}>(${pathExpr}, { data: body });`);
       } else {
-        lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr}, { data: body });`);
+        lines.push(`    return yield* client.put<${endpoint.responseType}>(${pathExpr}, { data: body });`);
       }
     } else {
-      lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`    return yield* client.put<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "DELETE") {
     if (endpoint.queryParams.length > 0) {
       lines.push(`    if (params) {`);
-      lines.push(`      return this.client.delete<${endpoint.responseType}>(${pathExpr}, {`);
+      lines.push(`      return yield* client.delete<${endpoint.responseType}>(${pathExpr}, {`);
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
         lines.push(`        "${param.name}": params.${safeName},`);
       }
       lines.push("      });");
       lines.push(`    }`);
-      lines.push(`    return this.client.delete<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`    return yield* client.delete<${endpoint.responseType}>(${pathExpr});`);
     } else {
-      lines.push(`    return this.client.delete<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`    return yield* client.delete<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "PATCH") {
     if (endpoint.requestBodyType) {
       if (endpoint.queryParams.length > 0) {
         lines.push(`    if (params) {`);
-        lines.push(`      return this.client.put<${endpoint.responseType}>(${pathExpr}, { data: body }, {`);
+        lines.push(`      return yield* client.put<${endpoint.responseType}>(${pathExpr}, { data: body }, {`);
         for (const param of endpoint.queryParams) {
           const safeName = param.name.replace(/\./g, "_").replace(/-/g, "_");
           lines.push(`        "${param.name}": params.${safeName},`);
         }
         lines.push("      });");
         lines.push(`    }`);
-        lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr}, { data: body });`);
+        lines.push(`    return yield* client.put<${endpoint.responseType}>(${pathExpr}, { data: body });`);
       } else {
-        lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr}, { data: body });`);
+        lines.push(`    return yield* client.put<${endpoint.responseType}>(${pathExpr}, { data: body });`);
       }
     }
   }
+
+  lines.push("    });");
 
   lines.push("  }");
 
