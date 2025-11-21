@@ -16,7 +16,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "yaml": "^2.3.4"
+    "yaml": "^2.3.4",
+    "@q8t/effect-sdk-base": "workspace:*",
+    "effect": "^3.10.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

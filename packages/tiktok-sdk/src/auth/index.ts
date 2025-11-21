@@ -23,3 +23,4 @@ export {
 
 // HttpClient interface (from client.ts)
 export type { HttpClient } from "./client";
+export * from "./effect-client";

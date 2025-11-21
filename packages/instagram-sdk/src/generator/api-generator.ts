@@ -19,15 +19,13 @@ export function generateApi(spec: OpenAPISpec): string {
     "// AUTO-GENERATED FILE - DO NOT EDIT",
     "// Generated from api/openapi.yaml",
     "",
-    'import type { HttpClient } from "../src/auth/client";',
+    'import { Effect } from "effect";',
+    'import type { HttpClient } from "@q8t/effect-sdk-base";',
+    'import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";',
     'import type * as Types from "./types";',
     "",
     "export class InstagramApi {",
-    "  private client: HttpClient;",
-    "",
-    "  constructor(client: HttpClient) {",
-    "    this.client = client;",
-    "  }",
+    "  constructor() {}",
     "",
   ];
 
@@ -117,8 +115,9 @@ function generateMethod(endpoint: EndpointInfo): string {
   // Generate method signature
   const params = generateMethodParams(endpoint);
   const methodName = endpoint.operationId;
+  const errorType = "HttpError | NetworkError | ParseError";
 
-  lines.push(`  async ${methodName}(${params}): Promise<${endpoint.responseType}> {`);
+  lines.push(`  ${methodName}(${params}): Effect.Effect<${endpoint.responseType}, ${errorType}, HttpClient> {`);
 
   // Generate path with replacements
   let pathExpr = `"${endpoint.path}"`;
@@ -129,33 +128,47 @@ function generateMethod(endpoint: EndpointInfo): string {
     pathExpr = "`" + pathExpr.slice(1, -1) + "`";
   }
 
-  // Generate method body
+  // Generate method body using Effect.gen
+  lines.push("    return Effect.gen(function* () {");
+  lines.push("      const client = yield* HttpClient;");
+
+  // Generate method call
   if (endpoint.method === "GET") {
     if (endpoint.queryParams.length > 0) {
-      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr}, {`);
+      lines.push(`      return yield* client.get<${endpoint.responseType}>(${pathExpr}, {`);
+      lines.push("        queryParams: {");
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_");
-        lines.push(`      "${param.name}": ${safeName},`);
+        lines.push(`          "${param.name}": ${safeName},`);
       }
-      lines.push(`    });`);
+      lines.push("        }");
+      lines.push("      });");
     } else {
-      lines.push(`    return this.client.get<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`      return yield* client.get<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "POST") {
     if (endpoint.requestBodyType) {
-      lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr}, body);`);
+      lines.push(`      return yield* client.post<${endpoint.responseType}>(${pathExpr}, { body });`);
     } else {
-      lines.push(`    return this.client.post<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`      return yield* client.post<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "PUT") {
     if (endpoint.requestBodyType) {
-      lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr}, body);`);
+      lines.push(`      return yield* client.put<${endpoint.responseType}>(${pathExpr}, { body });`);
     } else {
-      lines.push(`    return this.client.put<${endpoint.responseType}>(${pathExpr});`);
+      lines.push(`      return yield* client.put<${endpoint.responseType}>(${pathExpr});`);
+    }
+  } else if (endpoint.method === "PATCH") {
+    if (endpoint.requestBodyType) {
+      lines.push(`      return yield* client.patch<${endpoint.responseType}>(${pathExpr}, { body });`);
+    } else {
+      lines.push(`      return yield* client.patch<${endpoint.responseType}>(${pathExpr});`);
     }
   } else if (endpoint.method === "DELETE") {
-    lines.push(`    return this.client.delete<${endpoint.responseType}>(${pathExpr});`);
+    lines.push(`      return yield* client.delete<${endpoint.responseType}>(${pathExpr});`);
   }
+
+  lines.push("    });");
 
   lines.push(`  }`);
 
