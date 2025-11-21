@@ -6,7 +6,7 @@ import { Effect, Layer } from "effect";
 import { HttpClient, HttpClientLive, type HttpClientConfig } from "@q8t/effect-sdk-base";
 import { INSTAGRAM_API_BASE_URL } from "./config";
 
-export interface InstagramClientConfig {
+export interface InstagramEffectClientConfig {
   accessToken: string;
   baseUrl?: string;
 }
@@ -15,7 +15,7 @@ export interface InstagramClientConfig {
  * Create an HttpClient layer for Instagram Graph API
  */
 export const makeInstagramHttpClientLayer = (
-  config: InstagramClientConfig
+  config: InstagramEffectClientConfig
 ): Layer.Layer<HttpClient> => {
   const httpConfig: HttpClientConfig = {
     baseUrl: config.baseUrl || INSTAGRAM_API_BASE_URL,
@@ -30,7 +30,7 @@ export const makeInstagramHttpClientLayer = (
 /**
  * Create Instagram SDK with Effect-based API
  */
-export const createInstagramSDK = (config: InstagramClientConfig) => {
+export const createInstagramSDK = (config: InstagramEffectClientConfig) => {
   const layer = makeInstagramHttpClientLayer(config);
 
   return {

@@ -6,7 +6,7 @@ import { Effect, Layer } from "effect";
 import { HttpClient, HttpClientLive, type HttpClientConfig } from "@q8t/effect-sdk-base";
 import { DRIBBBLE_API_BASE_URL } from "./config";
 
-export interface DribbbleClientConfig {
+export interface DribbbleEffectClientConfig {
   accessToken: string;
   baseUrl?: string;
 }
@@ -15,7 +15,7 @@ export interface DribbbleClientConfig {
  * Create an HttpClient layer for Dribbble API
  */
 export const makeDribbbleHttpClientLayer = (
-  config: DribbbleClientConfig
+  config: DribbbleEffectClientConfig
 ): Layer.Layer<HttpClient> => {
   const httpConfig: HttpClientConfig = {
     baseUrl: config.baseUrl || DRIBBBLE_API_BASE_URL,
@@ -30,7 +30,7 @@ export const makeDribbbleHttpClientLayer = (
 /**
  * Create Dribbble SDK with Effect-based API
  */
-export const createDribbbleSDK = (config: DribbbleClientConfig) => {
+export const createDribbbleSDK = (config: DribbbleEffectClientConfig) => {
   const layer = makeDribbbleHttpClientLayer(config);
 
   return {

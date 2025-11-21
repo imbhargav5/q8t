@@ -3,7 +3,7 @@
  * Following effect.website patterns
  */
 
-import { Context, Effect, type Layer } from "effect"
+import { Context, Effect, Layer } from "effect"
 import { HttpError, NetworkError, ParseError } from "./errors.js"
 
 /**
@@ -35,7 +35,7 @@ export interface HttpResponse<T> {
  * HTTP Client service interface
  * This is the core abstraction that all SDKs will depend on
  */
-export interface HttpClient {
+export interface HttpClientService {
   /**
    * Perform a GET request
    */
@@ -89,7 +89,7 @@ export interface HttpClient {
 /**
  * HTTP Client service tag
  */
-export class HttpClient extends Context.Tag("@q8t/HttpClient")<HttpClient, HttpClient>() {}
+export class HttpClient extends Context.Tag("@q8t/HttpClient")<HttpClient, HttpClientService>() {}
 
 /**
  * Configuration for HTTP client
@@ -130,7 +130,7 @@ const buildUrl = (baseUrl: string, path: string, queryParams?: Record<string, st
 /**
  * Create a live HTTP client implementation using native fetch
  */
-export const makeHttpClient = (config: HttpClientConfig): HttpClient => {
+export const makeHttpClient = (config: HttpClientConfig): HttpClientService => {
   const request = <T>(
     method: HttpMethod,
     path: string,
@@ -139,7 +139,7 @@ export const makeHttpClient = (config: HttpClientConfig): HttpClient => {
     const url = buildUrl(config.baseUrl, path, options?.queryParams)
 
     return Effect.tryPromise({
-      try: async () => {
+      try: async (): Promise<T> => {
         const headers = {
           "Content-Type": "application/json",
           ...config.defaultHeaders,
@@ -173,7 +173,7 @@ export const makeHttpClient = (config: HttpClientConfig): HttpClient => {
         const contentType = response.headers.get("content-type")
         if (contentType?.includes("application/json")) {
           try {
-            return await response.json()
+            return (await response.json()) as T
           } catch (error) {
             throw new ParseError({
               message: "Failed to parse JSON response",
@@ -184,7 +184,7 @@ export const makeHttpClient = (config: HttpClientConfig): HttpClient => {
         }
 
         // Return text for non-JSON responses
-        return await response.text() as T
+        return (await response.text()) as T
       },
       catch: (error) => {
         // If it's already one of our typed errors, return it
@@ -206,14 +206,14 @@ export const makeHttpClient = (config: HttpClientConfig): HttpClient => {
     })
   }
 
-  return HttpClient.of({
+  return {
     get: (path, options) => request("GET", path, options),
     post: (path, options) => request("POST", path, options),
     put: (path, options) => request("PUT", path, options),
     patch: (path, options) => request("PATCH", path, options),
     delete: (path, options) => request("DELETE", path, options),
     request,
-  })
+  }
 }
 
 /**

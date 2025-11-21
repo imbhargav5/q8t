@@ -20,7 +20,7 @@ export function generateApi(spec: OpenAPISpec, className: string = "TikTokApi"):
     "// Generated from OpenAPI specification",
     "",
     'import { Effect } from "effect";',
-    'import type { HttpClient } from "@q8t/effect-sdk-base";',
+    'import { HttpClient } from "@q8t/effect-sdk-base";',
     'import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";',
     'import type * as Types from "./types";',
     "",

@@ -16,13 +16,10 @@ export const withTimeout = <A, E, R>(
   effect: Effect.Effect<A, E, R>,
   duration: Duration.Duration = DEFAULT_TIMEOUT
 ): Effect.Effect<A, E | Error, R> =>
-  Effect.timeout(effect, duration).pipe(
-    Effect.flatMap((option) =>
-      option._tag === "Some"
-        ? Effect.succeed(option.value)
-        : Effect.fail(new Error("Operation timed out"))
-    )
-  )
+  Effect.timeoutFail({
+    duration,
+    onTimeout: () => new Error("Operation timed out"),
+  })(effect)
 
 /**
  * Safe JSON parse that returns an Effect
@@ -63,21 +60,13 @@ export const delay = (duration: Duration.Duration) =>
  */
 export const createLogger = (sdkName: string) => ({
   debug: (message: string, ...args: unknown[]) =>
-    Effect.log(`[${sdkName}] ${message}`, ...args).pipe(
-      Effect.withLogLevel("Debug")
-    ),
+    Effect.logDebug(`[${sdkName}] ${message}`, ...args),
   info: (message: string, ...args: unknown[]) =>
-    Effect.log(`[${sdkName}] ${message}`, ...args).pipe(
-      Effect.withLogLevel("Info")
-    ),
+    Effect.logInfo(`[${sdkName}] ${message}`, ...args),
   warn: (message: string, ...args: unknown[]) =>
-    Effect.log(`[${sdkName}] ${message}`, ...args).pipe(
-      Effect.withLogLevel("Warning")
-    ),
+    Effect.logWarning(`[${sdkName}] ${message}`, ...args),
   error: (message: string, ...args: unknown[]) =>
-    Effect.log(`[${sdkName}] ${message}`, ...args).pipe(
-      Effect.withLogLevel("Error")
-    ),
+    Effect.logError(`[${sdkName}] ${message}`, ...args),
 })
 
 /**

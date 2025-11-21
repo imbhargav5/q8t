@@ -68,19 +68,19 @@ describe('Airtable API - Method Existence', () => {
       expect(typeof api.deleteRecords).toBe('function');
     });
 
-    it('should have getRecord method', () => {
-      expect(api.getRecord).toBeDefined();
-      expect(typeof api.getRecord).toBe('function');
+    it('should have getAirtableRecord method', () => {
+      expect(api.getAirtableRecord).toBeDefined();
+      expect(typeof api.getAirtableRecord).toBe('function');
     });
 
-    it('should have updateRecord method', () => {
-      expect(api.updateRecord).toBeDefined();
-      expect(typeof api.updateRecord).toBe('function');
+    it('should have updateAirtableRecord method', () => {
+      expect(api.updateAirtableRecord).toBeDefined();
+      expect(typeof api.updateAirtableRecord).toBe('function');
     });
 
-    it('should have deleteRecord method', () => {
-      expect(api.deleteRecord).toBeDefined();
-      expect(typeof api.deleteRecord).toBe('function');
+    it('should have deleteAirtableRecord method', () => {
+      expect(api.deleteAirtableRecord).toBeDefined();
+      expect(typeof api.deleteAirtableRecord).toBe('function');
     });
   });
 
@@ -143,9 +143,9 @@ describe('Airtable API - Method Existence', () => {
         'createRecords',
         'updateRecords',
         'deleteRecords',
-        'getRecord',
-        'updateRecord',
-        'deleteRecord',
+        'getAirtableRecord',
+        'updateAirtableRecord',
+        'deleteAirtableRecord',
         'listBases',
         'listTables',
         'getTableSchema',

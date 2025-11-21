@@ -199,6 +199,12 @@ importers:
 
   packages/airtable-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -218,6 +224,12 @@ importers:
 
   packages/asana-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -237,6 +249,12 @@ importers:
 
   packages/bluesky-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -256,6 +274,12 @@ importers:
 
   packages/clickup-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -275,6 +299,12 @@ importers:
 
   packages/cloudinary-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -294,6 +324,12 @@ importers:
 
   packages/discord-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -313,6 +349,12 @@ importers:
 
   packages/dribbble-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -332,6 +374,12 @@ importers:
 
   packages/dropbox-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -349,8 +397,33 @@ importers:
         specifier: ^2.1.0
         version: 2.1.9(@types/node@20.19.25)(lightningcss@1.30.2)
 
+  packages/effect-sdk-base:
+    dependencies:
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.0
+        version: 20.19.25
+      tsx:
+        specifier: ^4.7.0
+        version: 4.20.6
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.0
+        version: 2.1.9(@types/node@20.19.25)(lightningcss@1.30.2)
+
   packages/facebook-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -370,6 +443,12 @@ importers:
 
   packages/farcaster-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -389,6 +468,12 @@ importers:
 
   packages/google-my-business-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -402,9 +487,18 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@20.19.25)(lightningcss@1.30.2)
 
   packages/instagram-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -418,9 +512,18 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@20.19.25)(lightningcss@1.30.2)
 
   packages/linkedin-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -434,9 +537,18 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@20.19.25)(lightningcss@1.30.2)
 
   packages/mastodon-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       ws:
         specifier: ^8.18.0
         version: 8.18.3
@@ -462,6 +574,12 @@ importers:
 
   packages/monday-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -490,9 +608,15 @@ importers:
       '@noble/hashes':
         specifier: ^1.4.0
         version: 1.8.0
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
       '@scure/base':
         specifier: ^1.1.6
         version: 1.2.6
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       ws:
         specifier: ^8.18.0
         version: 8.18.3
@@ -518,6 +642,12 @@ importers:
 
   packages/notion-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -537,6 +667,12 @@ importers:
 
   packages/pinterest-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -550,9 +686,18 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@20.19.25)(lightningcss@1.30.2)
 
   packages/reddit-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -572,6 +717,12 @@ importers:
 
   packages/salesforce-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -597,6 +748,12 @@ importers:
 
   packages/slack-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -616,6 +773,12 @@ importers:
 
   packages/telegram-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -635,6 +798,12 @@ importers:
 
   packages/threads-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -654,6 +823,12 @@ importers:
 
   packages/tiktok-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -673,6 +848,12 @@ importers:
 
   packages/trustpilot-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -700,6 +881,12 @@ importers:
 
   packages/whatsapp-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -719,6 +906,12 @@ importers:
 
   packages/x-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -738,6 +931,12 @@ importers:
 
   packages/youtube-sdk:
     dependencies:
+      '@q8t/effect-sdk-base':
+        specifier: workspace:*
+        version: link:../effect-sdk-base
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
       yaml:
         specifier: ^2.3.4
         version: 2.8.1
@@ -751,6 +950,9 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@20.19.25)(lightningcss@1.30.2)
 
 packages:
 
@@ -2106,6 +2308,9 @@ packages:
   '@scure/base@1.2.6':
     resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
 
+  '@standard-schema/spec@1.0.0':
+    resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
+
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
@@ -2440,6 +2645,9 @@ packages:
   ecdsa-sig-formatter@1.0.11:
     resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
 
+  effect@3.19.6:
+    resolution: {integrity: sha512-Eh1E/CI+xCAcMSDC5DtyE29yWJINC0zwBbwHappQPorjKyS69rCA8qzpsHpfhKnPDYgxdg8zkknii8mZ+6YMQA==}
+
   embla-carousel-react@8.6.0:
     resolution: {integrity: sha512-0/PjqU7geVmo6F734pmPqpyHqiM99olvyecY7zdweCw+6tKEXnrE90pBiBbMMU8s5tICemzpQ3hi5EpxzGW+JA==}
     peerDependencies:
@@ -2479,6 +2687,10 @@ packages:
   expect-type@1.2.2:
     resolution: {integrity: sha512-JhFGDVJ7tmDJItKhYgJCGLOWjuK9vPxiXoUFLwLDc99NlmklilbiQJwoctZtt13+xMw91MCk/REan6MWHqDjyA==}
     engines: {node: '>=12.0.0'}
+
+  fast-check@3.23.2:
+    resolution: {integrity: sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==}
+    engines: {node: '>=8.0.0'}
 
   fast-equals@5.3.3:
     resolution: {integrity: sha512-/boTcHZeIAQ2r/tL11voclBHDeP9WPxLt+tyAbVSyyXuUFyh0Tne7gJZTqGbxnvj79TjLdCXLOY7UIPhyG5MTw==}
@@ -2694,6 +2906,9 @@ packages:
 
   prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
+
+  pure-rand@6.1.0:
+    resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
 
   react-day-picker@9.11.1:
     resolution: {integrity: sha512-l3ub6o8NlchqIjPKrRFUCkTUEq6KwemQlfv3XZzzwpUeGwmDJ+0u0Upmt38hJyd7D/vn2dQoOoLV/qAp0o3uUw==}
@@ -4156,6 +4371,8 @@ snapshots:
 
   '@scure/base@1.2.6': {}
 
+  '@standard-schema/spec@1.0.0': {}
+
   '@standard-schema/utils@0.3.0': {}
 
   '@supabase/auth-js@2.84.0':
@@ -4476,6 +4693,11 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
+  effect@3.19.6:
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      fast-check: 3.23.2
+
   embla-carousel-react@8.6.0(react@19.2.0):
     dependencies:
       embla-carousel: 8.6.0
@@ -4557,6 +4779,10 @@ snapshots:
   eventemitter3@4.0.7: {}
 
   expect-type@1.2.2: {}
+
+  fast-check@3.23.2:
+    dependencies:
+      pure-rand: 6.1.0
 
   fast-equals@5.3.3: {}
 
@@ -4742,6 +4968,8 @@ snapshots:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       react-is: 16.13.1
+
+  pure-rand@6.1.0: {}
 
   react-day-picker@9.11.1(react@19.2.0):
     dependencies:

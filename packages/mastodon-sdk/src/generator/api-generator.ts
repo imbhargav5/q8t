@@ -21,7 +21,7 @@ export function generateApi(spec: OpenAPISpec): string {
     "// Generated from api/openapi.yaml",
     "",
     'import { Effect } from "effect";',
-    'import type { HttpClient } from "@q8t/effect-sdk-base";',
+    'import { HttpClient } from "@q8t/effect-sdk-base";',
     'import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";',
     'import type * as Types from "./types";',
     "",
@@ -261,7 +261,8 @@ function generateMethod(endpoint: EndpointInfo): string {
     }
   }
 
-  lines.push(`  }`);
+  lines.push(`    });`); // Close Effect.gen
+  lines.push(`  }`); // Close method
 
   return lines.join("\n");
 }

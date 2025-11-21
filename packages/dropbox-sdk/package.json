@@ -12,7 +12,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "check": "biome check . && tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest"
   },
   "dependencies": {

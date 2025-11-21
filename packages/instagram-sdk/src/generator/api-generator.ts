@@ -20,7 +20,7 @@ export function generateApi(spec: OpenAPISpec): string {
     "// Generated from api/openapi.yaml",
     "",
     'import { Effect } from "effect";',
-    'import type { HttpClient } from "@q8t/effect-sdk-base";',
+    'import { HttpClient } from "@q8t/effect-sdk-base";',
     'import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";',
     'import type * as Types from "./types";',
     "",
@@ -139,7 +139,7 @@ function generateMethod(endpoint: EndpointInfo): string {
       lines.push("        queryParams: {");
       for (const param of endpoint.queryParams) {
         const safeName = param.name.replace(/\./g, "_");
-        lines.push(`          "${param.name}": ${safeName},`);
+        lines.push(`          "${param.name}": params?.${safeName},`);
       }
       lines.push("        }");
       lines.push("      });");
@@ -196,7 +196,7 @@ function generateMethodParams(endpoint: EndpointInfo): string {
       const safeName = param.name.replace(/\./g, "_");
       queryParamTypes.push(`${safeName}?: ${tsType}`);
     }
-    params.push(`{ ${queryParamTypes.join(", ")} }: { ${queryParamTypes.join("; ")} } = {}`);
+    params.push(`params?: { ${queryParamTypes.join("; ")} }`);
   }
 
   return params.join(", ");

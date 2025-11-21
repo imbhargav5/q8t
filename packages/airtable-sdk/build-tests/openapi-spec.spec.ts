@@ -5,7 +5,7 @@
  * and properly structured.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { parse } from 'yaml';
