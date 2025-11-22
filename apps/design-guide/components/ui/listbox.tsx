@@ -8,7 +8,8 @@ function Listbox({
   orientation = "vertical",
   children,
   ...props
-}: React.ComponentProps<typeof ListboxPrimitive.Root> & {
+}: Omit<React.ComponentProps<typeof ListboxPrimitive.Root>, "className"> & {
+  className?: string;
   children?: React.ReactNode;
 }) {
   return (
