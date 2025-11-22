@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -13,43 +14,84 @@ import {
   TrendingUp,
   Clock,
   Calendar,
+  Phone,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import type { Person } from "@/lib/zod-schemas";
+import {
+  SendMessageDialog,
+  AddTagDialog,
+  MarkDateDialog,
+  ContactMethodDialog,
+} from "./transaction-dialogs";
 
 interface PersonSidebarProps {
   person: Person;
 }
 
 export function PersonSidebar({ person }: PersonSidebarProps) {
+  const [sendMessageOpen, setSendMessageOpen] = useState(false);
+  const [addTagOpen, setAddTagOpen] = useState(false);
+  const [markDateOpen, setMarkDateOpen] = useState(false);
+  const [contactMethodOpen, setContactMethodOpen] = useState(false);
+
   return (
-    <div className="p-4 space-y-6">
-      {/* Quick Actions */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3">Quick Actions</h3>
-        <div className="space-y-2">
-          <Button variant="outline" size="sm" className="w-full justify-start">
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Send Message
-          </Button>
-          <Button variant="outline" size="sm" className="w-full justify-start">
-            <StickyNote className="h-4 w-4 mr-2" />
-            Add Note
-          </Button>
-          <Button variant="outline" size="sm" className="w-full justify-start">
-            <Tag className="h-4 w-4 mr-2" />
-            Add Tag
-          </Button>
-          <Button variant="outline" size="sm" className="w-full justify-start">
-            <Star className="h-4 w-4 mr-2" />
-            {person.is_vip ? "Remove VIP" : "Mark as VIP"}
-          </Button>
-          <Button variant="outline" size="sm" className="w-full justify-start">
-            <Ban className="h-4 w-4 mr-2" />
-            Block Contact
-          </Button>
+    <>
+      <div className="p-4 space-y-6">
+        {/* Quick Actions */}
+        <div>
+          <h3 className="text-sm font-semibold mb-3">Quick Actions</h3>
+          <div className="space-y-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-start"
+              onClick={() => setSendMessageOpen(true)}
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Send Message
+            </Button>
+            <Button variant="outline" size="sm" className="w-full justify-start">
+              <StickyNote className="h-4 w-4 mr-2" />
+              Add Note
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-start"
+              onClick={() => setAddTagOpen(true)}
+            >
+              <Tag className="h-4 w-4 mr-2" />
+              Add Tag
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-start"
+              onClick={() => setMarkDateOpen(true)}
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              Mark Date
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-start"
+              onClick={() => setContactMethodOpen(true)}
+            >
+              <Phone className="h-4 w-4 mr-2" />
+              Log Contact
+            </Button>
+            <Button variant="outline" size="sm" className="w-full justify-start">
+              <Star className="h-4 w-4 mr-2" />
+              {person.is_vip ? "Remove VIP" : "Mark as VIP"}
+            </Button>
+            <Button variant="outline" size="sm" className="w-full justify-start">
+              <Ban className="h-4 w-4 mr-2" />
+              Block Contact
+            </Button>
+          </div>
         </div>
-      </div>
 
       <Separator />
 
@@ -125,5 +167,28 @@ export function PersonSidebar({ person }: PersonSidebarProps) {
         </div>
       </div>
     </div>
+
+    {/* Dialogs */}
+    <SendMessageDialog
+      open={sendMessageOpen}
+      onOpenChange={setSendMessageOpen}
+      person={person}
+    />
+    <AddTagDialog
+      open={addTagOpen}
+      onOpenChange={setAddTagOpen}
+      person={person}
+    />
+    <MarkDateDialog
+      open={markDateOpen}
+      onOpenChange={setMarkDateOpen}
+      person={person}
+    />
+    <ContactMethodDialog
+      open={contactMethodOpen}
+      onOpenChange={setContactMethodOpen}
+      person={person}
+    />
+  </>
   );
 }

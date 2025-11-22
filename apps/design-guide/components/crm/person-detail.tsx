@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { PersonOverview } from "./person-overview";
 import { PersonConversations } from "./person-conversations";
 import { PersonTimeline } from "./person-timeline";
 import { PersonNotes } from "./person-notes";
+import { EditContactDialog, AssignToDialog } from "./contact-form-dialogs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +37,10 @@ interface PersonDetailProps {
 }
 
 export function PersonDetail({ person }: PersonDetailProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
+  const [editContactOpen, setEditContactOpen] = useState(false);
+  const [assignToOpen, setAssignToOpen] = useState(false);
 
   return (
     <div className="flex flex-col h-full">
@@ -86,13 +91,18 @@ export function PersonDetail({ person }: PersonDetailProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => router.push(`/crm/${person.id}/email`)}
+              title="Open Email"
+            >
               <Mail className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" title="Call">
               <Phone className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" title="Message">
               <MessageSquare className="h-4 w-4" />
             </Button>
 
@@ -103,11 +113,11 @@ export function PersonDetail({ person }: PersonDetailProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setEditContactOpen(true)}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Contact
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setAssignToOpen(true)}>
                   <UserPlus className="mr-2 h-4 w-4" />
                   Assign to...
                 </DropdownMenuItem>
@@ -178,6 +188,18 @@ export function PersonDetail({ person }: PersonDetailProps) {
           <PersonNotes person={person} />
         </TabsContent>
       </Tabs>
+
+      {/* Dialogs */}
+      <EditContactDialog
+        open={editContactOpen}
+        onOpenChange={setEditContactOpen}
+        person={person}
+      />
+      <AssignToDialog
+        open={assignToOpen}
+        onOpenChange={setAssignToOpen}
+        person={person}
+      />
     </div>
   );
 }
