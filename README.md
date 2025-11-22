@@ -4,12 +4,37 @@ A modern open source social media management platform with comprehensive feature
 
 ## Features
 
-- **Social Inbox** - Unified inbox for managing messages across multiple social media platforms
+### Content Management & Publishing
 - **Multi-Platform Publishing** - Publish content to multiple social media platforms simultaneously
+- **Content Calendar** - Visual calendar for planning and scheduling posts across all platforms
+- **Bulk Scheduling** - Schedule multiple posts at once with CSV import support
 - **AI Content Creator** - AI-powered content generation and optimization
+- **Media Library** - Centralized asset management for images, videos, and other media
 - **Post Timing Analytics** - Analyze and recommend optimal times to post content
-- **Built-in CRM** - Customer relationship management for social media support
+- **URL Shortening** - Automatic link shortening with click tracking
+- **Hashtag Suggestions** - AI-powered hashtag recommendations for better reach
+
+### Social Engagement
+- **Social Inbox** - Unified inbox for managing messages across multiple social media platforms
 - **Social Mention Tracking** - Monitor and track brand mentions across social platforms
+- **Social Listening** - Track keywords, hashtags, and brand conversations in real-time
+- **Built-in CRM** - Customer relationship management for social media support
+
+### Analytics & Reporting
+- **Performance Metrics** - Comprehensive analytics for posts, engagement, and audience growth
+- **Custom Reports** - Create and schedule custom reports with key metrics
+- **Competitor Analysis** - Track and compare competitor social media performance
+- **Influencer Identification** - Discover and analyze potential influencer partnerships
+
+### Team & Workflow
+- **Team Collaboration** - Multi-user access with role-based permissions
+- **Approval Workflows** - Content approval process for team and client reviews
+- **Workspaces** - Organize multiple brands and clients in separate workspaces
+
+### Integrations
+- **Platform Integrations** - Connect with major social networks (Facebook, Instagram, Twitter/X, LinkedIn, TikTok, YouTube, Pinterest, etc.)
+- **RSS Feed Integration** - Auto-publish content from RSS feeds
+- **Third-Party Apps** - Integration with popular tools and services
 
 ## Tech Stack
 
