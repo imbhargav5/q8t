@@ -18,13 +18,11 @@ import {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider
-      style={
+    <SidebarProvider style={
         {
           "--sidebar-width": "280px",
         } as React.CSSProperties
-      }
-    >
+      }>
       <AppSidebar />
       <SidebarInset>
         <header className="bg-background sticky top-0 z-50 flex shrink-0 items-center gap-2 border-b p-4">
