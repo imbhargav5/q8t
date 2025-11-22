@@ -1,0 +1,45 @@
+{
+  "name": "@q8t/queue",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write ."
+  },
+  "dependencies": {
+    "inngest": "^3.22.13",
+    "zod": "^3.23.8",
+    "lodash": "^4.17.21",
+    "@supabase/supabase-js": "^2.45.4",
+    "@q8t/linkedin-sdk": "workspace:*",
+    "@q8t/reddit-sdk": "workspace:*",
+    "@q8t/x-sdk": "workspace:*",
+    "@q8t/instagram-sdk": "workspace:*",
+    "@q8t/threads-sdk": "workspace:*",
+    "@q8t/facebook-sdk": "workspace:*",
+    "@q8t/bluesky-sdk": "workspace:*",
+    "@q8t/pinterest-sdk": "workspace:*",
+    "@q8t/youtube-sdk": "workspace:*",
+    "@q8t/tiktok-sdk": "workspace:*",
+    "@q8t/farcaster-sdk": "workspace:*",
+    "@q8t/nostr-sdk": "workspace:*",
+    "@q8t/discord-sdk": "workspace:*",
+    "@q8t/slack-sdk": "workspace:*",
+    "@q8t/telegram-sdk": "workspace:*",
+    "@q8t/whatsapp-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.8.6",
+    "@types/lodash": "^4.17.13",
+    "typescript": "^5.7.2"
+  }
+}
