@@ -67,7 +67,7 @@ export function PostDetailSidebar({ post }: PostDetailSidebarProps) {
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {post.platforms.map((platform) => (
-              <PlatformBadge key={platform} platform={platform} size="sm" />
+              <PlatformBadge key={platform} platform={platform} />
             ))}
           </div>
         </CardContent>
@@ -82,7 +82,7 @@ export function PostDetailSidebar({ post }: PostDetailSidebarProps) {
           <CardContent className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm">
-                <Heart className="h-4 w-4 text-red-500" />
+                <Heart className="h-4 w-4" />
                 <span>Likes</span>
               </div>
               <span className="font-semibold">
@@ -91,7 +91,7 @@ export function PostDetailSidebar({ post }: PostDetailSidebarProps) {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm">
-                <MessageCircle className="h-4 w-4 text-blue-500" />
+                <MessageCircle className="h-4 w-4" />
                 <span>Comments</span>
               </div>
               <span className="font-semibold">
@@ -100,7 +100,7 @@ export function PostDetailSidebar({ post }: PostDetailSidebarProps) {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm">
-                <Share2 className="h-4 w-4 text-green-500" />
+                <Share2 className="h-4 w-4" />
                 <span>Shares</span>
               </div>
               <span className="font-semibold">
@@ -109,7 +109,7 @@ export function PostDetailSidebar({ post }: PostDetailSidebarProps) {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm">
-                <Eye className="h-4 w-4 text-purple-500" />
+                <Eye className="h-4 w-4" />
                 <span>Impressions</span>
               </div>
               <span className="font-semibold">
@@ -119,7 +119,7 @@ export function PostDetailSidebar({ post }: PostDetailSidebarProps) {
             <div className="pt-2 border-t">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Engagement Rate</span>
-                <span className="text-lg font-bold text-primary">
+                <span className="text-lg font-bold">
                   {post.engagement.engagement_rate}%
                 </span>
               </div>
@@ -161,8 +161,8 @@ export function PostDetailSidebar({ post }: PostDetailSidebarProps) {
             Duplicate Post
           </Button>
           <Button
-            variant="outline"
-            className="w-full justify-start text-red-500 hover:text-red-600"
+            variant="destructive"
+            className="w-full justify-start"
             size="sm"
           >
             <Trash2 className="h-4 w-4 mr-2" />

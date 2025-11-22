@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import type { SocialPlatform } from "@/lib/zod-schemas";
 import { PlatformIcon } from "./platform-badge";
-import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface PlatformSelectorProps {
   selected: SocialPlatform[];
@@ -58,34 +58,33 @@ export function PlatformSelector({
 
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-medium">Select Platforms</Label>
+      <Label>Select Platforms</Label>
       <div className="grid grid-cols-2 gap-3">
         {availablePlatforms.map((platform) => (
           <Card
             key={platform}
-            className={`p-3 cursor-pointer transition-all ${
-              selected.includes(platform)
-                ? "border-primary bg-primary/5"
-                : "hover:border-primary/50"
-            }`}
+            className={cn(
+              "cursor-pointer transition-colors",
+              selected.includes(platform) && "bg-accent"
+            )}
             onClick={() => handleToggle(platform)}
           >
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id={`platform-${platform}`}
-                checked={selected.includes(platform)}
-                onCheckedChange={() => handleToggle(platform)}
-              />
-              <div className="flex items-center gap-2 flex-1">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id={`platform-${platform}`}
+                  checked={selected.includes(platform)}
+                  onCheckedChange={() => handleToggle(platform)}
+                />
                 <PlatformIcon platform={platform} className="h-4 w-4" />
                 <Label
                   htmlFor={`platform-${platform}`}
-                  className="cursor-pointer font-normal"
+                  className="cursor-pointer"
                 >
                   {platformLabels[platform]}
                 </Label>
               </div>
-            </div>
+            </CardContent>
           </Card>
         ))}
       </div>

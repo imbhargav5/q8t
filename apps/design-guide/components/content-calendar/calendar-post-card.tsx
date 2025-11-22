@@ -1,7 +1,8 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import type { PostWithAuthor } from "@/lib/zod-schemas";
 import { PlatformIcon } from "./platform-badge";
 import { PostStatusBadge } from "./post-status-badge";
@@ -17,22 +18,9 @@ export function CalendarPostCard({ post, onClick }: CalendarPostCardProps) {
   const scheduledTime = post.scheduled_for || post.published_at;
 
   return (
-    <Card
-      className="p-2 cursor-pointer hover:shadow-md transition-all border-l-4"
-      style={{
-        borderLeftColor: post.status === "published"
-          ? "#22c55e"
-          : post.status === "scheduled"
-          ? "#3b82f6"
-          : post.status === "failed"
-          ? "#ef4444"
-          : "#6b7280",
-      }}
-      onClick={onClick}
-    >
-      <div className="space-y-2">
-        {/* Header with time and status */}
-        <div className="flex items-center justify-between gap-2">
+    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
+      <CardContent className="p-3 space-y-2">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Clock className="h-3 w-3" />
             {scheduledTime && format(new Date(scheduledTime), "HH:mm")}
@@ -40,12 +28,10 @@ export function CalendarPostCard({ post, onClick }: CalendarPostCardProps) {
           <PostStatusBadge status={post.status} />
         </div>
 
-        {/* Content preview */}
-        <p className="text-xs line-clamp-2 text-foreground">
+        <p className="text-xs line-clamp-2">
           {post.content}
         </p>
 
-        {/* Media indicators */}
         {post.media.length > 0 && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             {post.media[0].type === "video" ? (
@@ -57,7 +43,6 @@ export function CalendarPostCard({ post, onClick }: CalendarPostCardProps) {
           </div>
         )}
 
-        {/* Link preview indicator */}
         {post.link_preview && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <LinkIcon className="h-3 w-3" />
@@ -65,23 +50,20 @@ export function CalendarPostCard({ post, onClick }: CalendarPostCardProps) {
           </div>
         )}
 
-        {/* Platforms and engagement */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             {post.platforms.slice(0, 3).map((platform) => (
-              <div
-                key={platform}
-                className="flex items-center justify-center h-5 w-5 rounded-full bg-secondary"
-              >
-                <PlatformIcon platform={platform} className="h-3 w-3" />
-              </div>
+              <Avatar key={platform} className="h-5 w-5">
+                <AvatarFallback>
+                  <PlatformIcon platform={platform} className="h-3 w-3" />
+                </AvatarFallback>
+              </Avatar>
             ))}
             {post.platforms.length > 3 && (
               <span className="text-xs text-muted-foreground">+{post.platforms.length - 3}</span>
             )}
           </div>
 
-          {/* Engagement metrics for published posts */}
           {post.engagement && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <BarChart2 className="h-3 w-3" />
@@ -90,8 +72,9 @@ export function CalendarPostCard({ post, onClick }: CalendarPostCardProps) {
           )}
         </div>
 
-        {/* Author */}
-        <div className="flex items-center gap-1.5 pt-1 border-t">
+        <Separator />
+
+        <div className="flex items-center gap-2">
           <Avatar className="h-4 w-4">
             <AvatarImage src={post.author.avatar_url || undefined} />
             <AvatarFallback className="text-[8px]">
@@ -102,7 +85,7 @@ export function CalendarPostCard({ post, onClick }: CalendarPostCardProps) {
             {post.author.full_name}
           </span>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }

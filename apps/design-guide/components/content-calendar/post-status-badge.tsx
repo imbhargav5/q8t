@@ -8,6 +8,7 @@ import {
   Loader2,
   Archive,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PostStatusBadgeProps {
   status: PostStatus;
@@ -15,36 +16,36 @@ interface PostStatusBadgeProps {
 
 const statusConfig: Record<
   PostStatus,
-  { icon: typeof Clock; color: string; label: string }
+  { icon: typeof Clock; variant: "default" | "secondary" | "destructive" | "outline"; label: string }
 > = {
   draft: {
     icon: FileText,
-    color: "bg-gray-500 text-white",
+    variant: "outline",
     label: "Draft",
   },
   scheduled: {
     icon: Clock,
-    color: "bg-blue-500 text-white",
+    variant: "default",
     label: "Scheduled",
   },
   publishing: {
     icon: Loader2,
-    color: "bg-yellow-500 text-white",
+    variant: "secondary",
     label: "Publishing",
   },
   published: {
     icon: CheckCircle2,
-    color: "bg-green-500 text-white",
+    variant: "secondary",
     label: "Published",
   },
   failed: {
     icon: AlertCircle,
-    color: "bg-red-500 text-white",
+    variant: "destructive",
     label: "Failed",
   },
   archived: {
     icon: Archive,
-    color: "bg-gray-400 text-white",
+    variant: "outline",
     label: "Archived",
   },
 };
@@ -54,9 +55,9 @@ export function PostStatusBadge({ status }: PostStatusBadgeProps) {
   const Icon = config.icon;
 
   return (
-    <Badge variant="secondary" className={`${config.color} gap-1 px-2 py-0.5`}>
-      <Icon className={`h-3 w-3 ${status === "publishing" ? "animate-spin" : ""}`} />
-      <span className="text-xs font-medium">{config.label}</span>
+    <Badge variant={config.variant}>
+      <Icon className={cn("h-3 w-3 mr-1", status === "publishing" && "animate-spin")} />
+      {config.label}
     </Badge>
   );
 }

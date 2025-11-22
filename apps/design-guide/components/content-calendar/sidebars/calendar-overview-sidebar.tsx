@@ -65,9 +65,7 @@ export function CalendarOverviewSidebar({
         <Card>
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <Clock className="h-4 w-4 text-blue-600" />
-              </div>
+              <Clock className="h-4 w-4" />
               <div>
                 <p className="text-xs text-muted-foreground">Scheduled</p>
                 <p className="text-lg font-bold">{scheduledCount}</p>
@@ -79,9 +77,7 @@ export function CalendarOverviewSidebar({
         <Card>
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
-                <FileText className="h-4 w-4 text-gray-600" />
-              </div>
+              <FileText className="h-4 w-4" />
               <div>
                 <p className="text-xs text-muted-foreground">Drafts</p>
                 <p className="text-lg font-bold">{draftCount}</p>
@@ -93,9 +89,7 @@ export function CalendarOverviewSidebar({
         <Card>
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-              </div>
+              <CheckCircle2 className="h-4 w-4" />
               <div>
                 <p className="text-xs text-muted-foreground">Published</p>
                 <p className="text-lg font-bold">{publishedCount}</p>
@@ -107,9 +101,7 @@ export function CalendarOverviewSidebar({
         <Card>
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-                <Calendar className="h-4 w-4 text-purple-600" />
-              </div>
+              <Calendar className="h-4 w-4" />
               <div>
                 <p className="text-xs text-muted-foreground">This Month</p>
                 <p className="text-lg font-bold">{monthPosts.length}</p>

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import type { PostWithAuthor } from "@/lib/zod-schemas";
@@ -64,8 +65,8 @@ export function PostDetailDialog({
               <Button variant="outline" size="icon">
                 <Copy className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="icon">
-                <Trash2 className="h-4 w-4 text-red-500" />
+              <Button variant="destructive" size="icon">
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -164,7 +165,7 @@ export function PostDetailDialog({
             <h3 className="font-semibold">Publishing Platforms</h3>
             <div className="flex flex-wrap gap-2">
               {post.platforms.map((platform) => (
-                <PlatformBadge key={platform} platform={platform} size="md" />
+                <PlatformBadge key={platform} platform={platform} />
               ))}
             </div>
           </div>
@@ -176,55 +177,65 @@ export function PostDetailDialog({
               <div className="space-y-3">
                 <h3 className="font-semibold">Performance Metrics</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-                    <Heart className="h-4 w-4 text-red-500" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Likes</p>
-                      <p className="text-lg font-semibold">
-                        {post.engagement.likes.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-                    <MessageCircle className="h-4 w-4 text-blue-500" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Comments</p>
-                      <p className="text-lg font-semibold">
-                        {post.engagement.comments.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-                    <Share2 className="h-4 w-4 text-green-500" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Shares</p>
-                      <p className="text-lg font-semibold">
-                        {post.engagement.shares.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-                    <Eye className="h-4 w-4 text-purple-500" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Impressions</p>
-                      <p className="text-lg font-semibold">
-                        {post.engagement.impressions.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
+                  <Card>
+                    <CardContent className="p-3 flex items-center gap-2">
+                      <Heart className="h-4 w-4" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Likes</p>
+                        <p className="text-lg font-semibold">
+                          {post.engagement.likes.toLocaleString()}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-3 flex items-center gap-2">
+                      <MessageCircle className="h-4 w-4" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Comments</p>
+                        <p className="text-lg font-semibold">
+                          {post.engagement.comments.toLocaleString()}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-3 flex items-center gap-2">
+                      <Share2 className="h-4 w-4" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Shares</p>
+                        <p className="text-lg font-semibold">
+                          {post.engagement.shares.toLocaleString()}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-3 flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Impressions</p>
+                        <p className="text-lg font-semibold">
+                          {post.engagement.impressions.toLocaleString()}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
 
-                <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary">
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">
-                      Engagement Rate
-                    </p>
-                    <p className="text-xl font-bold text-primary">
-                      {post.engagement.engagement_rate}%
-                    </p>
-                  </div>
-                </div>
+                <Card>
+                  <CardContent className="p-3 flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">
+                        Engagement Rate
+                      </p>
+                      <p className="text-xl font-bold">
+                        {post.engagement.engagement_rate}%
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </>
           )}
@@ -234,19 +245,18 @@ export function PostDetailDialog({
             <>
               <Separator />
               <div className="space-y-2">
-                <h3 className="font-semibold text-red-500">Publishing Errors</h3>
+                <h3 className="font-semibold">Publishing Errors</h3>
                 {post.platform_settings
                   .filter((ps) => ps.status === "failed")
                   .map((ps) => (
-                    <div
-                      key={ps.platform}
-                      className="p-3 bg-red-50 border border-red-200 rounded-lg"
-                    >
-                      <div className="flex items-center gap-2">
-                        <PlatformBadge platform={ps.platform} size="sm" />
-                        <p className="text-sm text-red-600">{ps.error_message}</p>
-                      </div>
-                    </div>
+                    <Card key={ps.platform} className="border-destructive">
+                      <CardContent className="p-3">
+                        <div className="flex items-center gap-2">
+                          <PlatformBadge platform={ps.platform} />
+                          <p className="text-sm">{ps.error_message}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
               </div>
             </>
