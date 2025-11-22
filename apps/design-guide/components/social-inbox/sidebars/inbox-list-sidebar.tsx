@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, MessageSquare, Clock, TrendingUp } from "lucide-react";
 import { mockTeamMembers } from "@/lib/mock-data";
 import type { ConversationWithRelations } from "@/lib/zod-schemas";
+import * as Listbox from "@diceui/listbox";
 
 interface InboxListSidebarProps {
   conversations: ConversationWithRelations[];
@@ -58,34 +59,38 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
             Team Availability
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {mockTeamMembers.slice(0, 4).map((member) => (
-            <div key={member.id} className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={member.avatar_url || undefined} />
-                    <AvatarFallback className="text-xs">
-                      {member.full_name?.substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div
-                    className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background ${
-                      member.status === "online"
-                        ? "bg-green-500"
-                        : member.status === "away"
-                          ? "bg-yellow-500"
-                          : "bg-gray-400"
-                    }`}
-                  />
-                </div>
-                <span className="text-sm">{member.full_name?.split(" ")[0]}</span>
-              </div>
-              <Badge variant="outline" className="text-xs">
-                {member.conversation_load}
-              </Badge>
-            </div>
-          ))}
+        <CardContent>
+          <Listbox.Root orientation="vertical">
+            <Listbox.Group className="space-y-3">
+              {mockTeamMembers.slice(0, 4).map((member) => (
+                <Listbox.Item key={member.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent">
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={member.avatar_url || undefined} />
+                        <AvatarFallback className="text-xs">
+                          {member.full_name?.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div
+                        className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background ${
+                          member.status === "online"
+                            ? "bg-green-500"
+                            : member.status === "away"
+                              ? "bg-yellow-500"
+                              : "bg-gray-400"
+                        }`}
+                      />
+                    </div>
+                    <span className="text-sm">{member.full_name?.split(" ")[0]}</span>
+                  </div>
+                  <Badge variant="outline" className="text-xs">
+                    {member.conversation_load}
+                  </Badge>
+                </Listbox.Item>
+              ))}
+            </Listbox.Group>
+          </Listbox.Root>
         </CardContent>
       </Card>
 
@@ -97,32 +102,34 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
             Recent Activity
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="text-sm space-y-2">
-            <div className="flex items-start gap-2">
-              <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-              <div>
-                <p className="text-foreground">Sarah resolved 3 conversations</p>
-                <span className="text-xs text-muted-foreground">2 hours ago</span>
-              </div>
-            </div>
-            <Separator />
-            <div className="flex items-start gap-2">
-              <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-              <div>
-                <p className="text-foreground">New message from Twitter</p>
-                <span className="text-xs text-muted-foreground">5 hours ago</span>
-              </div>
-            </div>
-            <Separator />
-            <div className="flex items-start gap-2">
-              <Users className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-              <div>
-                <p className="text-foreground">Mike assigned to Emma</p>
-                <span className="text-xs text-muted-foreground">1 day ago</span>
-              </div>
-            </div>
-          </div>
+        <CardContent>
+          <Listbox.Root orientation="vertical">
+            <Listbox.Group>
+              <Listbox.Item className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+                <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="text-foreground">Sarah resolved 3 conversations</p>
+                  <span className="text-xs text-muted-foreground">2 hours ago</span>
+                </div>
+              </Listbox.Item>
+              <Separator className="my-2" />
+              <Listbox.Item className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+                <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="text-foreground">New message from Twitter</p>
+                  <span className="text-xs text-muted-foreground">5 hours ago</span>
+                </div>
+              </Listbox.Item>
+              <Separator className="my-2" />
+              <Listbox.Item className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+                <Users className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="text-foreground">Mike assigned to Emma</p>
+                  <span className="text-xs text-muted-foreground">1 day ago</span>
+                </div>
+              </Listbox.Item>
+            </Listbox.Group>
+          </Listbox.Root>
         </CardContent>
       </Card>
 

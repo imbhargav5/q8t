@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Star, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { ListeningQuery } from "@/lib/mock-data";
+import * as Listbox from "@diceui/listbox";
 
 interface ListenerQueryListProps {
   queries: ListeningQuery[];
@@ -15,20 +16,21 @@ interface ListenerQueryListProps {
 export function ListenerQueryList({ queries, selectedId, onSelect }: ListenerQueryListProps) {
   return (
     <ScrollArea className="flex-1">
-      <div className="p-2 space-y-1">
-        {queries.map((query) => (
-          <button
-            key={query.id}
-            type="button"
-            onClick={() => onSelect(query)}
-            className={cn(
-              "w-full text-left p-3 rounded-lg border transition-colors",
-              "hover:bg-accent hover:border-accent-foreground/20",
-              selectedId === query.id
-                ? "bg-accent border-accent-foreground/20"
-                : "bg-card border-transparent"
-            )}
-          >
+      <div className="p-2">
+        <Listbox.Root orientation="vertical">
+          <Listbox.Group className="space-y-1">
+            {queries.map((query) => (
+              <Listbox.Item
+                key={query.id}
+                onClick={() => onSelect(query)}
+                className={cn(
+                  "w-full text-left p-3 rounded-lg border transition-colors cursor-pointer",
+                  "hover:bg-accent hover:border-accent-foreground/20",
+                  selectedId === query.id
+                    ? "bg-accent border-accent-foreground/20"
+                    : "bg-card border-transparent"
+                )}
+              >
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 {query.icon && <span className="text-lg">{query.icon}</span>}
@@ -85,8 +87,10 @@ export function ListenerQueryList({ queries, selectedId, onSelect }: ListenerQue
                 <span>Alerts enabled</span>
               </div>
             )}
-          </button>
-        ))}
+              </Listbox.Item>
+            ))}
+          </Listbox.Group>
+        </Listbox.Root>
       </div>
     </ScrollArea>
   );

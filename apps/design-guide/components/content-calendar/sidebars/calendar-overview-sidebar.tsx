@@ -12,6 +12,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import * as Listbox from "@diceui/listbox";
 
 interface CalendarOverviewSidebarProps {
   posts: PostWithAuthor[];
@@ -116,34 +117,38 @@ export function CalendarOverviewSidebar({
         <CardHeader className="pb-3">
           <CardTitle className="text-sm">Upcoming Posts</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent>
           {upcomingPosts.length > 0 ? (
-            upcomingPosts.map((post) => (
-              <div key={post.id} className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium">
-                    {post.scheduled_for &&
-                      format(new Date(post.scheduled_for), "MMM d, h:mm a")}
-                  </span>
-                  <PostStatusBadge status={post.status} />
-                </div>
-                <p className="text-xs text-muted-foreground line-clamp-2">
-                  {post.content}
-                </p>
-                <div className="flex gap-1">
-                  {post.platforms.slice(0, 2).map((platform) => (
-                    <Badge key={platform} variant="secondary" className="text-xs">
-                      {platform}
-                    </Badge>
-                  ))}
-                  {post.platforms.length > 2 && (
-                    <Badge variant="secondary" className="text-xs">
-                      +{post.platforms.length - 2}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            ))
+            <Listbox.Root orientation="vertical">
+              <Listbox.Group>
+                {upcomingPosts.map((post) => (
+                  <Listbox.Item key={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium">
+                        {post.scheduled_for &&
+                          format(new Date(post.scheduled_for), "MMM d, h:mm a")}
+                      </span>
+                      <PostStatusBadge status={post.status} />
+                    </div>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {post.content}
+                    </p>
+                    <div className="flex gap-1">
+                      {post.platforms.slice(0, 2).map((platform) => (
+                        <Badge key={platform} variant="secondary" className="text-xs">
+                          {platform}
+                        </Badge>
+                      ))}
+                      {post.platforms.length > 2 && (
+                        <Badge variant="secondary" className="text-xs">
+                          +{post.platforms.length - 2}
+                        </Badge>
+                      )}
+                    </div>
+                  </Listbox.Item>
+                ))}
+              </Listbox.Group>
+            </Listbox.Root>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4">
               No upcoming posts scheduled
@@ -162,31 +167,33 @@ export function CalendarOverviewSidebar({
         </CardHeader>
         <CardContent>
           {posts.find((p) => p.engagement) ? (
-            <div className="space-y-2">
-              {posts
-                .filter((p) => p.engagement)
-                .sort(
-                  (a, b) =>
-                    (b.engagement?.engagement_rate || 0) -
-                    (a.engagement?.engagement_rate || 0)
-                )
-                .slice(0, 1)
-                .map((post) => (
-                  <div key={post.id} className="space-y-1">
-                    <p className="text-sm font-medium">
-                      {post.engagement?.engagement_rate}% engagement
-                    </p>
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                      {post.content}
-                    </p>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>❤️ {post.engagement?.likes}</span>
-                      <span>💬 {post.engagement?.comments}</span>
-                      <span>🔁 {post.engagement?.shares}</span>
-                    </div>
-                  </div>
-                ))}
-            </div>
+            <Listbox.Root orientation="vertical">
+              <Listbox.Group>
+                {posts
+                  .filter((p) => p.engagement)
+                  .sort(
+                    (a, b) =>
+                      (b.engagement?.engagement_rate || 0) -
+                      (a.engagement?.engagement_rate || 0)
+                  )
+                  .slice(0, 1)
+                  .map((post) => (
+                    <Listbox.Item key={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
+                      <p className="text-sm font-medium">
+                        {post.engagement?.engagement_rate}% engagement
+                      </p>
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {post.content}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span>❤️ {post.engagement?.likes}</span>
+                        <span>💬 {post.engagement?.comments}</span>
+                        <span>🔁 {post.engagement?.shares}</span>
+                      </div>
+                    </Listbox.Item>
+                  ))}
+              </Listbox.Group>
+            </Listbox.Root>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4">
               No published posts yet
