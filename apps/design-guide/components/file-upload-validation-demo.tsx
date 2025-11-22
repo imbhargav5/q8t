@@ -1,8 +1,5 @@
 "use client";
 
-import { Upload, X } from "lucide-react";
-import * as React from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   FileUpload,
@@ -14,6 +11,9 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/components/ui/file-upload";
+import { Upload, X } from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
 
 export function FileUploadValidationDemo() {
   const [files, setFiles] = React.useState<File[]>([]);
@@ -64,9 +64,7 @@ export function FileUploadValidationDemo() {
             <Upload className="size-6 text-muted-foreground" />
           </div>
           <p className="font-medium text-sm">Drag & drop files here</p>
-          <p className="text-muted-foreground text-xs">
-            Or click to browse (max 2 files)
-          </p>
+          <p className="text-muted-foreground text-xs">Or click to browse (max 2 files)</p>
         </div>
         <FileUploadTrigger asChild>
           <Button variant="outline" size="sm" className="mt-2 w-fit">

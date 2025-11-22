@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import {
   FileArchiveIcon,
@@ -11,7 +12,6 @@ import {
   FileVideoIcon,
 } from "lucide-react";
 import * as React from "react";
-import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "FileUpload";
 const DROPZONE_NAME = "FileUploadDropzone";
@@ -31,7 +31,7 @@ function useLazyRef<T>(fn: () => T) {
     ref.current = fn();
   }
 
-  return ref as React.RefObject<T>;
+  return ref as React.MutableRefObject<T>;
 }
 
 type Direction = "ltr" | "rtl";
@@ -92,9 +92,7 @@ function createStore(
         }
 
         if (onValueChange) {
-          const fileList = Array.from(files.values()).map(
-            (fileState) => fileState.file,
-          );
+          const fileList = Array.from(files.values()).map((fileState) => fileState.file);
           onValueChange(fileList);
         }
         return { ...state, files };
@@ -169,9 +167,7 @@ function createStore(
         files.delete(action.file);
 
         if (onValueChange) {
-          const fileList = Array.from(files.values()).map(
-            (fileState) => fileState.file,
-          );
+          const fileList = Array.from(files.values()).map((fileState) => fileState.file);
           onValueChange(fileList);
         }
         return { ...state, files };
@@ -227,9 +223,7 @@ function createStore(
   return { getState, dispatch, subscribe };
 }
 
-const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(
-  null,
-);
+const StoreContext = React.createContext<ReturnType<typeof createStore> | null>(null);
 
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
@@ -242,9 +236,7 @@ function useStoreContext(consumerName: string) {
 function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext("useStore");
 
-  const lastValueRef = useLazyRef<{ value: T; state: StoreState } | null>(
-    () => null,
-  );
+  const lastValueRef = useLazyRef<{ value: T; state: StoreState } | null>(() => null);
 
   const getSnapshot = React.useCallback(() => {
     const state = store.getState();
@@ -273,9 +265,7 @@ interface FileUploadContextValue {
   urlCache: WeakMap<File, string>;
 }
 
-const FileUploadContext = React.createContext<FileUploadContextValue | null>(
-  null,
-);
+const FileUploadContext = React.createContext<FileUploadContextValue | null>(null);
 
 function useFileUploadContext(consumerName: string) {
   const context = React.useContext(FileUploadContext);
@@ -381,11 +371,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
   React.useEffect(() => {
     if (isControlled) {
       store.dispatch({ type: "SET_FILES", files: value });
-    } else if (
-      defaultValue &&
-      defaultValue.length > 0 &&
-      !store.getState().files.size
-    ) {
+    } else if (defaultValue && defaultValue.length > 0 && !store.getState().files.size) {
       store.dispatch({ type: "SET_FILES", files: defaultValue });
     }
   }, [value, defaultValue, isControlled, store]);
@@ -428,8 +414,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
           }
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Upload failed";
+        const errorMessage = error instanceof Error ? error.message : "Upload failed";
         for (const file of files) {
           store.dispatch({
             type: "SET_ERROR",
@@ -501,8 +486,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
               (type) =>
                 type === fileType ||
                 type === fileExtension ||
-                (type.includes("/*") &&
-                  fileType.startsWith(type.replace("/*", "/"))),
+                (type.includes("/*") && fileType.startsWith(type.replace("/*", "/"))),
             )
           ) {
             rejectionMessage = "File type not accepted";
@@ -537,9 +521,7 @@ function FileUploadRoot(props: FileUploadRootProps) {
         store.dispatch({ type: "ADD_FILES", files: acceptedFiles });
 
         if (isControlled && onValueChange) {
-          const currentFiles = Array.from(store.getState().files.values()).map(
-            (f) => f.file,
-          );
+          const currentFiles = Array.from(store.getState().files.values()).map((f) => f.file);
           onValueChange([...currentFiles]);
         }
 
@@ -667,8 +649,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       const target = event.target;
 
       const isFromTrigger =
-        target instanceof HTMLElement &&
-        target.closest('[data-slot="file-upload-trigger"]');
+        target instanceof HTMLElement && target.closest('[data-slot="file-upload-trigger"]');
 
       if (!isFromTrigger) {
         context.inputRef.current?.click();
@@ -789,10 +770,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       onKeyDownProp?.(event);
 
-      if (
-        !event.defaultPrevented &&
-        (event.key === "Enter" || event.key === " ")
-      ) {
+      if (!event.defaultPrevented && (event.key === "Enter" || event.key === " ")) {
         event.preventDefault();
         context.inputRef.current?.click();
       }
@@ -872,13 +850,7 @@ interface FileUploadListProps extends React.ComponentProps<"div"> {
 }
 
 function FileUploadList(props: FileUploadListProps) {
-  const {
-    className,
-    orientation = "vertical",
-    asChild,
-    forceMount,
-    ...listProps
-  } = props;
+  const { className, orientation = "vertical", asChild, forceMount, ...listProps } = props;
 
   const context = useFileUploadContext(LIST_NAME);
   const fileCount = useStore((state) => state.files.size);
@@ -916,8 +888,7 @@ interface FileUploadItemContextValue {
   messageId: string;
 }
 
-const FileUploadItemContext =
-  React.createContext<FileUploadItemContextValue | null>(null);
+const FileUploadItemContext = React.createContext<FileUploadItemContextValue | null>(null);
 
 function useFileUploadItemContext(consumerName: string) {
   const context = React.useContext(FileUploadItemContext);
@@ -975,22 +946,18 @@ function FileUploadItem(props: FileUploadItemProps) {
 
   return (
     <FileUploadItemContext.Provider value={itemContext}>
+      {/* biome-ignore lint/a11y/useSemanticElements: Using Slot primitive for flexibility */}
       <ItemPrimitive
         role="listitem"
         id={id}
         aria-setsize={fileCount}
         aria-posinset={fileIndex}
-        aria-describedby={`${nameId} ${sizeId} ${statusId} ${
-          fileState.error ? messageId : ""
-        }`}
+        aria-describedby={`${nameId} ${sizeId} ${statusId} ${fileState.error ? messageId : ""}`}
         aria-labelledby={nameId}
         data-slot="file-upload-item"
         dir={context.dir}
         {...itemProps}
-        className={cn(
-          "relative flex items-center gap-2.5 rounded-md border p-3",
-          className,
-        )}
+        className={cn("relative flex items-center gap-2.5 rounded-md border p-3", className)}
       >
         {props.children}
         <span id={statusId} className="sr-only">
@@ -1020,10 +987,7 @@ function getFileIcon(file: File) {
     return <FileAudioIcon />;
   }
 
-  if (
-    type.startsWith("text/") ||
-    ["txt", "md", "rtf", "pdf"].includes(extension)
-  ) {
+  if (type.startsWith("text/") || ["txt", "md", "rtf", "pdf"].includes(extension)) {
     return <FileTextIcon />;
   }
 
@@ -1083,10 +1047,7 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
           context.urlCache.set(file, url);
         }
 
-        return (
-          // biome-ignore lint/performance/noImgElement: dynamic file URLs from user uploads don't work well with Next.js Image optimization
-          <img src={url} alt={file.name} className="size-full object-cover" />
-        );
+        return <img src={url} alt={file.name} className="size-full object-cover" />;
       }
 
       return getFileIcon(file);
@@ -1131,13 +1092,7 @@ interface FileUploadItemMetadataProps extends React.ComponentProps<"div"> {
 }
 
 function FileUploadItemMetadata(props: FileUploadItemMetadataProps) {
-  const {
-    asChild,
-    size = "default",
-    children,
-    className,
-    ...metadataProps
-  } = props;
+  const { asChild, size = "default", children, className, ...metadataProps } = props;
 
   const context = useFileUploadContext(ITEM_METADATA_NAME);
   const itemContext = useFileUploadItemContext(ITEM_METADATA_NAME);
@@ -1174,10 +1129,7 @@ function FileUploadItemMetadata(props: FileUploadItemMetadataProps) {
             {formatBytes(itemContext.fileState.file.size)}
           </span>
           {itemContext.fileState.error && (
-            <span
-              id={itemContext.messageId}
-              className="text-destructive text-xs"
-            >
+            <span id={itemContext.messageId} className="text-destructive text-xs">
               {itemContext.fileState.error}
             </span>
           )}
@@ -1194,14 +1146,7 @@ interface FileUploadItemProgressProps extends React.ComponentProps<"div"> {
 }
 
 function FileUploadItemProgress(props: FileUploadItemProgressProps) {
-  const {
-    variant = "linear",
-    size = 40,
-    asChild,
-    forceMount,
-    className,
-    ...progressProps
-  } = props;
+  const { variant = "linear", size = 40, asChild, forceMount, className, ...progressProps } = props;
 
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
@@ -1229,10 +1174,7 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
           aria-labelledby={itemContext.nameId}
           data-slot="file-upload-progress"
           {...progressProps}
-          className={cn(
-            "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2",
-            className,
-          )}
+          className={cn("-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2", className)}
         >
           <svg
             className="rotate-[-90deg] transform"
@@ -1241,7 +1183,9 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
             viewBox={`0 0 ${size} ${size}`}
             fill="none"
             stroke="currentColor"
+            aria-label="Upload progress"
           >
+            <title>Upload progress indicator</title>
             <circle
               className="text-primary/20"
               strokeWidth="2"
@@ -1362,13 +1306,7 @@ interface FileUploadClearProps extends React.ComponentProps<"button"> {
 }
 
 function FileUploadClear(props: FileUploadClearProps) {
-  const {
-    asChild,
-    forceMount,
-    disabled,
-    onClick: onClickProp,
-    ...clearProps
-  } = props;
+  const { asChild, forceMount, disabled, onClick: onClickProp, ...clearProps } = props;
 
   const context = useFileUploadContext(CLEAR_NAME);
   const store = useStoreContext(CLEAR_NAME);
