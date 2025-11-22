@@ -17,3 +17,6 @@ export * from "./feeds";
 export * from "./crm-activities";
 export * from "./crm-segments";
 export * from "./crm-custom-fields";
+
+// Listening mock data
+export * from "./listening";
