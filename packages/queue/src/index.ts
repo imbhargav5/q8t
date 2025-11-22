@@ -47,10 +47,20 @@ export * from './functions';
 import { publishOrchestrator } from './functions/orchestrator';
 import { linkedinPublisher } from './functions/publishers/linkedin-publisher';
 import { redditPublisher } from './functions/publishers/reddit-publisher';
+import { listeningQueriesCron } from './functions/listening/queries-cron';
+import { processListeningQuery } from './functions/listening/query-processor';
+import { analyzeSentiment } from './functions/listening/sentiment-analyzer';
+import { checkAlerts } from './functions/listening/alert-checker';
 
 export const allFunctions = [
+  // Publishing functions
   publishOrchestrator,
   linkedinPublisher,
   redditPublisher,
+  // Listening functions
+  listeningQueriesCron,
+  processListeningQuery,
+  analyzeSentiment,
+  checkAlerts,
   // Additional publishers would be added here as they're implemented
 ];
