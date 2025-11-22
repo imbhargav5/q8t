@@ -6,7 +6,7 @@ import { SlackSettings } from "@/components/integrations/integration-settings/sl
 import { XSettings } from "@/components/integrations/integration-settings/x-settings";
 import { Button } from "@/components/ui/button";
 import { getIntegrationById } from "@/lib/mock-data";
-import type { IntegrationProvider } from "@/lib/zod-schemas";
+import type { Integration, IntegrationProvider } from "@/lib/zod-schemas";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -34,7 +34,7 @@ export default function IntegrationSettingsPage({
     const settingsMap: Partial<
       Record<
         IntegrationProvider,
-        (integration: typeof integration) => JSX.Element
+        (integration: Integration) => JSX.Element
       >
     > = {
       x: (int) => <XSettings integration={int} />,
