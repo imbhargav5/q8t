@@ -23,9 +23,8 @@ function Listbox({
         className,
       )}
       {...props}
-    >
-      {children}
-    </ListboxPrimitive.Root>
+      {...({ children } as any)}
+    />
   );
 }
 
