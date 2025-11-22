@@ -17,7 +17,7 @@ export const MessageSentimentSchema = z.object({
   sentiment: SentimentTypeSchema,
   score: z.number().min(-1).max(1),
   confidence: z.number().min(0).max(1).optional(),
-  emotions: z.record(z.number()).optional(),
+  emotions: z.record(z.string(), z.number()).optional(),
   keywords: z.array(z.string()).optional(),
   categories: z.array(z.string()).optional(),
   analyzer: z.string(),
