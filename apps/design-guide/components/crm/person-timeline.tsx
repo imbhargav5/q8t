@@ -104,10 +104,10 @@ export function PersonTimeline({ person }: PersonTimelineProps) {
                       </div>
 
                       {/* Activity Data */}
-                      {item.data && Object.keys(item.data).length > 0 && (
+                      {item.data && Object.keys(item.data).length > 0 ? (
                         <div className="mt-2 p-3 bg-muted rounded-lg">
                           <div className="text-sm space-y-1">
-                            {item.type === "tag_added" && item.data.tags && (
+                            {item.type === "tag_added" && item.data.tags ? (
                               <div className="flex flex-wrap gap-1">
                                 {(item.data.tags as string[]).map((tag) => (
                                   <Badge key={tag} variant="secondary" className="text-xs">
@@ -115,9 +115,9 @@ export function PersonTimeline({ person }: PersonTimelineProps) {
                                   </Badge>
                                 ))}
                               </div>
-                            )}
+                            ) : null}
 
-                            {item.type === "profile_updated" && (
+                            {item.type === "profile_updated" ? (
                               <div className="text-xs space-y-1">
                                 {Object.entries(item.data).map(([field, change]) => {
                                   const changeObj = change as { old: string; new: string };
@@ -137,39 +137,39 @@ export function PersonTimeline({ person }: PersonTimelineProps) {
                                   );
                                 })}
                               </div>
-                            )}
+                            ) : null}
 
-                            {item.type === "social_identity_added" && (
+                            {item.type === "social_identity_added" ? (
                               <div className="text-xs">
                                 <span className="font-medium">
                                   {String(item.data.platform)}
                                 </span>
-                                {item.data.username && (
+                                {item.data.username ? (
                                   <>
                                     {" · "}
                                     <span>{String(item.data.username)}</span>
                                   </>
-                                )}
+                                ) : null}
                               </div>
-                            )}
+                            ) : null}
 
                             {(item.type === "message_sent" || item.type === "message_received") &&
-                              item.data.content_preview && (
-                                <div className="text-xs italic">
-                                  "{String(item.data.content_preview)}"
-                                </div>
-                              )}
+                            item.data.content_preview ? (
+                              <div className="text-xs italic">
+                                "{String(item.data.content_preview)}"
+                              </div>
+                            ) : null}
 
-                            {item.type === "conversation_started" && item.data.platform && (
+                            {item.type === "conversation_started" && item.data.platform ? (
                               <div className="text-xs">
                                 via <Badge variant="outline" className="text-xs">
                                   {String(item.data.platform)}
                                 </Badge>
                               </div>
-                            )}
+                            ) : null}
                           </div>
                         </div>
-                      )}
+                      ) : null}
 
                       {/* Related Links */}
                       {item.relatedEntities && (
