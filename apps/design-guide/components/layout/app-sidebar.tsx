@@ -27,7 +27,7 @@ const navItems = [
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: Users, label: "CRM", href: "/crm" },
   { icon: Bot, label: "Automations", href: "/automations" },
-  { icon: Settings, label: "Settings", href: "/settings" },
+  { icon: Settings, label: "Settings", href: "/workspace/workspace-1/settings" },
 ];
 
 export function AppSidebar({ isCollapsed, onToggle }: AppSidebarProps) {
