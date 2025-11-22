@@ -7,3 +7,4 @@ export * from "./messages";
 export * from "./notes";
 export * from "./media";
 export * from "./workspaces";
+export * from "./settings";

@@ -9,3 +9,4 @@ export * from "./conversation.schema";
 export * from "./message.schema";
 export * from "./note.schema";
 export * from "./media.schema";
+export * from "./settings.schema";
