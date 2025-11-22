@@ -16,15 +16,16 @@ import {
   Share2,
   CheckSquare,
 } from "lucide-react";
-import { useState } from "react";
+import { use, useState } from "react";
 
 interface IntegrationsPageProps {
-  params: {
+  params: Promise<{
     workspaceId: string;
-  };
+  }>;
 }
 
 export default function IntegrationsPage({ params }: IntegrationsPageProps) {
+  const { workspaceId } = use(params);
   const [activeTab, setActiveTab] = useState("all");
 
   const categoryIcons = {
@@ -81,14 +82,14 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="all" className="mt-0">
               <IntegrationList
                 integrations={mockIntegrations}
-                workspaceId={params.workspaceId}
+                workspaceId={workspaceId}
               />
             </TabsContent>
 
             <TabsContent value="social-media" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("social-media")}
-                workspaceId={params.workspaceId}
+                workspaceId={workspaceId}
                 category="social-media"
               />
             </TabsContent>
@@ -96,7 +97,7 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="communication" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("communication")}
-                workspaceId={params.workspaceId}
+                workspaceId={workspaceId}
                 category="communication"
               />
             </TabsContent>
@@ -104,7 +105,7 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="productivity" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("productivity")}
-                workspaceId={params.workspaceId}
+                workspaceId={workspaceId}
                 category="productivity"
               />
             </TabsContent>
@@ -112,7 +113,7 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="business" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("business")}
-                workspaceId={params.workspaceId}
+                workspaceId={workspaceId}
                 category="business"
               />
             </TabsContent>
@@ -120,7 +121,7 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="media" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("media")}
-                workspaceId={params.workspaceId}
+                workspaceId={workspaceId}
                 category="media"
               />
             </TabsContent>

@@ -10,18 +10,20 @@ import type { IntegrationProvider } from "@/lib/zod-schemas";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { use } from "react";
 
 interface IntegrationSettingsPageProps {
-  params: {
+  params: Promise<{
     workspaceId: string;
     integrationId: string;
-  };
+  }>;
 }
 
 export default function IntegrationSettingsPage({
   params,
 }: IntegrationSettingsPageProps) {
-  const integration = getIntegrationById(params.integrationId);
+  const { workspaceId, integrationId } = use(params);
+  const integration = getIntegrationById(integrationId);
 
   if (!integration) {
     notFound();
@@ -58,7 +60,7 @@ export default function IntegrationSettingsPage({
       <div className="border-b bg-background px-6 py-4">
         <div className="flex items-center gap-4">
           <Link
-            href={`/workspace/${params.workspaceId}/integrations/${params.integrationId}`}
+            href={`/workspace/${workspaceId}/integrations/${integrationId}`}
           >
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4" />

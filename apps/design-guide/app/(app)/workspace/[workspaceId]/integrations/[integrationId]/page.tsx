@@ -6,18 +6,20 @@ import { getIntegrationById } from "@/lib/mock-data";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { use } from "react";
 
 interface IntegrationDetailPageProps {
-  params: {
+  params: Promise<{
     workspaceId: string;
     integrationId: string;
-  };
+  }>;
 }
 
 export default function IntegrationDetailPage({
   params,
 }: IntegrationDetailPageProps) {
-  const integration = getIntegrationById(params.integrationId);
+  const { workspaceId, integrationId } = use(params);
+  const integration = getIntegrationById(integrationId);
 
   if (!integration) {
     notFound();
@@ -28,7 +30,7 @@ export default function IntegrationDetailPage({
       {/* Header */}
       <div className="border-b bg-background px-6 py-4">
         <div className="flex items-center gap-4">
-          <Link href={`/workspace/${params.workspaceId}/integrations`}>
+          <Link href={`/workspace/${workspaceId}/integrations`}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -47,7 +49,7 @@ export default function IntegrationDetailPage({
         <div className="max-w-5xl mx-auto p-6">
           <IntegrationOverview
             integration={integration}
-            workspaceId={params.workspaceId}
+            workspaceId={workspaceId}
           />
         </div>
       </div>
