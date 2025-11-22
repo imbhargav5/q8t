@@ -7,6 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Star, ShieldCheck } from "lucide-react";
 import type { Person } from "@/lib/zod-schemas";
 import { cn } from "@/lib/utils";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface PersonListProps {
   people: Person[];
@@ -34,19 +35,21 @@ export function PersonList({
 
   return (
     <ScrollArea className="flex-1">
-      <div className={cn(
-        "p-2",
-        viewMode === "grid" && "grid grid-cols-2 gap-2"
-      )}>
-        {people.map((person) => (
-          <button
-            key={person.id}
-            onClick={() => onSelect(person)}
-            className={cn(
-              "w-full text-left p-3 rounded-lg transition-colors hover:bg-accent",
-              selectedId === person.id && "bg-accent"
-            )}
-          >
+      <div className="p-2">
+        <Listbox orientation={viewMode === "grid" ? "horizontal" : "vertical"}>
+          <ListboxGroup className={cn(
+            viewMode === "grid" && "grid grid-cols-2 gap-2"
+          )}>
+            {people.map((person) => (
+              <ListboxItem
+                key={person.id}
+                value={person.id}
+                onClick={() => onSelect(person)}
+                className={cn(
+                  "w-full text-left p-3 rounded-lg transition-colors hover:bg-accent cursor-pointer",
+                  selectedId === person.id && "bg-accent"
+                )}
+              >
             <div className="flex items-start gap-3">
               <Avatar className="h-10 w-10 flex-shrink-0">
                 <AvatarImage src={person.avatar_url || undefined} />
@@ -112,8 +115,10 @@ export function PersonList({
                 )}
               </div>
             </div>
-          </button>
-        ))}
+              </ListboxItem>
+            ))}
+          </ListboxGroup>
+        </Listbox>
       </div>
     </ScrollArea>
   );

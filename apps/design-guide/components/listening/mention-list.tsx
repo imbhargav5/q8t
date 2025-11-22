@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { ListeningMention } from "@/lib/mock-data";
 import { formatDistanceToNow } from "date-fns";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface ListenerMentionListProps {
   mentions: ListeningMention[];
@@ -25,18 +26,19 @@ interface ListenerMentionListProps {
 export function ListenerMentionList({ mentions, selectedId, onSelect }: ListenerMentionListProps) {
   return (
     <ScrollArea className="flex-1">
-      <div className="divide-y">
-        {mentions.map((mention) => (
-          <button
-            key={mention.id}
-            type="button"
-            onClick={() => onSelect(mention)}
-            className={cn(
-              "w-full text-left p-4 transition-colors hover:bg-accent",
-              selectedId === mention.id && "bg-accent",
-              !mention.isRead && "border-l-4 border-l-blue-500"
-            )}
-          >
+      <Listbox orientation="vertical">
+        <ListboxGroup className="divide-y">
+          {mentions.map((mention) => (
+            <ListboxItem
+              key={mention.id}
+              value={mention.id}
+              onClick={() => onSelect(mention)}
+              className={cn(
+                "w-full text-left p-4 transition-colors hover:bg-accent cursor-pointer",
+                selectedId === mention.id && "bg-accent",
+                !mention.isRead && "border-l-4 border-l-blue-500"
+              )}
+            >
             {/* Author Header */}
             <div className="flex items-start gap-3 mb-2">
               <Avatar className="h-10 w-10 flex-shrink-0">
@@ -168,9 +170,10 @@ export function ListenerMentionList({ mentions, selectedId, onSelect }: Listener
                 )}
               </div>
             )}
-          </button>
-        ))}
-      </div>
+            </ListboxItem>
+          ))}
+        </ListboxGroup>
+      </Listbox>
     </ScrollArea>
   );
 }

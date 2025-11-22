@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
 import { ConversationItem } from "./conversation-item";
 import type { ConversationWithRelations } from "@/lib/zod-schemas";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface ConversationListProps {
   conversations: ConversationWithRelations[];
@@ -72,41 +73,47 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
 
       {/* Conversation List */}
       <ScrollArea className="flex-1">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.05,
-              },
-            },
-          }}
-        >
-          {sortedConversations.map((conversation) => (
-            <motion.div
-              key={conversation.id}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0 },
-              }}
-            >
-              <ConversationItem
-                conversation={conversation}
-                isSelected={conversation.id === selectedId}
-                onClick={() => onSelect(conversation)}
-              />
-            </motion.div>
-          ))}
-
-          {sortedConversations.length === 0 && (
-            <div className="p-8 text-center text-muted-foreground">
-              <p>No conversations found</p>
-            </div>
-          )}
-        </motion.div>
+        {sortedConversations.length === 0 ? (
+          <div className="p-8 text-center text-muted-foreground">
+            <p>No conversations found</p>
+          </div>
+        ) : (
+          <Listbox orientation="vertical">
+            <ListboxGroup>
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.05,
+                    },
+                  },
+                }}
+              >
+                {sortedConversations.map((conversation) => (
+                  <motion.div
+                    key={conversation.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                  >
+                    <ListboxItem value={conversation.id}>
+                      <ConversationItem
+                        conversation={conversation}
+                        isSelected={conversation.id === selectedId}
+                        onClick={() => onSelect(conversation)}
+                      />
+                    </ListboxItem>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </ListboxGroup>
+          </Listbox>
+        )}
       </ScrollArea>
     </div>
   );

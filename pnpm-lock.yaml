@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@diceui/listbox':
+        specifier: ^0.2.0
+        version: 0.2.0(@types/react-dom@18.3.7(@types/react@18.3.26))(@types/react@18.3.26)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.4
@@ -36,6 +40,9 @@ importers:
 
   apps/design-guide:
     dependencies:
+      '@diceui/listbox':
+        specifier: ^0.2.0
+        version: 0.2.0(@types/react-dom@18.3.7(@types/react@18.3.26))(@types/react@18.3.26)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.66.0(react@19.2.0))
@@ -1264,6 +1271,19 @@ packages:
 
   '@date-fns/tz@1.4.1':
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
+
+  '@diceui/listbox@0.2.0':
+    resolution: {integrity: sha512-Om4JSEcJ3nM5mDLotPn/ubRlb/frzajSqzSxBa5Bsp1YaMXc3r5+AkUDBMyE6FH4r1+IvItk8TpUqrbxDcdrQQ==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
 
   '@emnapi/runtime@1.7.1':
     resolution: {integrity: sha512-PVtJr5CmLwYAU9PZDMITZoR5iAOShYREoR45EyyLrbntV50mdePTgUn4AmOw90Ifcj+x2kRjdzr1HP3RrNiHGA==}
@@ -4390,6 +4410,14 @@ snapshots:
   '@bufbuild/protobuf@2.10.1': {}
 
   '@date-fns/tz@1.4.1': {}
+
+  '@diceui/listbox@0.2.0(@types/react-dom@18.3.7(@types/react@18.3.26))(@types/react@18.3.26)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+    dependencies:
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+    optionalDependencies:
+      '@types/react': 18.3.26
+      '@types/react-dom': 18.3.7(@types/react@18.3.26)
 
   '@emnapi/runtime@1.7.1':
     dependencies:

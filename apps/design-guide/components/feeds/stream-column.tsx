@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface StreamColumnProps {
   stream: StreamConfig;
@@ -119,7 +120,7 @@ export function StreamColumn({ stream, posts, workspaceId }: StreamColumnProps) 
 
       {/* Column Content - Scrollable */}
       <ScrollArea className="flex-1">
-        <div className="p-3 space-y-3">
+        <div className="p-3">
           {posts.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -129,7 +130,15 @@ export function StreamColumn({ stream, posts, workspaceId }: StreamColumnProps) 
               </p>
             </div>
           ) : (
-            posts.map((post) => <PostCard key={post.id} post={post} />)
+            <Listbox orientation="vertical">
+              <ListboxGroup className="space-y-3">
+                {posts.map((post) => (
+                  <ListboxItem key={post.id} value={post.id}>
+                    <PostCard post={post} />
+                  </ListboxItem>
+                ))}
+              </ListboxGroup>
+            </Listbox>
           )}
         </div>
       </ScrollArea>
