@@ -20,3 +20,7 @@ export * from "./crm-custom-fields";
 
 // Listening mock data
 export * from "./listening";
+
+// Automation mock data
+export * from "./crisis-management";
+export * from "./automations";
