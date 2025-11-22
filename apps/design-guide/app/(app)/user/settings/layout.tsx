@@ -8,17 +8,17 @@ import { User, Shield, Lock } from "lucide-react";
 const settingsTabs = [
   {
     name: "General",
-    href: "/settings",
+    href: "/user/settings",
     icon: User,
   },
   {
     name: "Privacy",
-    href: "/settings/privacy",
+    href: "/user/settings/privacy",
     icon: Shield,
   },
   {
     name: "Security",
-    href: "/settings/security",
+    href: "/user/settings/security",
     icon: Lock,
   },
 ];
