@@ -6,6 +6,7 @@ import { PersonDetail } from "@/components/crm/person-detail";
 import { PersonSidebar } from "@/components/crm/person-sidebar";
 import { FilterSidebar } from "@/components/crm/filter-sidebar";
 import { RightSidebarContainer } from "@/components/layout/right-sidebar-container";
+import { AddContactDialog } from "@/components/crm/contact-form-dialogs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,6 +26,7 @@ export default function CRMPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [showFilters, setShowFilters] = useState(true);
+  const [addContactOpen, setAddContactOpen] = useState(false);
 
   // Filter people based on search query
   const filteredPeople = mockPeople.filter((person) => {
@@ -53,7 +55,7 @@ export default function CRMPage() {
                 {filteredPeople.length}
               </span>
             </h2>
-            <Button size="sm">
+            <Button size="sm" onClick={() => setAddContactOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add
             </Button>
@@ -124,7 +126,7 @@ export default function CRMPage() {
             <div className="text-center space-y-4">
               <div className="text-6xl">👥</div>
               <p className="text-lg">Select a contact to view details</p>
-              <Button>
+              <Button onClick={() => setAddContactOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Contact
               </Button>
@@ -161,6 +163,9 @@ export default function CRMPage() {
           </div>
         )}
       </RightSidebarContainer>
+
+      {/* Dialogs */}
+      <AddContactDialog open={addContactOpen} onOpenChange={setAddContactOpen} />
     </div>
   );
 }
