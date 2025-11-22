@@ -8,3 +8,5 @@ export * from "./notes";
 export * from "./media";
 export * from "./workspaces";
 export * from "./settings";
+export * from "./social-accounts";
+export * from "./posts";

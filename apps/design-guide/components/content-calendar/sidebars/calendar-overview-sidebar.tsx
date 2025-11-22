@@ -1,0 +1,207 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { PostWithAuthor } from "@/lib/zod-schemas";
+import { PostStatusBadge } from "../post-status-badge";
+import {
+  Calendar,
+  Clock,
+  CheckCircle2,
+  FileText,
+  TrendingUp,
+} from "lucide-react";
+import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+
+interface CalendarOverviewSidebarProps {
+  posts: PostWithAuthor[];
+  currentDate: Date;
+}
+
+export function CalendarOverviewSidebar({
+  posts,
+  currentDate,
+}: CalendarOverviewSidebarProps) {
+  const monthStart = startOfMonth(currentDate);
+  const monthEnd = endOfMonth(currentDate);
+
+  // Filter posts for current month
+  const monthPosts = posts.filter((post) => {
+    const postDate = new Date(post.scheduled_for || post.published_at || "");
+    return isWithinInterval(postDate, { start: monthStart, end: monthEnd });
+  });
+
+  const scheduledCount = posts.filter((p) => p.status === "scheduled").length;
+  const draftCount = posts.filter((p) => p.status === "draft").length;
+  const publishedCount = posts.filter((p) => p.status === "published").length;
+
+  // Upcoming posts (next 7 days)
+  const now = new Date();
+  const upcomingPosts = posts
+    .filter((p) => {
+      if (!p.scheduled_for || p.status !== "scheduled") return false;
+      const postDate = new Date(p.scheduled_for);
+      const diffTime = postDate.getTime() - now.getTime();
+      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+      return diffDays >= 0 && diffDays <= 7;
+    })
+    .sort(
+      (a, b) =>
+        new Date(a.scheduled_for!).getTime() - new Date(b.scheduled_for!).getTime()
+    )
+    .slice(0, 5);
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h3 className="font-semibold mb-2">Overview</h3>
+        <p className="text-sm text-muted-foreground">
+          {format(currentDate, "MMMM yyyy")}
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-2">
+        <Card>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <Clock className="h-4 w-4 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Scheduled</p>
+                <p className="text-lg font-bold">{scheduledCount}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                <FileText className="h-4 w-4 text-gray-600" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Drafts</p>
+                <p className="text-lg font-bold">{draftCount}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Published</p>
+                <p className="text-lg font-bold">{publishedCount}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">This Month</p>
+                <p className="text-lg font-bold">{monthPosts.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Upcoming posts */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">Upcoming Posts</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {upcomingPosts.length > 0 ? (
+            upcomingPosts.map((post) => (
+              <div key={post.id} className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium">
+                    {post.scheduled_for &&
+                      format(new Date(post.scheduled_for), "MMM d, h:mm a")}
+                  </span>
+                  <PostStatusBadge status={post.status} />
+                </div>
+                <p className="text-xs text-muted-foreground line-clamp-2">
+                  {post.content}
+                </p>
+                <div className="flex gap-1">
+                  {post.platforms.slice(0, 2).map((platform) => (
+                    <Badge key={platform} variant="secondary" className="text-xs">
+                      {platform}
+                    </Badge>
+                  ))}
+                  {post.platforms.length > 2 && (
+                    <Badge variant="secondary" className="text-xs">
+                      +{post.platforms.length - 2}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              No upcoming posts scheduled
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Best performing post */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Top Performing
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {posts.find((p) => p.engagement) ? (
+            <div className="space-y-2">
+              {posts
+                .filter((p) => p.engagement)
+                .sort(
+                  (a, b) =>
+                    (b.engagement?.engagement_rate || 0) -
+                    (a.engagement?.engagement_rate || 0)
+                )
+                .slice(0, 1)
+                .map((post) => (
+                  <div key={post.id} className="space-y-1">
+                    <p className="text-sm font-medium">
+                      {post.engagement?.engagement_rate}% engagement
+                    </p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {post.content}
+                    </p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>❤️ {post.engagement?.likes}</span>
+                      <span>💬 {post.engagement?.comments}</span>
+                      <span>🔁 {post.engagement?.shares}</span>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              No published posts yet
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
