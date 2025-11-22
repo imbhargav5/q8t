@@ -38,8 +38,8 @@ export const PersonSchema = z.object({
   tags: z.array(z.string()).default([]),
 
   // Custom fields (flexible storage)
-  custom_fields: z.record(z.unknown()).default({}),
-  metadata: z.record(z.unknown()).default({}),
+  custom_fields: z.record(z.string(), z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
 
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),

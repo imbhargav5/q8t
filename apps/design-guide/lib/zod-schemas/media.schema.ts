@@ -45,7 +45,7 @@ export const MediaAttachmentSchema = z.object({
   caption: z.string().nullable(),
 
   // Platform-specific metadata
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
 
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),

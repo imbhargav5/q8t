@@ -32,7 +32,7 @@ export const SocialIdentitySchema = z.object({
   last_message_at: z.string().datetime().nullable(),
 
   // Platform-specific data
-  platform_data: z.record(z.unknown()).default({}),
+  platform_data: z.record(z.string(), z.unknown()).default({}),
 
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),

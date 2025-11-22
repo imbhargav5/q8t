@@ -37,7 +37,7 @@ export const ConversationSchema = z.object({
   is_spam: z.boolean().default(false),
 
   // Platform-specific metadata
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
 
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),

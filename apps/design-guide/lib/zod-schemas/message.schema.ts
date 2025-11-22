@@ -45,7 +45,7 @@ export const MessageSchema = z.object({
   platform_table_name: z.string().nullable(),
 
   // Metadata
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
 
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
