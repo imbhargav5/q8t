@@ -72,8 +72,8 @@ export const LinkPreviewSchema = z.object({
 
 export type LinkPreview = z.infer<typeof LinkPreviewSchema>;
 
-// Engagement Metrics Schema
-export const EngagementMetricsSchema = z.object({
+// Post Engagement Metrics Schema
+export const PostEngagementMetricsSchema = z.object({
   likes: z.number().int().default(0),
   comments: z.number().int().default(0),
   shares: z.number().int().default(0),
@@ -84,7 +84,7 @@ export const EngagementMetricsSchema = z.object({
   engagement_rate: z.number().default(0),
 });
 
-export type EngagementMetrics = z.infer<typeof EngagementMetricsSchema>;
+export type PostEngagementMetrics = z.infer<typeof PostEngagementMetricsSchema>;
 
 // Platform-specific Post Settings
 export const PlatformPostSettingsSchema = z.object({
@@ -150,7 +150,7 @@ export const PostSchema = z.object({
   assigned_to: z.string().uuid().nullable(),
 
   // Analytics
-  engagement: EngagementMetricsSchema.nullable(),
+  engagement: PostEngagementMetricsSchema.nullable(),
 
   // Metadata
   is_pinned: z.boolean().default(false),
