@@ -17,3 +17,8 @@ export * from "./integration.schema";
 export * from "./workspace.schema";
 export * from "./stream-config.schema";
 export * from "./feed.schema";
+
+// CRM schemas
+export * from "./crm-activity.schema";
+export * from "./crm-segment.schema";
+export * from "./crm-custom-field.schema";
