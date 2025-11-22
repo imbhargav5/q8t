@@ -4,10 +4,10 @@
  * Analyzes sentiment of listening mentions using AI/ML
  */
 
-import { inngest } from '../../client';
-import { EVENT_NAMES, FUNCTION_IDS } from '../../constants';
-import { createSupabaseAdapter } from '../../adapters';
-import { ListeningSentimentAnalyzeEventSchema } from '../../types';
+import { inngest } from '../client';
+import { EVENT_NAMES, FUNCTION_IDS } from '../constants';
+import { createSupabaseAdapter } from '../adapters';
+import { ListeningSentimentAnalyzeEventSchema } from '../types';
 
 /**
  * Simple sentiment analysis using keyword matching

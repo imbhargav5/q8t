@@ -5,9 +5,9 @@
  * Runs every 15 minutes by default (configurable per query)
  */
 
-import { inngest } from '../../client';
-import { EVENT_NAMES, FUNCTION_IDS } from '../../constants';
-import { createSupabaseAdapter } from '../../adapters';
+import { inngest } from '../client';
+import { EVENT_NAMES, FUNCTION_IDS } from '../constants';
+import { createSupabaseAdapter } from '../adapters';
 
 /**
  * Cron job to check active listening queries
