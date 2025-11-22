@@ -13,3 +13,4 @@ export * from "./settings.schema";
 export * from "./social-account.schema";
 export * from "./post.schema";
 export * from "./listening.schema";
+export * from "./integration.schema";
