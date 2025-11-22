@@ -45,7 +45,11 @@ import {
   XCircle
 } from "lucide-react";
 
-export function WorkspaceMembersSettings() {
+interface WorkspaceMembersSettingsProps {
+  workspaceId: string;
+}
+
+export function WorkspaceMembersSettings({ workspaceId }: WorkspaceMembersSettingsProps) {
   const [members, setMembers] = useState(mockTeamMembers);
   const [invitations, setInvitations] = useState(mockInvitations);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);

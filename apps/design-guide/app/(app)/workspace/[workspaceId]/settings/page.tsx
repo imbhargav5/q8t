@@ -1,14 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, use } from "react";
+import { useSearchParams } from "next/navigation";
 import { Settings, Users, CreditCard, Building2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WorkspaceGeneralSettings } from "@/components/settings/workspace-general-settings";
 import { WorkspaceMembersSettings } from "@/components/settings/workspace-members-settings";
 import { WorkspacePlanSettings } from "@/components/settings/workspace-plan-settings";
 
-export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState("general");
+interface SettingsPageProps {
+  params: Promise<{
+    workspaceId: string;
+  }>;
+}
+
+export default function SettingsPage({ params }: SettingsPageProps) {
+  const { workspaceId } = use(params);
+  const searchParams = useSearchParams();
+  const tabFromUrl = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState(tabFromUrl || "general");
+
+  useEffect(() => {
+    if (tabFromUrl && ["general", "members", "plan"].includes(tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
 
   return (
     <div className="flex h-full">
@@ -41,15 +57,15 @@ export default function SettingsPage() {
               </TabsList>
 
               <TabsContent value="general" className="space-y-4">
-                <WorkspaceGeneralSettings />
+                <WorkspaceGeneralSettings workspaceId={workspaceId} />
               </TabsContent>
 
               <TabsContent value="members" className="space-y-4">
-                <WorkspaceMembersSettings />
+                <WorkspaceMembersSettings workspaceId={workspaceId} />
               </TabsContent>
 
               <TabsContent value="plan" className="space-y-4">
-                <WorkspacePlanSettings />
+                <WorkspacePlanSettings workspaceId={workspaceId} />
               </TabsContent>
             </Tabs>
           </div>

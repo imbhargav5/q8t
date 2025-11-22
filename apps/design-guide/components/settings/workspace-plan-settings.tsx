@@ -30,7 +30,11 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 
-export function WorkspacePlanSettings() {
+interface WorkspacePlanSettingsProps {
+  workspaceId: string;
+}
+
+export function WorkspacePlanSettings({ workspaceId }: WorkspacePlanSettingsProps) {
   const [subscription, setSubscription] = useState(mockSubscription);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(subscription.billing_period);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);

@@ -16,7 +16,11 @@ import { mockWorkspace } from "@/lib/mock-data";
 import { Building2, Save, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-export function WorkspaceGeneralSettings() {
+interface WorkspaceGeneralSettingsProps {
+  workspaceId: string;
+}
+
+export function WorkspaceGeneralSettings({ workspaceId }: WorkspaceGeneralSettingsProps) {
   const [workspace, setWorkspace] = useState(mockWorkspace);
   const [isSaving, setIsSaving] = useState(false);
 
