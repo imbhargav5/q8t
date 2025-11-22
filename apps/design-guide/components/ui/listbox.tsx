@@ -3,11 +3,11 @@ import { Check } from "lucide-react";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-const Listbox = (({
+function Listbox({
   className,
   orientation = "vertical",
   ...props
-}: React.ComponentProps<typeof ListboxPrimitive.Root>) => {
+}: React.ComponentProps<typeof ListboxPrimitive.Root>) {
   return (
     <ListboxPrimitive.Root
       data-slot="listbox"
@@ -21,7 +21,7 @@ const Listbox = (({
       {...props}
     />
   );
-}) as ListboxPrimitive.ListboxRootComponentProps;
+}
 
 function ListboxGroup({
   className,
