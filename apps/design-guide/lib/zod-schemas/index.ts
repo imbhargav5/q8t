@@ -22,3 +22,6 @@ export * from "./feed.schema";
 export * from "./crm-activity.schema";
 export * from "./crm-segment.schema";
 export * from "./crm-custom-field.schema";
+
+// Automation schemas
+export * from "./automation.schema";
