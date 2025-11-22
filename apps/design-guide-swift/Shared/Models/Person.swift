@@ -3,38 +3,101 @@ import Foundation
 // MARK: - Person
 struct Person: Codable, Identifiable {
     let id: String
+    let workspaceId: String
+
+    // Identity
     let email: String?
-    let name: String
-    let company: String?
+    let fullName: String?
+    let displayName: String?
     let avatar: String?
-    let tags: [String]
+
+    // Contact Info
+    let phone: String?
+    let location: String?
+    let timezone: String?
+    let language: String?
+
+    // Professional
+    let bio: String?
+    let company: String?
+    let jobTitle: String?
+    let website: String?
+
+    // Engagement Metrics
+    let firstContactAt: Date?
+    let lastContactAt: Date?
+    let totalMessages: Int
+    let totalConversations: Int
+
+    // Flags
     let isVIP: Bool
+    let isVerified: Bool
+    let isBlocked: Bool
+
+    // Categorization
+    let tags: [String]
     let customFields: [String: String]
+
     let createdAt: Date
     let updatedAt: Date
 
     init(
         id: String,
+        workspaceId: String,
         email: String? = nil,
-        name: String,
-        company: String? = nil,
+        fullName: String? = nil,
+        displayName: String? = nil,
         avatar: String? = nil,
-        tags: [String] = [],
+        phone: String? = nil,
+        location: String? = nil,
+        timezone: String? = nil,
+        language: String? = nil,
+        bio: String? = nil,
+        company: String? = nil,
+        jobTitle: String? = nil,
+        website: String? = nil,
+        firstContactAt: Date? = nil,
+        lastContactAt: Date? = nil,
+        totalMessages: Int = 0,
+        totalConversations: Int = 0,
         isVIP: Bool = false,
+        isVerified: Bool = false,
+        isBlocked: Bool = false,
+        tags: [String] = [],
         customFields: [String: String] = [:],
         createdAt: Date,
         updatedAt: Date
     ) {
         self.id = id
+        self.workspaceId = workspaceId
         self.email = email
-        self.name = name
-        self.company = company
+        self.fullName = fullName
+        self.displayName = displayName
         self.avatar = avatar
-        self.tags = tags
+        self.phone = phone
+        self.location = location
+        self.timezone = timezone
+        self.language = language
+        self.bio = bio
+        self.company = company
+        self.jobTitle = jobTitle
+        self.website = website
+        self.firstContactAt = firstContactAt
+        self.lastContactAt = lastContactAt
+        self.totalMessages = totalMessages
+        self.totalConversations = totalConversations
         self.isVIP = isVIP
+        self.isVerified = isVerified
+        self.isBlocked = isBlocked
+        self.tags = tags
         self.customFields = customFields
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+    }
+
+    // Computed property for name compatibility
+    var name: String {
+        displayName ?? fullName ?? email ?? "Unknown"
     }
 }
 
