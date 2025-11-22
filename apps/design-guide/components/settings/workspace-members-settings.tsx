@@ -214,7 +214,7 @@ export function WorkspaceMembersSettings({ workspaceId }: WorkspaceMembersSettin
             {members.map((member) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
@@ -288,7 +288,7 @@ export function WorkspaceMembersSettings({ workspaceId }: WorkspaceMembersSettin
               {invitations.map((invitation) => (
                 <div
                   key={invitation.id}
-                  className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">

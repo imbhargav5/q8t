@@ -292,7 +292,7 @@ export default function PrivacySettingsPage() {
 
           <div className="space-y-4">
             {connectedApps.map((app) => (
-              <div key={app.id} className="flex items-start justify-between p-4 border rounded-lg">
+              <div key={app.id} className="flex items-start justify-between p-4 rounded-lg hover:bg-accent transition-colors">
                 <div className="flex items-start gap-4">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={app.app_icon || undefined} />
@@ -301,7 +301,7 @@ export default function PrivacySettingsPage() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <h4 className="text-sm font-medium">{app.app_name}</h4>
-                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {app.permissions.map((permission, index) => (
@@ -358,7 +358,7 @@ export default function PrivacySettingsPage() {
           <CardDescription>Download or delete your account data</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
+          <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
             <div className="space-y-0.5">
               <h4 className="text-sm font-medium">Export Your Data</h4>
               <p className="text-sm text-muted-foreground">
@@ -371,7 +371,7 @@ export default function PrivacySettingsPage() {
             </Button>
           </div>
 
-          <div className="flex items-center justify-between p-4 border border-destructive/50 rounded-lg bg-destructive/5">
+          <div className="flex items-center justify-between p-4 rounded-lg bg-destructive/10">
             <div className="space-y-0.5">
               <h4 className="text-sm font-medium text-destructive">Delete Account</h4>
               <p className="text-sm text-muted-foreground">

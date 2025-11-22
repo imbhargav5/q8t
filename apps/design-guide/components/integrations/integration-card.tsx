@@ -19,9 +19,9 @@ export function IntegrationCard({
   workspaceId,
 }: IntegrationCardProps) {
   const statusIcons = {
-    connected: <CheckCircle2 className="h-4 w-4 text-green-600" />,
-    error: <AlertCircle className="h-4 w-4 text-red-600" />,
-    pending: <Clock className="h-4 w-4 text-yellow-600" />,
+    connected: <CheckCircle2 className="h-4 w-4 text-primary" />,
+    error: <AlertCircle className="h-4 w-4 text-destructive" />,
+    pending: <Clock className="h-4 w-4 text-muted-foreground" />,
     disconnected: null,
   };
 

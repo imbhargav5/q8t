@@ -101,12 +101,12 @@ export default function ContentCalendarPage() {
             />
           ) : (
             <div className="h-full overflow-auto p-4">
-              <div className="max-w-4xl mx-auto space-y-3">
+              <div className="max-w-4xl mx-auto space-y-4">
                 <h2 className="text-lg font-semibold">All Posts</h2>
                 {mockPosts.map((post) => (
                   <div
                     key={post.id}
-                    className="p-4 border rounded-lg cursor-pointer hover:shadow-md transition-all"
+                    className="p-4 rounded-lg cursor-pointer hover:bg-accent transition-colors"
                     onClick={() => handlePostClick(post)}
                   >
                     <div className="space-y-2">

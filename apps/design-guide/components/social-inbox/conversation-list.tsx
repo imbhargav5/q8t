@@ -48,7 +48,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
   return (
     <div className="flex flex-col h-full">
       {/* Search */}
-      <div className="p-3 border-b space-y-3">
+      <div className="p-4 border-b space-y-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input

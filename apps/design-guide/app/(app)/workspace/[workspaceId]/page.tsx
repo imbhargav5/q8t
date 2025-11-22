@@ -137,11 +137,11 @@ export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {teamMembers.slice(0, 5).map((member) => (
                     <div
                       key={member.id}
-                      className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
@@ -179,7 +179,7 @@ export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Link href={`/workspace/${workspaceId}/settings?tab=members`}>
                     <Button variant="outline" className="w-full justify-start">
                       <Users className="h-4 w-4 mr-2" />

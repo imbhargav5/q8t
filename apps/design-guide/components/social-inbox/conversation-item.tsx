@@ -24,11 +24,11 @@ export function ConversationItem({ conversation, isSelected, onClick }: Conversa
 
   return (
     <motion.div
-      whileHover={{ scale: 1.01, backgroundColor: "rgba(0,0,0,0.02)" }}
+      whileHover={{ scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
       onClick={onClick}
       className={cn(
-        "relative cursor-pointer border-b p-3 transition-colors",
+        "relative cursor-pointer border-b p-4 transition-colors",
         isSelected && "bg-accent",
         !isSelected && "hover:bg-accent/50"
       )}
@@ -59,15 +59,15 @@ export function ConversationItem({ conversation, isSelected, onClick }: Conversa
                 {person.display_name || person.full_name || person.email}
               </h3>
               {person.is_vip && (
-                <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                <Badge variant="secondary" className="text-xs">
                   VIP
                 </Badge>
               )}
             </div>
 
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {is_starred && (
-                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <Star className="h-4 w-4 fill-primary text-primary" />
               )}
               {timeAgo && (
                 <span className={cn(
@@ -92,14 +92,9 @@ export function ConversationItem({ conversation, isSelected, onClick }: Conversa
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2">
               {status !== "open" && (
-                <span className={cn(
-                  "text-xs",
-                  status === "resolved" && "text-blue-600 dark:text-blue-400",
-                  status === "pending" && "text-yellow-600 dark:text-yellow-400",
-                  status === "archived" && "text-gray-600 dark:text-gray-400"
-                )}>
+                <Badge variant="outline" className="text-xs h-5">
                   {status.charAt(0).toUpperCase() + status.slice(1)}
-                </span>
+                </Badge>
               )}
               {conversation.assigned_to_user && (
                 <span className="text-xs text-muted-foreground">

@@ -166,8 +166,8 @@ export default function SecuritySettingsPage() {
               <div className="flex items-center gap-2">
                 <Label htmlFor="2fa_enabled">Enable 2FA</Label>
                 {twoFactorAuth.enabled && (
-                  <Badge variant="default" className="bg-green-500">
-                    <CheckCircle className="h-3 w-3 mr-1" />
+                  <Badge variant="default">
+                    <CheckCircle className="h-4 w-4 mr-1" />
                     Enabled
                   </Badge>
                 )}
@@ -221,7 +221,7 @@ export default function SecuritySettingsPage() {
                         Choose how you want to receive verification codes
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <Button
                         variant="outline"
                         className="w-full justify-start"
@@ -264,7 +264,7 @@ export default function SecuritySettingsPage() {
                       Choose how you want to receive verification codes
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <Button
                       variant="outline"
                       className="w-full justify-start"
@@ -325,7 +325,7 @@ export default function SecuritySettingsPage() {
           {loginSessions.map((session) => (
             <div
               key={session.id}
-              className="flex items-start justify-between p-4 border rounded-lg"
+              className="flex items-start justify-between p-4 rounded-lg hover:bg-accent transition-colors"
             >
               <div className="flex items-start gap-4">
                 <div className="p-2 bg-muted rounded-lg">
@@ -335,7 +335,7 @@ export default function SecuritySettingsPage() {
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-medium">{session.device_name}</h4>
                     {session.is_current && (
-                      <Badge variant="default" className="bg-green-500">
+                      <Badge variant="default">
                         Current
                       </Badge>
                     )}
@@ -443,7 +443,7 @@ export default function SecuritySettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           {apiKeys.map((apiKey) => (
-            <div key={apiKey.id} className="flex items-start justify-between p-4 border rounded-lg">
+            <div key={apiKey.id} className="flex items-start justify-between p-4 rounded-lg hover:bg-accent transition-colors">
               <div className="space-y-1 flex-1">
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-medium">{apiKey.name}</h4>
@@ -527,10 +527,10 @@ export default function SecuritySettingsPage() {
 
             <TabsContent value="login" className="space-y-4 mt-4">
               {loginHistory.map((entry) => (
-                <div key={entry.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                <div key={entry.id} className="flex items-start gap-4 p-4 rounded-lg hover:bg-accent transition-colors">
                   <div className="p-2 bg-muted rounded-lg">
                     {entry.success ? (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <CheckCircle className="h-4 w-4 text-primary" />
                     ) : (
                       <XCircle className="h-4 w-4 text-destructive" />
                     )}
@@ -565,7 +565,7 @@ export default function SecuritySettingsPage() {
 
             <TabsContent value="audit" className="space-y-4 mt-4">
               {auditLog.map((entry) => (
-                <div key={entry.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                <div key={entry.id} className="flex items-start gap-4 p-4 rounded-lg hover:bg-accent transition-colors">
                   <div className="p-2 bg-muted rounded-lg">
                     <Shield className="h-4 w-4" />
                   </div>

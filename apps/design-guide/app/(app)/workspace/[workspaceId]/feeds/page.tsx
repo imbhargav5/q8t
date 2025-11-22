@@ -95,7 +95,7 @@ export default function FeedsPage({ params }: FeedsPageProps) {
                     </div>
                     {feed.last_viewed_at && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
+                        <Clock className="h-4 w-4" />
                         <span>
                           Viewed{" "}
                           {formatDistanceToNow(new Date(feed.last_viewed_at), {

@@ -682,7 +682,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="container py-24">
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/20">
+        <Card className="bg-accent">
           <CardContent className="py-16 text-center">
             <div className="mx-auto max-w-2xl space-y-8">
               <div className="space-y-4">

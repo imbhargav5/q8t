@@ -73,7 +73,7 @@ export function WorkspaceGeneralSettings({ workspaceId }: WorkspaceGeneralSettin
           <div className="space-y-2">
             <Label>Workspace Logo</Label>
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/50">
+              <div className="h-16 w-16 rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted">
                 {workspace.logo_url ? (
                   <img src={workspace.logo_url} alt="Workspace logo" className="h-full w-full object-cover rounded-lg" />
                 ) : (
@@ -151,16 +151,16 @@ export function WorkspaceGeneralSettings({ workspaceId }: WorkspaceGeneralSettin
             </div>
           </div>
 
-          <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+          <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
             <div
-              className="h-8 w-8 rounded"
+              className="h-8 w-8 rounded border"
               style={{ backgroundColor: workspace.branding.primary_color }}
             />
             <div
-              className="h-8 w-8 rounded"
+              className="h-8 w-8 rounded border"
               style={{ backgroundColor: workspace.branding.secondary_color }}
             />
-            <span className="text-sm text-muted-foreground ml-2">Color preview</span>
+            <span className="text-sm text-muted-foreground">Color preview</span>
           </div>
         </CardContent>
       </Card>
@@ -266,7 +266,7 @@ export function WorkspaceGeneralSettings({ workspaceId }: WorkspaceGeneralSettin
       </Card>
 
       {/* Save Button */}
-      <div className="flex items-center justify-end gap-3">
+      <div className="flex items-center justify-end gap-4">
         <Button variant="outline">Cancel</Button>
         <Button onClick={handleSave} disabled={isSaving}>
           <Save className="h-4 w-4 mr-2" />

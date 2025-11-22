@@ -86,7 +86,7 @@ export function WorkspacePlanSettings({ workspaceId }: WorkspacePlanSettingsProp
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex items-center justify-between p-4 bg-primary/5 rounded-lg border border-primary/20">
+          <div className="flex items-center justify-between p-4 bg-accent rounded-lg">
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 rounded-lg bg-primary flex items-center justify-center">
                 <Crown className="h-6 w-6 text-primary-foreground" />
@@ -137,7 +137,7 @@ export function WorkspacePlanSettings({ workspaceId }: WorkspacePlanSettingsProp
             </div>
             <Progress value={seatsUsagePercent} className="h-2" />
             {seatsUsagePercent > 80 && (
-              <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-500">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <AlertCircle className="h-4 w-4" />
                 <span>You're running low on seats. Consider upgrading your plan.</span>
               </div>
@@ -208,7 +208,7 @@ export function WorkspacePlanSettings({ workspaceId }: WorkspacePlanSettingsProp
                         </span>
                       </div>
                       {savings > 0 && (
-                        <p className="text-xs text-green-600 dark:text-green-500 mt-1">
+                        <p className="text-xs text-primary mt-1">
                           Save ${savings}/year
                         </p>
                       )}
@@ -237,7 +237,7 @@ export function WorkspacePlanSettings({ workspaceId }: WorkspacePlanSettingsProp
                           className="flex items-start gap-2 text-sm"
                         >
                           {feature.included ? (
-                            <Check className="h-4 w-4 text-green-600 dark:text-green-500 shrink-0 mt-0.5" />
+                            <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                           ) : (
                             <div className="h-4 w-4 shrink-0 mt-0.5" />
                           )}
@@ -267,10 +267,10 @@ export function WorkspacePlanSettings({ workspaceId }: WorkspacePlanSettingsProp
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
+          <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <CreditCard className="h-5 w-5 text-white" />
+              <div className="h-10 w-10 rounded bg-primary flex items-center justify-center">
+                <CreditCard className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
                 <div className="font-medium">Visa ending in 4242</div>
@@ -309,11 +309,11 @@ export function WorkspacePlanSettings({ workspaceId }: WorkspacePlanSettingsProp
             ].map((invoice, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                    <Check className="h-5 w-5 text-green-600 dark:text-green-500" />
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Check className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <div className="font-medium">

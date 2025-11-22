@@ -82,7 +82,7 @@ export function ConversationDetail({ conversation }: ConversationDetailProps) {
             <Button
               variant="ghost"
               size="icon"
-              className={is_starred ? "text-amber-500" : ""}
+              className={is_starred ? "text-primary" : ""}
             >
               <Star className={is_starred ? "fill-current" : ""} />
             </Button>
