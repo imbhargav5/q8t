@@ -35,15 +35,27 @@ struct ContentView: View {
             }
             .tag(Tab.inbox)
 
-            // Workspace Tab
+            // Content Calendar Tab
             NavigationStack {
-                WorkspaceNavigationView()
-                    .navigationTitle("Workspace")
+                ContentCalendarView()
+                    .navigationTitle("Calendar")
+                    .navigationBarTitleDisplayMode(.inline)
             }
             .tabItem {
-                Label("Workspace", systemImage: "building.2.fill")
+                Label("Calendar", systemImage: "calendar")
             }
-            .tag(Tab.workspace)
+            .tag(Tab.calendar)
+
+            // CRM Tab
+            NavigationStack {
+                CRMView()
+                    .navigationTitle("CRM")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+            .tabItem {
+                Label("CRM", systemImage: "person.3.fill")
+            }
+            .tag(Tab.crm)
 
             // More Tab
             NavigationStack {
@@ -61,7 +73,8 @@ struct ContentView: View {
 enum Tab {
     case home
     case inbox
-    case workspace
+    case calendar
+    case crm
     case more
 }
 
@@ -70,6 +83,10 @@ struct WorkspaceNavigationView: View {
         List {
             NavigationLink(destination: WorkspaceHomeView()) {
                 Label("Dashboard", systemImage: "square.grid.2x2.fill")
+            }
+
+            NavigationLink(destination: IntegrationsView()) {
+                Label("Integrations", systemImage: "link")
             }
 
             NavigationLink(destination: WorkspaceSettingsView()) {
@@ -83,16 +100,16 @@ struct MoreView: View {
     var body: some View {
         List {
             Section("Features") {
-                NavigationLink(destination: ComingSoonView(feature: "Publishing")) {
-                    Label("Publishing", systemImage: "calendar")
+                NavigationLink(destination: FeedsView()) {
+                    Label("Feeds", systemImage: "rectangle.3.group")
+                }
+
+                NavigationLink(destination: ListeningView()) {
+                    Label("Social Listening", systemImage: "ear")
                 }
 
                 NavigationLink(destination: ComingSoonView(feature: "Analytics")) {
                     Label("Analytics", systemImage: "chart.bar.fill")
-                }
-
-                NavigationLink(destination: ComingSoonView(feature: "CRM")) {
-                    Label("CRM", systemImage: "person.3.fill")
                 }
 
                 NavigationLink(destination: ComingSoonView(feature: "Automations")) {

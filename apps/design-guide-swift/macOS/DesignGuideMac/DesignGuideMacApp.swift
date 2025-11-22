@@ -37,9 +37,12 @@ struct ContentView: View {
 enum NavigationItem: String, CaseIterable, Identifiable {
     case landing = "Home"
     case socialInbox = "Social Inbox"
-    case publishing = "Publishing"
+    case contentCalendar = "Content Calendar"
+    case feeds = "Feeds"
+    case listening = "Social Listening"
     case analytics = "Analytics"
     case crm = "CRM"
+    case integrations = "Integrations"
     case automations = "Automations"
     case workspace = "Workspace"
     case workspaceSettings = "Workspace Settings"
@@ -53,12 +56,18 @@ enum NavigationItem: String, CaseIterable, Identifiable {
             return "house.fill"
         case .socialInbox:
             return "tray.fill"
-        case .publishing:
+        case .contentCalendar:
             return "calendar"
+        case .feeds:
+            return "rectangle.3.group"
+        case .listening:
+            return "ear"
         case .analytics:
             return "chart.bar.fill"
         case .crm:
             return "person.3.fill"
+        case .integrations:
+            return "link"
         case .automations:
             return "bolt.fill"
         case .workspace:
@@ -72,7 +81,7 @@ enum NavigationItem: String, CaseIterable, Identifiable {
 
     var isImplemented: Bool {
         switch self {
-        case .landing, .socialInbox, .workspace, .workspaceSettings, .userSettings:
+        case .landing, .socialInbox, .contentCalendar, .feeds, .listening, .crm, .integrations, .workspace, .workspaceSettings, .userSettings:
             return true
         default:
             return false
@@ -86,7 +95,7 @@ struct SidebarView: View {
     var body: some View {
         List(selection: $selectedView) {
             Section("Main") {
-                ForEach([NavigationItem.landing, .socialInbox, .publishing, .analytics, .crm, .automations]) { item in
+                ForEach([NavigationItem.landing, .socialInbox, .contentCalendar, .feeds, .listening, .analytics, .crm, .automations]) { item in
                     NavigationLink(value: item) {
                         Label(item.rawValue, systemImage: item.icon)
                     }
@@ -96,10 +105,12 @@ struct SidebarView: View {
             }
 
             Section("Workspace") {
-                ForEach([NavigationItem.workspace, .workspaceSettings]) { item in
+                ForEach([NavigationItem.workspace, .integrations, .workspaceSettings]) { item in
                     NavigationLink(value: item) {
                         Label(item.rawValue, systemImage: item.icon)
                     }
+                    .disabled(!item.isImplemented)
+                    .opacity(item.isImplemented ? 1.0 : 0.5)
                 }
             }
 
@@ -124,13 +135,23 @@ struct DetailView: View {
                 LandingPageView()
             case .socialInbox:
                 SocialInboxView()
+            case .contentCalendar:
+                ContentCalendarView()
+            case .feeds:
+                FeedsView()
+            case .listening:
+                ListeningView()
+            case .crm:
+                CRMView()
+            case .integrations:
+                IntegrationsView()
             case .workspace:
                 WorkspaceHomeView()
             case .workspaceSettings:
                 WorkspaceSettingsView()
             case .userSettings:
                 UserSettingsView()
-            case .publishing, .analytics, .crm, .automations:
+            case .analytics, .automations:
                 ComingSoonView(feature: selectedView.rawValue)
             }
         }
