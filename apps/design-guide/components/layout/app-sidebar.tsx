@@ -1,7 +1,6 @@
-"use client";
+"use client"
 
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import * as React from "react"
 import {
   MessageSquare,
   Send,
@@ -9,104 +8,154 @@ import {
   Users,
   Bot,
   Settings,
-  ChevronLeft,
   LayoutGrid,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  Command,
+  Briefcase,
+  Home,
+} from "lucide-react"
+import { usePathname } from "next/navigation"
 
-interface AppSidebarProps {
-  isCollapsed: boolean;
-  onToggle: () => void;
+import { NavUser } from "@/components/nav-user"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar"
+
+// Navigation items
+const navItems = [
+  {
+    title: "Dashboard",
+    url: "/workspace/workspace-1",
+    icon: Home,
+    isActive: false,
+  },
+  {
+    title: "Social Inbox",
+    url: "/social-inbox",
+    icon: MessageSquare,
+    isActive: false,
+  },
+  {
+    title: "Feeds",
+    url: "/workspace/workspace-1/feeds",
+    icon: LayoutGrid,
+    isActive: false,
+  },
+  {
+    title: "Content Calendar",
+    url: "/content-calendar",
+    icon: Send,
+    isActive: false,
+  },
+  {
+    title: "Analytics",
+    url: "/analytics",
+    icon: BarChart3,
+    isActive: false,
+  },
+  {
+    title: "CRM",
+    url: "/crm",
+    icon: Users,
+    isActive: false,
+  },
+  {
+    title: "Automations",
+    url: "/automations",
+    icon: Bot,
+    isActive: false,
+  },
+  {
+    title: "Settings",
+    url: "/user/settings",
+    icon: Settings,
+    isActive: false,
+  },
+]
+
+// Sample user data
+const userData = {
+  name: "User",
+  email: "user@example.com",
+  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=You",
 }
 
-const navItems = [
-  { icon: MessageSquare, label: "Social Inbox", href: "/social-inbox" },
-  { icon: LayoutGrid, label: "Feeds", href: "/workspace/workspace-1/feeds" },
-  { icon: Send, label: "Content Calendar", href: "/content-calendar" },
-  { icon: BarChart3, label: "Analytics", href: "/analytics" },
-  { icon: Users, label: "CRM", href: "/crm" },
-  { icon: Bot, label: "Automations", href: "/automations" },
-  { icon: Settings, label: "Settings", href: "/user/settings" },
-];
-
-export function AppSidebar({ isCollapsed, onToggle }: AppSidebarProps) {
-  const pathname = usePathname();
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname()
+  const { setOpen } = useSidebar()
 
   return (
-    <motion.aside
-      initial={false}
-      animate={{ width: isCollapsed ? 56 : 240 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="relative border-r bg-background flex flex-col"
+    <Sidebar
+      collapsible="icon"
+      className="overflow-hidden *:data-[sidebar=sidebar]:flex-row"
+      {...props}
     >
-      {/* Navigation */}
-      <nav className="flex-1 py-4">
-        <TooltipProvider delayDuration={0}>
-          <ul className="space-y-1 px-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname?.startsWith(item.href);
-
-              return (
-                <li key={item.href}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link href={item.href}>
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                            isActive
-                              ? "bg-primary text-primary-foreground"
-                              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                          )}
-                        >
-                          <Icon className="h-5 w-5 flex-shrink-0" />
-                          {!isCollapsed && (
-                            <motion.span
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              className="truncate"
-                            >
-                              {item.label}
-                            </motion.span>
-                          )}
-                        </motion.div>
-                      </Link>
-                    </TooltipTrigger>
-                    {isCollapsed && (
-                      <TooltipContent side="right">{item.label}</TooltipContent>
-                    )}
-                  </Tooltip>
-                </li>
-              );
-            })}
-          </ul>
-        </TooltipProvider>
-      </nav>
-
-      {/* Collapse Toggle */}
-      <div className="border-t p-2">
-        <Button
-          variant="ghost"
-          size={isCollapsed ? "icon" : "default"}
-          onClick={onToggle}
-          className="w-full"
-        >
-          <motion.div
-            animate={{ rotate: isCollapsed ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </motion.div>
-          {!isCollapsed && <span className="ml-2">Collapse</span>}
-        </Button>
-      </div>
-    </motion.aside>
-  );
+      {/* This is the main sidebar */}
+      <Sidebar
+        collapsible="none"
+        className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r"
+      >
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
+                <a href="/workspace/workspace-1">
+                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                    <Briefcase className="size-4" />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">Workspace</span>
+                    <span className="truncate text-xs">Pro</span>
+                  </div>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent className="px-1.5 md:px-0">
+              <SidebarMenu>
+                {navItems.map((item) => {
+                  const isActive = pathname?.startsWith(item.url)
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        tooltip={{
+                          children: item.title,
+                          hidden: false,
+                        }}
+                        onClick={() => {
+                          setOpen(true)
+                        }}
+                        isActive={isActive}
+                        className="px-2.5 md:px-2"
+                        asChild
+                      >
+                        <a href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={userData} />
+        </SidebarFooter>
+      </Sidebar>
+    </Sidebar>
+  )
 }

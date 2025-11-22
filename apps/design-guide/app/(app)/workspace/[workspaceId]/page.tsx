@@ -23,29 +23,23 @@ export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
   const seatsUsagePercent = (subscription.used_seats / subscription.seats) * 100;
 
   return (
-    <div className="flex h-full">
-      <div className="flex-1 flex flex-col overflow-auto">
-        <div className="border-b bg-background">
-          <div className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-semibold">{workspace.name}</h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Workspace overview and quick actions
-                </p>
-              </div>
-              <Link href={`/workspace/${workspaceId}/settings`}>
-                <Button variant="outline">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
-              </Link>
-            </div>
-          </div>
+    <div className="flex flex-1 flex-col gap-4 p-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">{workspace.name}</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Workspace overview and quick actions
+          </p>
         </div>
+        <Link href={`/workspace/${workspaceId}/settings`}>
+          <Button variant="outline">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
+        </Link>
+      </div>
 
-        <div className="flex-1 p-6">
-          <div className="max-w-6xl mx-auto space-y-6">
+      <div className="space-y-6">
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
@@ -207,8 +201,6 @@ export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
       </div>
     </div>
   );
