@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import {
   Calendar,
   Sparkles,
@@ -39,52 +40,57 @@ import {
   Star,
   Code,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b bg-gradient-to-b from-background via-secondary/20 to-background">
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        <div className="container mx-auto px-4 py-24 md:py-32">
-          <div className="mx-auto max-w-5xl text-center">
-            <Badge variant="outline" className="mb-6 border-primary/20 px-4 py-2">
-              <Github className="mr-2 h-4 w-4" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="container py-24 md:py-32">
+          <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
+            <Badge variant="outline" className="gap-2">
+              <Github className="size-4" />
               Open Source Social Media Platform
             </Badge>
-            <h1 className="mb-6 text-5xl font-bold tracking-tight md:text-7xl lg:text-8xl">
+
+            <h1 className="text-balance text-5xl font-bold tracking-tight md:text-7xl lg:text-8xl">
               Social Media Management,{" "}
               <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
                 Reimagined
               </span>
             </h1>
-            <p className="mx-auto mb-10 max-w-3xl text-lg text-muted-foreground md:text-xl">
+
+            <p className="max-w-3xl text-pretty text-lg text-muted-foreground md:text-xl">
               A modern, open-source platform with comprehensive features for content creation,
               publishing, and customer engagement. Manage all your social media from one powerful
               dashboard.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" className="gap-2 text-lg">
-                <Star className="h-5 w-5" />
+
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Button size="lg">
+                <Star />
                 Star on GitHub
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight />
               </Button>
-              <Button size="lg" variant="outline" className="gap-2 text-lg">
-                <Code className="h-5 w-5" />
+              <Button size="lg" variant="outline">
+                <Code />
                 View Demo
               </Button>
             </div>
-            <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
+
+            <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <CheckCircle2 className="size-4 text-primary" />
                 Free & Open Source
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <CheckCircle2 className="size-4 text-primary" />
                 Self-Hosted
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <CheckCircle2 className="size-4 text-primary" />
                 Modern Tech Stack
               </div>
             </div>
@@ -93,15 +99,13 @@ export default function Home() {
       </section>
 
       {/* Feature Categories */}
-      <section className="container mx-auto px-4 py-24">
-        <div className="mb-16 text-center">
-          <Badge variant="secondary" className="mb-4">
-            Comprehensive Features
-          </Badge>
-          <h2 className="mb-4 text-4xl font-bold md:text-5xl">
+      <section className="container py-24">
+        <div className="mb-16 flex flex-col items-center gap-4 text-center">
+          <Badge variant="secondary">Comprehensive Features</Badge>
+          <h2 className="text-balance text-4xl font-bold md:text-5xl">
             Everything You Need to Succeed
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          <p className="max-w-2xl text-pretty text-lg text-muted-foreground">
             From content creation to analytics, team collaboration to customer engagement - all in
             one platform.
           </p>
@@ -116,12 +120,12 @@ export default function Home() {
             <TabsTrigger value="integrations">Integrations</TabsTrigger>
           </TabsList>
 
-          {/* Content Management & Publishing */}
-          <TabsContent value="publishing" className="mt-8">
+          {/* Publishing Tab */}
+          <TabsContent value="publishing" className="mt-8 space-y-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Share2 className="mb-3 h-10 w-10 text-primary" />
+                  <Share2 className="size-10 text-primary" />
                   <CardTitle>Multi-Platform Publishing</CardTitle>
                   <CardDescription>
                     Publish content to multiple social media platforms simultaneously with one
@@ -130,9 +134,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Calendar className="mb-3 h-10 w-10 text-primary" />
+                  <Calendar className="size-10 text-primary" />
                   <CardTitle>Content Calendar</CardTitle>
                   <CardDescription>
                     Visual calendar for planning and scheduling posts across all platforms.
@@ -140,9 +144,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Upload className="mb-3 h-10 w-10 text-primary" />
+                  <Upload className="size-10 text-primary" />
                   <CardTitle>Bulk Scheduling</CardTitle>
                   <CardDescription>
                     Schedule multiple posts at once with CSV import support for efficient workflow.
@@ -150,9 +154,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Brain className="mb-3 h-10 w-10 text-primary" />
+                  <Brain className="size-10 text-primary" />
                   <CardTitle>AI Content Creator</CardTitle>
                   <CardDescription>
                     AI-powered content generation and optimization for maximum engagement.
@@ -160,9 +164,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <ImageIcon className="mb-3 h-10 w-10 text-primary" />
+                  <ImageIcon className="size-10 text-primary" />
                   <CardTitle>Media Library</CardTitle>
                   <CardDescription>
                     Centralized asset management for images, videos, and other media files.
@@ -170,9 +174,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Clock className="mb-3 h-10 w-10 text-primary" />
+                  <Clock className="size-10 text-primary" />
                   <CardTitle>Post Timing Analytics</CardTitle>
                   <CardDescription>
                     Analyze and recommend optimal times to post content for best results.
@@ -180,9 +184,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Link className="mb-3 h-10 w-10 text-primary" />
+                  <Link className="size-10 text-primary" />
                   <CardTitle>URL Shortening</CardTitle>
                   <CardDescription>
                     Automatic link shortening with click tracking and analytics.
@@ -190,9 +194,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Hash className="mb-3 h-10 w-10 text-primary" />
+                  <Hash className="size-10 text-primary" />
                   <CardTitle>Hashtag Suggestions</CardTitle>
                   <CardDescription>
                     AI-powered hashtag recommendations for better reach and discoverability.
@@ -202,12 +206,12 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          {/* Social Engagement */}
-          <TabsContent value="engagement" className="mt-8">
+          {/* Engagement Tab */}
+          <TabsContent value="engagement" className="mt-8 space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <MessageSquare className="mb-3 h-10 w-10 text-primary" />
+                  <MessageSquare className="size-10 text-primary" />
                   <CardTitle>Social Inbox</CardTitle>
                   <CardDescription>
                     Unified inbox for managing messages across multiple social media platforms in
@@ -217,24 +221,24 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Centralized message management
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Quick replies and templates
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Message filtering and sorting
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Bell className="mb-3 h-10 w-10 text-primary" />
+                  <Bell className="size-10 text-primary" />
                   <CardTitle>Social Mention Tracking</CardTitle>
                   <CardDescription>
                     Monitor and track brand mentions across all social platforms in real-time.
@@ -243,24 +247,24 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Real-time mention alerts
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Sentiment analysis
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Engagement tracking
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Radio className="mb-3 h-10 w-10 text-primary" />
+                  <Radio className="size-10 text-primary" />
                   <CardTitle>Social Listening</CardTitle>
                   <CardDescription>
                     Track keywords, hashtags, and brand conversations in real-time across
@@ -270,24 +274,24 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Keyword monitoring
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Trend detection
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Competitive intelligence
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <UsersIcon className="mb-3 h-10 w-10 text-primary" />
+                  <UsersIcon className="size-10 text-primary" />
                   <CardTitle>Built-in CRM</CardTitle>
                   <CardDescription>
                     Customer relationship management designed specifically for social media support.
@@ -296,15 +300,15 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Customer profiles
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Interaction history
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Automated workflows
                     </li>
                   </ul>
@@ -313,12 +317,12 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          {/* Analytics & Reporting */}
-          <TabsContent value="analytics" className="mt-8">
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="mt-8 space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <BarChart3 className="mb-3 h-10 w-10 text-primary" />
+                  <BarChart3 className="size-10 text-primary" />
                   <CardTitle>Performance Metrics</CardTitle>
                   <CardDescription>
                     Comprehensive analytics for posts, engagement, and audience growth.
@@ -327,24 +331,24 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Real-time analytics dashboard
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Engagement rate tracking
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Audience demographics
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <FileText className="mb-3 h-10 w-10 text-primary" />
+                  <FileText className="size-10 text-primary" />
                   <CardTitle>Custom Reports</CardTitle>
                   <CardDescription>
                     Create and schedule custom reports with key metrics that matter to you.
@@ -353,24 +357,24 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Customizable templates
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Automated delivery
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Export to PDF/CSV
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <TrendingUp className="mb-3 h-10 w-10 text-primary" />
+                  <TrendingUp className="size-10 text-primary" />
                   <CardTitle>Competitor Analysis</CardTitle>
                   <CardDescription>
                     Track and compare competitor social media performance against yours.
@@ -379,24 +383,24 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Benchmark analysis
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Content strategy insights
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Market positioning
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <UserPlus className="mb-3 h-10 w-10 text-primary" />
+                  <UserPlus className="size-10 text-primary" />
                   <CardTitle>Influencer Identification</CardTitle>
                   <CardDescription>
                     Discover and analyze potential influencer partnerships for your brand.
@@ -405,15 +409,15 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Influencer discovery
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Audience overlap analysis
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Performance tracking
                     </li>
                   </ul>
@@ -422,12 +426,12 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          {/* Team & Workflow */}
-          <TabsContent value="team" className="mt-8">
+          {/* Team Tab */}
+          <TabsContent value="team" className="mt-8 space-y-6">
             <div className="grid gap-6 md:grid-cols-3">
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Users2 className="mb-3 h-10 w-10 text-primary" />
+                  <Users2 className="size-10 text-primary" />
                   <CardTitle>Team Collaboration</CardTitle>
                   <CardDescription>
                     Multi-user access with role-based permissions for seamless team workflow.
@@ -436,24 +440,24 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Role-based access control
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Activity logs
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Team comments
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <GitBranch className="mb-3 h-10 w-10 text-primary" />
+                  <GitBranch className="size-10 text-primary" />
                   <CardTitle>Approval Workflows</CardTitle>
                   <CardDescription>
                     Content approval process for team and client reviews before publishing.
@@ -462,24 +466,24 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Multi-level approvals
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Review notifications
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Version history
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Briefcase className="mb-3 h-10 w-10 text-primary" />
+                  <Briefcase className="size-10 text-primary" />
                   <CardTitle>Workspaces</CardTitle>
                   <CardDescription>
                     Organize multiple brands and clients in separate workspaces.
@@ -488,15 +492,15 @@ export default function Home() {
                 <CardContent>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Isolated environments
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Custom branding
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <CheckCircle2 className="size-4 text-primary" />
                       Workspace switching
                     </li>
                   </ul>
@@ -505,12 +509,12 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          {/* Integrations */}
-          <TabsContent value="integrations" className="mt-8">
+          {/* Integrations Tab */}
+          <TabsContent value="integrations" className="mt-8 space-y-6">
             <div className="grid gap-6 md:grid-cols-3">
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Zap className="mb-3 h-10 w-10 text-primary" />
+                  <Zap className="size-10 text-primary" />
                   <CardTitle>Platform Integrations</CardTitle>
                   <CardDescription>
                     Connect with major social networks including Facebook, Instagram, Twitter/X,
@@ -519,9 +523,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Rss className="mb-3 h-10 w-10 text-primary" />
+                  <Rss className="size-10 text-primary" />
                   <CardTitle>RSS Feed Integration</CardTitle>
                   <CardDescription>
                     Auto-publish content from RSS feeds to your social media channels automatically.
@@ -529,9 +533,9 @@ export default function Home() {
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/20">
+              <Card>
                 <CardHeader>
-                  <Puzzle className="mb-3 h-10 w-10 text-primary" />
+                  <Puzzle className="size-10 text-primary" />
                   <CardTitle>Third-Party Apps</CardTitle>
                   <CardDescription>
                     Integration with popular tools and services to extend functionality.
@@ -545,13 +549,11 @@ export default function Home() {
 
       {/* Tech Stack Section */}
       <section className="border-y bg-secondary/30 py-24">
-        <div className="container mx-auto px-4">
-          <div className="mb-16 text-center">
-            <Badge variant="secondary" className="mb-4">
-              Modern Technology
-            </Badge>
-            <h2 className="mb-4 text-4xl font-bold md:text-5xl">Built with Modern Tools</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+        <div className="container">
+          <div className="mb-16 flex flex-col items-center gap-4 text-center">
+            <Badge variant="secondary">Modern Technology</Badge>
+            <h2 className="text-balance text-4xl font-bold md:text-5xl">Built with Modern Tools</h2>
+            <p className="max-w-2xl text-pretty text-lg text-muted-foreground">
               Leveraging the latest and greatest web technologies for optimal performance and
               developer experience.
             </p>
@@ -560,7 +562,7 @@ export default function Home() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Code className="h-5 w-5" />
+                  <Code className="size-5" />
                   Next.js
                 </CardTitle>
                 <CardDescription>React framework for production-ready applications</CardDescription>
@@ -569,7 +571,7 @@ export default function Home() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
+                  <Shield className="size-5" />
                   TypeScript
                 </CardTitle>
                 <CardDescription>Type-safe development for reliable code</CardDescription>
@@ -578,7 +580,7 @@ export default function Home() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5" />
+                  <Sparkles className="size-5" />
                   Tailwind CSS
                 </CardTitle>
                 <CardDescription>Utility-first CSS framework for rapid UI development</CardDescription>
@@ -587,7 +589,7 @@ export default function Home() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Puzzle className="h-5 w-5" />
+                  <Puzzle className="size-5" />
                   Shadcn UI
                 </CardTitle>
                 <CardDescription>Re-usable component library with accessibility</CardDescription>
@@ -596,7 +598,7 @@ export default function Home() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5" />
+                  <CheckCircle2 className="size-5" />
                   Zod
                 </CardTitle>
                 <CardDescription>Schema validation and type inference</CardDescription>
@@ -605,7 +607,7 @@ export default function Home() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Github className="h-5 w-5" />
+                  <Github className="size-5" />
                   Open Source
                 </CardTitle>
                 <CardDescription>Free and open for the community</CardDescription>
@@ -616,51 +618,57 @@ export default function Home() {
       </section>
 
       {/* Design Preview Section */}
-      <section className="container mx-auto px-4 py-24">
-        <div className="mx-auto max-w-4xl text-center">
-          <Badge variant="secondary" className="mb-4">
-            Current Development
-          </Badge>
-          <h2 className="mb-4 text-4xl font-bold md:text-5xl">Design & Preview Application</h2>
-          <p className="mb-8 text-lg text-muted-foreground">
-            This is currently a design and preview application focused on building out the user
-            interface and experience before implementing backend functionality.
-          </p>
-          <Card className="border-primary/20 text-left">
+      <section className="container py-24">
+        <div className="mx-auto max-w-4xl space-y-8 text-center">
+          <div className="space-y-4">
+            <Badge variant="secondary">Current Development</Badge>
+            <h2 className="text-balance text-4xl font-bold md:text-5xl">
+              Design & Preview Application
+            </h2>
+            <p className="text-pretty text-lg text-muted-foreground">
+              This is currently a design and preview application focused on building out the user
+              interface and experience before implementing backend functionality.
+            </p>
+          </div>
+
+          <Card className="text-left">
             <CardHeader>
               <CardTitle>Mock Data Strategy</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
-                <div>
+                <CheckCircle2 className="mt-1 size-5 shrink-0 text-primary" />
+                <div className="space-y-1">
                   <p className="font-medium">Hard-coded Mock Data</p>
                   <p className="text-sm text-muted-foreground">
                     All data is mock/fake data organized in a dedicated mock-data folder
                   </p>
                 </div>
               </div>
+              <Separator />
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
-                <div>
+                <CheckCircle2 className="mt-1 size-5 shrink-0 text-primary" />
+                <div className="space-y-1">
                   <p className="font-medium">Zod Schema Validation</p>
                   <p className="text-sm text-muted-foreground">
                     Zod schemas define structure and validation for all data models
                   </p>
                 </div>
               </div>
+              <Separator />
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
-                <div>
+                <CheckCircle2 className="mt-1 size-5 shrink-0 text-primary" />
+                <div className="space-y-1">
                   <p className="font-medium">TypeScript Type Safety</p>
                   <p className="text-sm text-muted-foreground">
                     TypeScript types are derived from Zod schemas for complete type safety
                   </p>
                 </div>
               </div>
+              <Separator />
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
-                <div>
+                <CheckCircle2 className="mt-1 size-5 shrink-0 text-primary" />
+                <div className="space-y-1">
                   <p className="font-medium">UI/UX Focus</p>
                   <p className="text-sm text-muted-foreground">
                     Complete UI/UX implementation before adding backend functionality
@@ -673,26 +681,30 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-24">
-        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/20">
-          <CardContent className="px-6 py-16 text-center md:px-12">
-            <h2 className="mb-4 text-4xl font-bold md:text-5xl">
-              Ready to Transform Your Social Media?
-            </h2>
-            <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">
-              Join the open-source community building the future of social media management. Free,
-              self-hosted, and built with modern technologies.
-            </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" className="gap-2 text-lg">
-                <Github className="h-5 w-5" />
-                View on GitHub
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="gap-2 text-lg">
-                <Star className="h-5 w-5" />
-                Star the Project
-              </Button>
+      <section className="container py-24">
+        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/20">
+          <CardContent className="py-16 text-center">
+            <div className="mx-auto max-w-2xl space-y-8">
+              <div className="space-y-4">
+                <h2 className="text-balance text-4xl font-bold md:text-5xl">
+                  Ready to Transform Your Social Media?
+                </h2>
+                <p className="text-pretty text-lg text-muted-foreground">
+                  Join the open-source community building the future of social media management.
+                  Free, self-hosted, and built with modern technologies.
+                </p>
+              </div>
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+                <Button size="lg">
+                  <Github />
+                  View on GitHub
+                  <ArrowRight />
+                </Button>
+                <Button size="lg" variant="outline">
+                  <Star />
+                  Star the Project
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -700,13 +712,13 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t bg-secondary/30 py-12">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="text-center md:text-left">
-              <h3 className="mb-2 flex items-center justify-center gap-2 text-xl font-bold md:justify-start">
-                <Sparkles className="h-5 w-5 text-primary" />
+            <div className="flex flex-col items-center gap-2 md:items-start">
+              <div className="flex items-center gap-2 text-xl font-bold">
+                <Sparkles className="size-5 text-primary" />
                 Social Media Platform
-              </h3>
+              </div>
               <p className="text-sm text-muted-foreground">
                 Open Source • Modern • Self-Hosted
               </p>
@@ -726,7 +738,8 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <div className="mt-8 text-center text-sm text-muted-foreground">
+          <Separator className="my-6" />
+          <div className="text-center text-sm text-muted-foreground">
             © 2025 Social Media Platform. Open source under MIT License.
           </div>
         </div>
