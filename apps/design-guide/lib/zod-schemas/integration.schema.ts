@@ -68,7 +68,7 @@ export const IntegrationSchema = z.object({
   last_sync_at: z.string().datetime().optional(),
   token_expires_at: z.string().datetime().optional(),
   permissions: z.array(z.string()),
-  settings: z.record(z.any()).optional(),
+  settings: z.record(z.string(), z.any()).optional(),
   stats: z
     .object({
       api_calls_today: z.number().optional(),

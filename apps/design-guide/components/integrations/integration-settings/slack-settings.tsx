@@ -39,8 +39,12 @@ const mockChannels = [
 
 export function SlackSettings({ integration }: SlackSettingsProps) {
   const [isSaving, setIsSaving] = useState(false);
-  const [settings, setSettings] = useState(
-    integration.settings || {
+  const [settings, setSettings] = useState<{
+    bot_name: string;
+    default_channel: string;
+    enable_notifications: boolean;
+  }>(
+    (integration.settings as any) || {
       bot_name: "Chatsian Bot",
       default_channel: "#general",
       enable_notifications: true,

@@ -32,8 +32,12 @@ interface XSettingsProps {
 export function XSettings({ integration }: XSettingsProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [settings, setSettings] = useState(
-    integration.settings || {
+  const [settings, setSettings] = useState<{
+    default_visibility: string;
+    auto_retweet_mentions: boolean;
+    enable_webhooks: boolean;
+  }>(
+    (integration.settings as any) || {
       default_visibility: "public",
       auto_retweet_mentions: false,
       enable_webhooks: false,

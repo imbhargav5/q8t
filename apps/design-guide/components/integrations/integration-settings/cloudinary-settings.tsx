@@ -30,8 +30,14 @@ interface CloudinarySettingsProps {
 
 export function CloudinarySettings({ integration }: CloudinarySettingsProps) {
   const [isSaving, setIsSaving] = useState(false);
-  const [settings, setSettings] = useState(
-    integration.settings || {
+  const [settings, setSettings] = useState<{
+    cloud_name: string;
+    default_folder: string;
+    upload_preset: string;
+    auto_optimize: boolean;
+    default_quality: string;
+  }>(
+    (integration.settings as any) || {
       cloud_name: "chatsian-prod",
       default_folder: "social-media",
       upload_preset: "ml_default",
