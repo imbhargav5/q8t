@@ -31,6 +31,7 @@ export function ListenerMentionList({ mentions, selectedId, onSelect }: Listener
           {mentions.map((mention) => (
             <Listbox.Item
               key={mention.id}
+              value={mention.id}
               onClick={() => onSelect(mention)}
               className={cn(
                 "w-full text-left p-4 transition-colors hover:bg-accent cursor-pointer",

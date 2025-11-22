@@ -13,7 +13,7 @@ export function ProviderList({ providers }: ProviderListProps) {
     <Listbox.Root orientation="horizontal">
       <Listbox.Group className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {providers.map((provider) => (
-          <Listbox.Item key={provider.id}>
+          <Listbox.Item key={provider.id} value={provider.id}>
             <ProviderCard provider={provider} />
           </Listbox.Item>
         ))}

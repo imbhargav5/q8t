@@ -101,7 +101,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
                       visible: { opacity: 1, y: 0 },
                     }}
                   >
-                    <Listbox.Item>
+                    <Listbox.Item value={conversation.id}>
                       <ConversationItem
                         conversation={conversation}
                         isSelected={conversation.id === selectedId}

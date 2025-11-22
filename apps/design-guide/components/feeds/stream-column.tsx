@@ -133,7 +133,7 @@ export function StreamColumn({ stream, posts, workspaceId }: StreamColumnProps) 
             <Listbox.Root orientation="vertical">
               <Listbox.Group className="space-y-3">
                 {posts.map((post) => (
-                  <Listbox.Item key={post.id}>
+                  <Listbox.Item key={post.id} value={post.id}>
                     <PostCard post={post} />
                   </Listbox.Item>
                 ))}

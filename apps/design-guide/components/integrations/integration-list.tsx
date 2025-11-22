@@ -37,7 +37,7 @@ export function IntegrationList({
     <Listbox.Root orientation="horizontal">
       <Listbox.Group className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {integrations.map((integration) => (
-          <Listbox.Item key={integration.id}>
+          <Listbox.Item key={integration.id} value={integration.id}>
             <IntegrationCard
               integration={integration}
               workspaceId={workspaceId}

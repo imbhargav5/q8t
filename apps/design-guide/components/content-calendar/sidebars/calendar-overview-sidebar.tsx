@@ -122,7 +122,7 @@ export function CalendarOverviewSidebar({
             <Listbox.Root orientation="vertical">
               <Listbox.Group>
                 {upcomingPosts.map((post) => (
-                  <Listbox.Item key={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
+                  <Listbox.Item key={post.id} value={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium">
                         {post.scheduled_for &&
@@ -178,7 +178,7 @@ export function CalendarOverviewSidebar({
                   )
                   .slice(0, 1)
                   .map((post) => (
-                    <Listbox.Item key={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
+                    <Listbox.Item key={post.id} value={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
                       <p className="text-sm font-medium">
                         {post.engagement?.engagement_rate}% engagement
                       </p>

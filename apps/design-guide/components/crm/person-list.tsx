@@ -43,6 +43,7 @@ export function PersonList({
             {people.map((person) => (
               <Listbox.Item
                 key={person.id}
+                value={person.id}
                 onClick={() => onSelect(person)}
                 className={cn(
                   "w-full text-left p-3 rounded-lg transition-colors hover:bg-accent cursor-pointer",

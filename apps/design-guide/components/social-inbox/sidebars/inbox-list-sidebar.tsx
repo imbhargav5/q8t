@@ -63,7 +63,7 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
           <Listbox.Root orientation="vertical">
             <Listbox.Group className="space-y-3">
               {mockTeamMembers.slice(0, 4).map((member) => (
-                <Listbox.Item key={member.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent">
+                <Listbox.Item key={member.id} value={member.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent">
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <Avatar className="h-8 w-8">
@@ -105,7 +105,7 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
         <CardContent>
           <Listbox.Root orientation="vertical">
             <Listbox.Group>
-              <Listbox.Item className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+              <Listbox.Item value="activity-1" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
                 <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
                 <div className="text-sm">
                   <p className="text-foreground">Sarah resolved 3 conversations</p>
@@ -113,7 +113,7 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
                 </div>
               </Listbox.Item>
               <Separator className="my-2" />
-              <Listbox.Item className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+              <Listbox.Item value="activity-2" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
                 <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
                 <div className="text-sm">
                   <p className="text-foreground">New message from Twitter</p>
@@ -121,7 +121,7 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
                 </div>
               </Listbox.Item>
               <Separator className="my-2" />
-              <Listbox.Item className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+              <Listbox.Item value="activity-3" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
                 <Users className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
                 <div className="text-sm">
                   <p className="text-foreground">Mike assigned to Emma</p>

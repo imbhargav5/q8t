@@ -22,6 +22,7 @@ export function ListenerQueryList({ queries, selectedId, onSelect }: ListenerQue
             {queries.map((query) => (
               <Listbox.Item
                 key={query.id}
+                value={query.id}
                 onClick={() => onSelect(query)}
                 className={cn(
                   "w-full text-left p-3 rounded-lg border transition-colors cursor-pointer",
