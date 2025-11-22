@@ -6,8 +6,11 @@ import { cn } from "@/lib/utils";
 function Listbox({
   className,
   orientation = "vertical",
+  children,
   ...props
-}: React.ComponentProps<typeof ListboxPrimitive.Root>) {
+}: React.ComponentProps<typeof ListboxPrimitive.Root> & {
+  children?: React.ReactNode;
+}) {
   return (
     <ListboxPrimitive.Root
       data-slot="listbox"
@@ -19,7 +22,9 @@ function Listbox({
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </ListboxPrimitive.Root>
   );
 }
 
