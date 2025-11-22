@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import type { ListeningMention } from "@/lib/mock-data";
 import { formatDistanceToNow } from "date-fns";
-import * as Listbox from "@diceui/listbox";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface ListenerMentionListProps {
   mentions: ListeningMention[];
@@ -26,10 +26,10 @@ interface ListenerMentionListProps {
 export function ListenerMentionList({ mentions, selectedId, onSelect }: ListenerMentionListProps) {
   return (
     <ScrollArea className="flex-1">
-      <Listbox.Root orientation="vertical">
-        <Listbox.Group className="divide-y">
+      <Listbox orientation="vertical">
+        <ListboxGroup className="divide-y">
           {mentions.map((mention) => (
-            <Listbox.Item
+            <ListboxItem
               key={mention.id}
               value={mention.id}
               onClick={() => onSelect(mention)}
@@ -170,10 +170,10 @@ export function ListenerMentionList({ mentions, selectedId, onSelect }: Listener
                 )}
               </div>
             )}
-            </Listbox.Item>
+            </ListboxItem>
           ))}
-        </Listbox.Group>
-      </Listbox.Root>
+        </ListboxGroup>
+      </Listbox>
     </ScrollArea>
   );
 }

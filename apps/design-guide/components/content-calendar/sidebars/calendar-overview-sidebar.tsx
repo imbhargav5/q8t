@@ -12,7 +12,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
-import * as Listbox from "@diceui/listbox";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface CalendarOverviewSidebarProps {
   posts: PostWithAuthor[];
@@ -119,10 +119,10 @@ export function CalendarOverviewSidebar({
         </CardHeader>
         <CardContent>
           {upcomingPosts.length > 0 ? (
-            <Listbox.Root orientation="vertical">
-              <Listbox.Group>
+            <Listbox orientation="vertical">
+              <ListboxGroup>
                 {upcomingPosts.map((post) => (
-                  <Listbox.Item key={post.id} value={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
+                  <ListboxItem key={post.id} value={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium">
                         {post.scheduled_for &&
@@ -145,10 +145,10 @@ export function CalendarOverviewSidebar({
                         </Badge>
                       )}
                     </div>
-                  </Listbox.Item>
+                  </ListboxItem>
                 ))}
-              </Listbox.Group>
-            </Listbox.Root>
+              </ListboxGroup>
+            </Listbox>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4">
               No upcoming posts scheduled
@@ -167,8 +167,8 @@ export function CalendarOverviewSidebar({
         </CardHeader>
         <CardContent>
           {posts.find((p) => p.engagement) ? (
-            <Listbox.Root orientation="vertical">
-              <Listbox.Group>
+            <Listbox orientation="vertical">
+              <ListboxGroup>
                 {posts
                   .filter((p) => p.engagement)
                   .sort(
@@ -178,7 +178,7 @@ export function CalendarOverviewSidebar({
                   )
                   .slice(0, 1)
                   .map((post) => (
-                    <Listbox.Item key={post.id} value={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
+                    <ListboxItem key={post.id} value={post.id} className="space-y-1 p-3 rounded-md hover:bg-accent">
                       <p className="text-sm font-medium">
                         {post.engagement?.engagement_rate}% engagement
                       </p>
@@ -190,10 +190,10 @@ export function CalendarOverviewSidebar({
                         <span>💬 {post.engagement?.comments}</span>
                         <span>🔁 {post.engagement?.shares}</span>
                       </div>
-                    </Listbox.Item>
+                    </ListboxItem>
                   ))}
-              </Listbox.Group>
-            </Listbox.Root>
+              </ListboxGroup>
+            </Listbox>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4">
               No published posts yet

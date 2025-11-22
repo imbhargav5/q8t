@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import type { Integration, IntegrationCategory } from "@/lib/zod-schemas";
 import { AlertCircle } from "lucide-react";
 import { IntegrationCard } from "./integration-card";
-import * as Listbox from "@diceui/listbox";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface IntegrationListProps {
   integrations: Integration[];
@@ -34,17 +34,17 @@ export function IntegrationList({
   }
 
   return (
-    <Listbox.Root orientation="horizontal">
-      <Listbox.Group className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <Listbox orientation="horizontal">
+      <ListboxGroup className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {integrations.map((integration) => (
-          <Listbox.Item key={integration.id} value={integration.id}>
+          <ListboxItem key={integration.id} value={integration.id}>
             <IntegrationCard
               integration={integration}
               workspaceId={workspaceId}
             />
-          </Listbox.Item>
+          </ListboxItem>
         ))}
-      </Listbox.Group>
-    </Listbox.Root>
+      </ListboxGroup>
+    </Listbox>
   );
 }

@@ -7,7 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Star, ShieldCheck } from "lucide-react";
 import type { Person } from "@/lib/zod-schemas";
 import { cn } from "@/lib/utils";
-import * as Listbox from "@diceui/listbox";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface PersonListProps {
   people: Person[];
@@ -36,12 +36,12 @@ export function PersonList({
   return (
     <ScrollArea className="flex-1">
       <div className="p-2">
-        <Listbox.Root orientation={viewMode === "grid" ? "horizontal" : "vertical"}>
-          <Listbox.Group className={cn(
+        <Listbox orientation={viewMode === "grid" ? "horizontal" : "vertical"}>
+          <ListboxGroup className={cn(
             viewMode === "grid" && "grid grid-cols-2 gap-2"
           )}>
             {people.map((person) => (
-              <Listbox.Item
+              <ListboxItem
                 key={person.id}
                 value={person.id}
                 onClick={() => onSelect(person)}
@@ -115,10 +115,10 @@ export function PersonList({
                 )}
               </div>
             </div>
-              </Listbox.Item>
+              </ListboxItem>
             ))}
-          </Listbox.Group>
-        </Listbox.Root>
+          </ListboxGroup>
+        </Listbox>
       </div>
     </ScrollArea>
   );

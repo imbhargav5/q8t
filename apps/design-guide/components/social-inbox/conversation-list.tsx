@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
 import { ConversationItem } from "./conversation-item";
 import type { ConversationWithRelations } from "@/lib/zod-schemas";
-import * as Listbox from "@diceui/listbox";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface ConversationListProps {
   conversations: ConversationWithRelations[];
@@ -78,8 +78,8 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
             <p>No conversations found</p>
           </div>
         ) : (
-          <Listbox.Root orientation="vertical">
-            <Listbox.Group>
+          <Listbox orientation="vertical">
+            <ListboxGroup>
               <motion.div
                 initial="hidden"
                 animate="visible"
@@ -101,18 +101,18 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
                       visible: { opacity: 1, y: 0 },
                     }}
                   >
-                    <Listbox.Item value={conversation.id}>
+                    <ListboxItem value={conversation.id}>
                       <ConversationItem
                         conversation={conversation}
                         isSelected={conversation.id === selectedId}
                         onClick={() => onSelect(conversation)}
                       />
-                    </Listbox.Item>
+                    </ListboxItem>
                   </motion.div>
                 ))}
               </motion.div>
-            </Listbox.Group>
-          </Listbox.Root>
+            </ListboxGroup>
+          </Listbox>
         )}
       </ScrollArea>
     </div>

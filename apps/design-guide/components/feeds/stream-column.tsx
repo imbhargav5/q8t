@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import * as Listbox from "@diceui/listbox";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface StreamColumnProps {
   stream: StreamConfig;
@@ -130,15 +130,15 @@ export function StreamColumn({ stream, posts, workspaceId }: StreamColumnProps) 
               </p>
             </div>
           ) : (
-            <Listbox.Root orientation="vertical">
-              <Listbox.Group className="space-y-3">
+            <Listbox orientation="vertical">
+              <ListboxGroup className="space-y-3">
                 {posts.map((post) => (
-                  <Listbox.Item key={post.id} value={post.id}>
+                  <ListboxItem key={post.id} value={post.id}>
                     <PostCard post={post} />
-                  </Listbox.Item>
+                  </ListboxItem>
                 ))}
-              </Listbox.Group>
-            </Listbox.Root>
+              </ListboxGroup>
+            </Listbox>
           )}
         </div>
       </ScrollArea>

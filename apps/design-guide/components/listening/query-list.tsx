@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Star, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { ListeningQuery } from "@/lib/mock-data";
-import * as Listbox from "@diceui/listbox";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface ListenerQueryListProps {
   queries: ListeningQuery[];
@@ -17,10 +17,10 @@ export function ListenerQueryList({ queries, selectedId, onSelect }: ListenerQue
   return (
     <ScrollArea className="flex-1">
       <div className="p-2">
-        <Listbox.Root orientation="vertical">
-          <Listbox.Group className="space-y-1">
+        <Listbox orientation="vertical">
+          <ListboxGroup className="space-y-1">
             {queries.map((query) => (
-              <Listbox.Item
+              <ListboxItem
                 key={query.id}
                 value={query.id}
                 onClick={() => onSelect(query)}
@@ -88,10 +88,10 @@ export function ListenerQueryList({ queries, selectedId, onSelect }: ListenerQue
                 <span>Alerts enabled</span>
               </div>
             )}
-              </Listbox.Item>
+              </ListboxItem>
             ))}
-          </Listbox.Group>
-        </Listbox.Root>
+          </ListboxGroup>
+        </Listbox>
       </div>
     </ScrollArea>
   );

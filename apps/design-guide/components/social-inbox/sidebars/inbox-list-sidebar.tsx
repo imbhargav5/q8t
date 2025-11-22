@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, MessageSquare, Clock, TrendingUp } from "lucide-react";
 import { mockTeamMembers } from "@/lib/mock-data";
 import type { ConversationWithRelations } from "@/lib/zod-schemas";
-import * as Listbox from "@diceui/listbox";
+import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface InboxListSidebarProps {
   conversations: ConversationWithRelations[];
@@ -60,10 +60,10 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Listbox.Root orientation="vertical">
-            <Listbox.Group className="space-y-3">
+          <Listbox orientation="vertical">
+            <ListboxGroup className="space-y-3">
               {mockTeamMembers.slice(0, 4).map((member) => (
-                <Listbox.Item key={member.id} value={member.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent">
+                <ListboxItem key={member.id} value={member.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent">
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <Avatar className="h-8 w-8">
@@ -87,10 +87,10 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
                   <Badge variant="outline" className="text-xs">
                     {member.conversation_load}
                   </Badge>
-                </Listbox.Item>
+                </ListboxItem>
               ))}
-            </Listbox.Group>
-          </Listbox.Root>
+            </ListboxGroup>
+          </Listbox>
         </CardContent>
       </Card>
 
@@ -103,33 +103,33 @@ export function InboxListSidebar({ conversations }: InboxListSidebarProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Listbox.Root orientation="vertical">
-            <Listbox.Group>
-              <Listbox.Item value="activity-1" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+          <Listbox orientation="vertical">
+            <ListboxGroup>
+              <ListboxItem value="activity-1" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
                 <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
                 <div className="text-sm">
                   <p className="text-foreground">Sarah resolved 3 conversations</p>
                   <span className="text-xs text-muted-foreground">2 hours ago</span>
                 </div>
-              </Listbox.Item>
+              </ListboxItem>
               <Separator className="my-2" />
-              <Listbox.Item value="activity-2" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+              <ListboxItem value="activity-2" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
                 <MessageSquare className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
                 <div className="text-sm">
                   <p className="text-foreground">New message from Twitter</p>
                   <span className="text-xs text-muted-foreground">5 hours ago</span>
                 </div>
-              </Listbox.Item>
+              </ListboxItem>
               <Separator className="my-2" />
-              <Listbox.Item value="activity-3" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
+              <ListboxItem value="activity-3" className="flex items-start gap-2 p-2 rounded-md hover:bg-accent">
                 <Users className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
                 <div className="text-sm">
                   <p className="text-foreground">Mike assigned to Emma</p>
                   <span className="text-xs text-muted-foreground">1 day ago</span>
                 </div>
-              </Listbox.Item>
-            </Listbox.Group>
-          </Listbox.Root>
+              </ListboxItem>
+            </ListboxGroup>
+          </Listbox>
         </CardContent>
       </Card>
 
