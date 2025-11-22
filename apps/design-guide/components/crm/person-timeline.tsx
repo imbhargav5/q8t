@@ -107,7 +107,6 @@ export function PersonTimeline({ person }: PersonTimelineProps) {
                       {item.data && Object.keys(item.data).length > 0 && (
                         <div className="mt-2 p-3 bg-muted rounded-lg">
                           <div className="text-sm space-y-1">
-                            {/* Display data based on activity type */}
                             {item.type === "tag_added" && item.data.tags && (
                               <div className="flex flex-wrap gap-1">
                                 {(item.data.tags as string[]).map((tag) => (
