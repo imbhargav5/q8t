@@ -12,3 +12,8 @@ export * from "./social-accounts";
 export * from "./posts";
 export * from "./integrations";
 export * from "./feeds";
+
+// CRM mock data
+export * from "./crm-activities";
+export * from "./crm-segments";
+export * from "./crm-custom-fields";
