@@ -23,7 +23,7 @@ interface AppSidebarProps {
 
 const navItems = [
   { icon: MessageSquare, label: "Social Inbox", href: "/social-inbox" },
-  { icon: Send, label: "Publishing", href: "/publishing" },
+  { icon: Send, label: "Content Calendar", href: "/content-calendar" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: Users, label: "CRM", href: "/crm" },
   { icon: Bot, label: "Automations", href: "/automations" },

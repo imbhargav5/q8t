@@ -10,3 +10,6 @@ export * from "./message.schema";
 export * from "./note.schema";
 export * from "./media.schema";
 export * from "./settings.schema";
+export * from "./social-account.schema";
+export * from "./post.schema";
+export * from "./listening.schema";
