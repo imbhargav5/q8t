@@ -10,6 +10,7 @@ import {
   Bot,
   Settings,
   ChevronLeft,
+  LayoutGrid,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -23,6 +24,7 @@ interface AppSidebarProps {
 
 const navItems = [
   { icon: MessageSquare, label: "Social Inbox", href: "/social-inbox" },
+  { icon: LayoutGrid, label: "Feeds", href: "/workspace/workspace-1/feeds" },
   { icon: Send, label: "Content Calendar", href: "/content-calendar" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: Users, label: "CRM", href: "/crm" },

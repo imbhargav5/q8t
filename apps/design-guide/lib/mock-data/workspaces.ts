@@ -25,6 +25,53 @@ export const mockWorkspace: Workspace = {
   updated_at: "2024-12-01T14:30:00Z",
 };
 
+// Additional workspaces
+export const mockWorkspaces: Workspace[] = [
+  mockWorkspace,
+  {
+    id: "workspace-2",
+    name: "Client: TechCorp",
+    slug: "techcorp",
+    logo_url: null,
+    branding: {
+      primary_color: "#0ea5e9",
+      secondary_color: "#06b6d4",
+    },
+    settings: {
+      timezone: "America/Los_Angeles",
+      language: "en",
+      date_format: "MM/DD/YYYY",
+      time_format: "12h",
+    },
+    created_by: "user-1",
+    created_at: "2024-03-20T10:00:00Z",
+    updated_at: "2024-11-15T14:30:00Z",
+  },
+  {
+    id: "workspace-3",
+    name: "Personal Brand",
+    slug: "personal-brand",
+    logo_url: null,
+    branding: {
+      primary_color: "#ec4899",
+      secondary_color: "#f43f5e",
+    },
+    settings: {
+      timezone: "America/New_York",
+      language: "en",
+      date_format: "MM/DD/YYYY",
+      time_format: "12h",
+    },
+    created_by: "user-1",
+    created_at: "2024-02-10T10:00:00Z",
+    updated_at: "2024-11-20T14:30:00Z",
+  },
+];
+
+export function getWorkspaceById(workspaceId: string): Workspace | undefined {
+  return mockWorkspaces.find((workspace) => workspace.id === workspaceId);
+}
+
 export const mockPlans: Plan[] = [
   {
     id: "plan-free",

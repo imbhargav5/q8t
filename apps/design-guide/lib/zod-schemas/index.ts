@@ -14,3 +14,6 @@ export * from "./social-account.schema";
 export * from "./post.schema";
 export * from "./listening.schema";
 export * from "./integration.schema";
+export * from "./workspace.schema";
+export * from "./stream-config.schema";
+export * from "./feed.schema";
