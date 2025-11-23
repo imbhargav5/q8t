@@ -21,6 +21,7 @@ import {
   Link2,
   Sparkles,
   TrendingUp,
+  Upload,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 
@@ -64,6 +65,12 @@ const navItems = [
     title: "Content Calendar",
     url: "/content-calendar",
     icon: Send,
+    isActive: false,
+  },
+  {
+    title: "Bulk Upload",
+    url: "/publishing/bulk",
+    icon: Upload,
     isActive: false,
   },
   {
