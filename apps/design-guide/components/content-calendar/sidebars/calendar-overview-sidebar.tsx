@@ -13,15 +13,23 @@ import {
 } from "lucide-react";
 import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
+import {
+  MiniCalendar,
+  MiniCalendarDay,
+  MiniCalendarDays,
+  MiniCalendarNavigation,
+} from "@/components/kibo-ui/mini-calendar";
 
 interface CalendarOverviewSidebarProps {
   posts: PostWithAuthor[];
   currentDate: Date;
+  onDateChange?: (date: Date) => void;
 }
 
 export function CalendarOverviewSidebar({
   posts,
   currentDate,
+  onDateChange,
 }: CalendarOverviewSidebarProps) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -60,6 +68,19 @@ export function CalendarOverviewSidebar({
           {format(currentDate, "MMMM yyyy")}
         </p>
       </div>
+
+      {/* Mini Calendar */}
+      <Card>
+        <CardContent className="pt-4">
+          <MiniCalendar defaultDate={currentDate} selectedDate={currentDate} onSelectDate={onDateChange}>
+            <MiniCalendarNavigation direction="prev" />
+            <MiniCalendarNavigation direction="next" />
+            <MiniCalendarDays>
+              {(date) => <MiniCalendarDay date={date} key={date.toISOString()} />}
+            </MiniCalendarDays>
+          </MiniCalendar>
+        </CardContent>
+      </Card>
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-2">
