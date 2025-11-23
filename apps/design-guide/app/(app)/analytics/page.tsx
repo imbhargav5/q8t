@@ -30,9 +30,20 @@ import {
 } from "@/lib/mock-data/analytics/overview";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { useState } from "react";
+import { DateRangeDialog } from "@/components/dialogs/analytics/date-range-dialog";
+import { ExportAnalyticsDialog } from "@/components/dialogs/analytics/export-analytics-dialog";
+import type { DateRange } from "react-day-picker";
 
 export default function AnalyticsPage() {
   const metrics = mockAnalyticsOverviewMetrics;
+  const [dateRangeOpen, setDateRangeOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    to: new Date(),
+  });
+  const [dateRangeLabel, setDateRangeLabel] = useState("Last 30 days");
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
@@ -73,17 +84,37 @@ export default function AnalyticsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setDateRangeOpen(true)}>
               <Calendar className="h-4 w-4 mr-2" />
-              Last 30 days
+              {dateRangeLabel}
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setExportOpen(true)}>
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <DateRangeDialog
+        open={dateRangeOpen}
+        onOpenChange={setDateRangeOpen}
+        currentRange={dateRange}
+        onApply={(range, compareToPrevious) => {
+          setDateRange(range);
+          if (range?.from && range?.to) {
+            const days = Math.ceil((range.to.getTime() - range.from.getTime()) / (1000 * 60 * 60 * 24));
+            setDateRangeLabel(`Last ${days} days`);
+          }
+          console.log("Apply date range:", range, "Compare:", compareToPrevious);
+        }}
+      />
+      <ExportAnalyticsDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        currentDateRange={dateRangeLabel}
+      />
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto p-6">

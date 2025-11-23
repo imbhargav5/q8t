@@ -1,189 +1,237 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from api/openapi.yaml
 
-import type { HttpClient } from "../src/auth/client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
 export class WhatsAppApi {
-  private client: HttpClient;
-
-  constructor(client: HttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * Send a message
    */
-  async sendMessage(phone_number_id: string, body: Types.SendMessageRequest): Promise<Types.SendMessageResponse> {
-    return this.client.post<Types.SendMessageResponse>(`/${phone_number_id}/messages`, body);
+  sendMessage(phone_number_id: string, body: Types.SendMessageRequest): Effect.Effect<Types.SendMessageResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.SendMessageResponse>(`/${phone_number_id}/messages`, body);
   }
 
   /**
    * Mark message as read
    */
-  async markMessageAsRead(phone_number_id: string, body: Types.MarkAsReadRequest): Promise<Types.SuccessResponse> {
-    return this.client.post<Types.SuccessResponse>(`/${phone_number_id}/markAsRead`, body);
+  markMessageAsRead(phone_number_id: string, body: Types.MarkAsReadRequest): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.SuccessResponse>(`/${phone_number_id}/markAsRead`, body);
   }
 
   /**
    * Upload media
    */
-  async uploadMedia(phone_number_id: string): Promise<Types.MediaUploadResponse> {
-    return this.client.post<Types.MediaUploadResponse>(`/${phone_number_id}/media`);
+  uploadMedia(phone_number_id: string): Effect.Effect<Types.MediaUploadResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.MediaUploadResponse>(`/${phone_number_id}/media`);
   }
 
   /**
    * Get media URL
    */
-  async getMediaUrl(media_id: string): Promise<Types.MediaUrlResponse> {
-    return this.client.get<Types.MediaUrlResponse>(`/${media_id}`);
+  getMediaUrl(media_id: string): Effect.Effect<Types.MediaUrlResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.MediaUrlResponse>(`/${media_id}`);
   }
 
   /**
    * Delete media
    */
-  async deleteMedia(media_id: string): Promise<Types.SuccessResponse> {
-    return this.client.delete<Types.SuccessResponse>(`/${media_id}`);
+  deleteMedia(media_id: string): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.SuccessResponse>(`/${media_id}`);
   }
 
   /**
    * List message templates
    */
-  async listTemplates(waba_id: string, queryParams?: { name?: string; status?: string; limit?: number }): Promise<Types.TemplatesListResponse> {
-    return this.client.get<Types.TemplatesListResponse>(`/${waba_id}/message_templates`, queryParams);
+  listTemplates(waba_id: string, queryParams?: { name?: string; status?: string; limit?: number }): Effect.Effect<Types.TemplatesListResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.TemplatesListResponse>(`/${waba_id}/message_templates`, queryParams);
   }
 
   /**
    * Create message template
    */
-  async createTemplate(waba_id: string, body: Types.CreateTemplateRequest): Promise<Types.TemplateResponse> {
-    return this.client.post<Types.TemplateResponse>(`/${waba_id}/message_templates`, body);
+  createTemplate(waba_id: string, body: Types.CreateTemplateRequest): Effect.Effect<Types.TemplateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.TemplateResponse>(`/${waba_id}/message_templates`, body);
   }
 
   /**
    * Get template
    */
-  async getTemplate(template_id: string): Promise<Types.Template> {
-    return this.client.get<Types.Template>(`/${template_id}/template`);
+  getTemplate(template_id: string): Effect.Effect<Types.Template, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.Template>(`/${template_id}/template`);
   }
 
   /**
    * Delete template
    */
-  async deleteTemplate(template_id: string, queryParams?: { name?: string }): Promise<Types.SuccessResponse> {
-    return this.client.delete<Types.SuccessResponse>(`/${template_id}/template`);
+  deleteTemplate(template_id: string, queryParams?: { name?: string }): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.SuccessResponse>(`/${template_id}/template`);
   }
 
   /**
    * List phone numbers
    */
-  async listPhoneNumbers(waba_id: string): Promise<Types.PhoneNumbersResponse> {
-    return this.client.get<Types.PhoneNumbersResponse>(`/${waba_id}/phone_numbers`);
+  listPhoneNumbers(waba_id: string): Effect.Effect<Types.PhoneNumbersResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.PhoneNumbersResponse>(`/${waba_id}/phone_numbers`);
   }
 
   /**
    * Get phone number
    */
-  async getPhoneNumber(phone_number_id: string): Promise<Types.PhoneNumber> {
-    return this.client.get<Types.PhoneNumber>(`/${phone_number_id}/phoneNumber`);
+  getPhoneNumber(phone_number_id: string): Effect.Effect<Types.PhoneNumber, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.PhoneNumber>(`/${phone_number_id}/phoneNumber`);
   }
 
   /**
    * Register phone number
    */
-  async registerPhoneNumber(phone_number_id: string, body: Types.RegisterPhoneRequest): Promise<Types.SuccessResponse> {
-    return this.client.post<Types.SuccessResponse>(`/${phone_number_id}/register`, body);
+  registerPhoneNumber(phone_number_id: string, body: Types.RegisterPhoneRequest): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.SuccessResponse>(`/${phone_number_id}/register`, body);
   }
 
   /**
    * Deregister phone number
    */
-  async deregisterPhoneNumber(phone_number_id: string, body: Types.DeregisterPhoneRequest): Promise<Types.SuccessResponse> {
-    return this.client.post<Types.SuccessResponse>(`/${phone_number_id}/deregister`, body);
+  deregisterPhoneNumber(phone_number_id: string, body: Types.DeregisterPhoneRequest): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.SuccessResponse>(`/${phone_number_id}/deregister`, body);
   }
 
   /**
    * Request verification code
    */
-  async requestVerificationCode(phone_number_id: string, body: Types.RequestCodeRequest): Promise<Types.SuccessResponse> {
-    return this.client.post<Types.SuccessResponse>(`/${phone_number_id}/request_code`, body);
+  requestVerificationCode(phone_number_id: string, body: Types.RequestCodeRequest): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.SuccessResponse>(`/${phone_number_id}/request_code`, body);
   }
 
   /**
    * Verify phone number
    */
-  async verifyPhoneNumber(phone_number_id: string, body: Types.VerifyCodeRequest): Promise<Types.SuccessResponse> {
-    return this.client.post<Types.SuccessResponse>(`/${phone_number_id}/verify_code`, body);
+  verifyPhoneNumber(phone_number_id: string, body: Types.VerifyCodeRequest): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.SuccessResponse>(`/${phone_number_id}/verify_code`, body);
   }
 
   /**
    * List QR codes
    */
-  async listQRCodes(phone_number_id: string): Promise<Types.QRCodesResponse> {
-    return this.client.get<Types.QRCodesResponse>(`/${phone_number_id}/message_qrdls`);
+  listQRCodes(phone_number_id: string): Effect.Effect<Types.QRCodesResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.QRCodesResponse>(`/${phone_number_id}/message_qrdls`);
   }
 
   /**
    * Create QR code
    */
-  async createQRCode(phone_number_id: string, body: Types.CreateQRCodeRequest): Promise<Types.QRCode> {
-    return this.client.post<Types.QRCode>(`/${phone_number_id}/message_qrdls`, body);
+  createQRCode(phone_number_id: string, body: Types.CreateQRCodeRequest): Effect.Effect<Types.QRCode, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.QRCode>(`/${phone_number_id}/message_qrdls`, body);
   }
 
   /**
    * Get QR code
    */
-  async getQRCode(phone_number_id: string, qr_code_id: string): Promise<Types.QRCode> {
-    return this.client.get<Types.QRCode>(`/${phone_number_id}/message_qrdls/${qr_code_id}`);
+  getQRCode(phone_number_id: string, qr_code_id: string): Effect.Effect<Types.QRCode, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.QRCode>(`/${phone_number_id}/message_qrdls/${qr_code_id}`);
   }
 
   /**
    * Update QR code
    */
-  async updateQRCode(phone_number_id: string, qr_code_id: string, body: Types.UpdateQRCodeRequest): Promise<Types.QRCode> {
-    return this.client.post<Types.QRCode>(`/${phone_number_id}/message_qrdls/${qr_code_id}`, body);
+  updateQRCode(phone_number_id: string, qr_code_id: string, body: Types.UpdateQRCodeRequest): Effect.Effect<Types.QRCode, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.QRCode>(`/${phone_number_id}/message_qrdls/${qr_code_id}`, body);
   }
 
   /**
    * Delete QR code
    */
-  async deleteQRCode(phone_number_id: string, qr_code_id: string): Promise<Types.SuccessResponse> {
-    return this.client.delete<Types.SuccessResponse>(`/${phone_number_id}/message_qrdls/${qr_code_id}`);
+  deleteQRCode(phone_number_id: string, qr_code_id: string): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.SuccessResponse>(`/${phone_number_id}/message_qrdls/${qr_code_id}`);
   }
 
   /**
    * Get business profile
    */
-  async getBusinessProfile(phone_number_id: string): Promise<Types.BusinessProfileResponse> {
-    return this.client.get<Types.BusinessProfileResponse>(`/${phone_number_id}/whatsapp_business_profile`);
+  getBusinessProfile(phone_number_id: string): Effect.Effect<Types.BusinessProfileResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.BusinessProfileResponse>(`/${phone_number_id}/whatsapp_business_profile`);
   }
 
   /**
    * Update business profile
    */
-  async updateBusinessProfile(phone_number_id: string, body: Types.UpdateBusinessProfileRequest): Promise<Types.SuccessResponse> {
-    return this.client.post<Types.SuccessResponse>(`/${phone_number_id}/whatsapp_business_profile`, body);
+  updateBusinessProfile(phone_number_id: string, body: Types.UpdateBusinessProfileRequest): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.SuccessResponse>(`/${phone_number_id}/whatsapp_business_profile`, body);
   }
 
   /**
    * Get WABA info
    */
-  async getWABA(waba_id: string): Promise<Types.WABA> {
-    return this.client.get<Types.WABA>(`/${waba_id}/waba`);
+  getWABA(waba_id: string): Effect.Effect<Types.WABA, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.WABA>(`/${waba_id}/waba`);
   }
 
   /**
    * Get subscribed apps
    */
-  async getSubscribedApps(waba_id: string): Promise<Types.SubscribedAppsResponse> {
-    return this.client.get<Types.SubscribedAppsResponse>(`/${waba_id}/subscribed_apps`);
+  getSubscribedApps(waba_id: string): Effect.Effect<Types.SubscribedAppsResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.SubscribedAppsResponse>(`/${waba_id}/subscribed_apps`);
   }
 
   /**
    * Subscribe to webhooks
    */
-  async subscribeToWebhooks(waba_id: string): Promise<Types.SuccessResponse> {
-    return this.client.post<Types.SuccessResponse>(`/${waba_id}/subscribed_apps`);
+  subscribeToWebhooks(waba_id: string): Effect.Effect<Types.SuccessResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.SuccessResponse>(`/${waba_id}/subscribed_apps`);
   }
 
 }
