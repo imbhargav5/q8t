@@ -12,10 +12,9 @@ import type { ConversationWithRelations } from "@/lib/zod-schemas";
 interface ConversationItemProps {
   conversation: ConversationWithRelations;
   isSelected: boolean;
-  onClick: () => void;
 }
 
-export function ConversationItem({ conversation, isSelected, onClick }: ConversationItemProps) {
+export function ConversationItem({ conversation, isSelected }: ConversationItemProps) {
   const { person, platform, unread_count, last_message_at, is_starred, status } = conversation;
 
   const timeAgo = last_message_at
@@ -23,16 +22,8 @@ export function ConversationItem({ conversation, isSelected, onClick }: Conversa
     : null;
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
-      onClick={onClick}
-      className={cn(
-        "relative cursor-pointer border-b p-4 transition-colors",
-        isSelected && "bg-accent",
-        !isSelected && "hover:bg-accent/50"
-      )}
-    >
+    <div className="w-full">
+
       <div className="flex items-start gap-3">
         {/* Avatar */}
         <div className="relative">
@@ -115,6 +106,6 @@ export function ConversationItem({ conversation, isSelected, onClick }: Conversa
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

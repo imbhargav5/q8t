@@ -9,6 +9,7 @@ import { Search } from "lucide-react";
 import { ConversationItem } from "./conversation-item";
 import type { ConversationWithRelations } from "@/lib/zod-schemas";
 import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
+import { cn } from "@/lib/utils";
 
 interface ConversationListProps {
   conversations: ConversationWithRelations[];
@@ -78,41 +79,49 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
             <p>No conversations found</p>
           </div>
         ) : (
-          <Listbox orientation="vertical">
-            <ListboxGroup>
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.05,
+          <div className="p-2">
+            <Listbox orientation="vertical">
+              <ListboxGroup>
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.05,
+                      },
                     },
-                  },
-                }}
-              >
-                {sortedConversations.map((conversation) => (
-                  <motion.div
-                    key={conversation.id}
-                    variants={{
-                      hidden: { opacity: 0, y: 20 },
-                      visible: { opacity: 1, y: 0 },
-                    }}
-                  >
-                    <ListboxItem value={conversation.id}>
-                      <ConversationItem
-                        conversation={conversation}
-                        isSelected={conversation.id === selectedId}
+                  }}
+                >
+                  {sortedConversations.map((conversation) => (
+                    <motion.div
+                      key={conversation.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: { opacity: 1, y: 0 },
+                      }}
+                    >
+                      <ListboxItem
+                        value={conversation.id}
                         onClick={() => onSelect(conversation)}
-                      />
-                    </ListboxItem>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </ListboxGroup>
-          </Listbox>
+                        className={cn(
+                          "w-full text-left p-3 rounded-lg transition-colors hover:bg-accent cursor-pointer",
+                          conversation.id === selectedId && "bg-accent"
+                        )}
+                      >
+                        <ConversationItem
+                          conversation={conversation}
+                          isSelected={conversation.id === selectedId}
+                        />
+                      </ListboxItem>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </ListboxGroup>
+            </Listbox>
+          </div>
         )}
       </ScrollArea>
     </div>
