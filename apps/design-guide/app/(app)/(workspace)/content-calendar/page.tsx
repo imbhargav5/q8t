@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarGrid } from "@/components/content-calendar/calendar-grid";
-import { PostComposer } from "@/components/content-calendar/post-composer";
+import { ComposeSheet } from "@/components/compose/compose-sheet";
 import { PostDetailDialog } from "@/components/content-calendar/post-detail-dialog";
 import { RightSidebarContainer } from "@/components/layout/right-sidebar-container";
 import { CalendarOverviewSidebar } from "@/components/content-calendar/sidebars/calendar-overview-sidebar";
@@ -149,7 +149,7 @@ export default function ContentCalendarPage() {
       </RightSidebarContainer>
 
       {/* Dialogs */}
-      <PostComposer
+      <ComposeSheet
         open={isComposerOpen}
         onClose={() => setIsComposerOpen(false)}
         defaultDate={composerDate}
