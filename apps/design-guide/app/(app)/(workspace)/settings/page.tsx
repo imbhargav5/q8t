@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Settings, Users, CreditCard, Building2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +8,7 @@ import { WorkspaceGeneralSettings } from "@/components/settings/workspace-genera
 import { WorkspaceMembersSettings } from "@/components/settings/workspace-members-settings";
 import { WorkspacePlanSettings } from "@/components/settings/workspace-plan-settings";
 
-export default function SettingsPage() {
+function SettingsContent() {
   const workspaceId = "workspace-1";
   const searchParams = useSearchParams();
   const tabFromUrl = searchParams.get("tab");
@@ -66,5 +66,13 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={<div className="flex h-full items-center justify-center">Loading...</div>}>
+      <SettingsContent />
+    </Suspense>
   );
 }
