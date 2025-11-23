@@ -24,16 +24,16 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { Platform, IncidentSeverity } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface RuleData {
   name: string;
   description: string;
   keywords: string[];
-  platforms: Platform[];
+  platforms: SocialPlatform[];
   threshold: number;
   thresholdUnit: string;
-  severity: IncidentSeverity;
+  severity: "critical" | "high" | "medium" | "low";
   active: boolean;
 }
 
@@ -44,8 +44,8 @@ interface EditRuleDialogProps {
   onSave: (rule: RuleData) => void;
 }
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
-const severityOptions: IncidentSeverity[] = ["critical", "high", "medium", "low"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const severityOptions: ("critical" | "high" | "medium" | "low")[] = ["critical", "high", "medium", "low"];
 const thresholdUnits = [
   { value: "mentions_hour", label: "mentions/hour" },
   { value: "mentions_day", label: "mentions/day" },
@@ -62,10 +62,10 @@ export function EditRuleDialog({
   const [description, setDescription] = useState(rule.description);
   const [keywordInput, setKeywordInput] = useState("");
   const [keywords, setKeywords] = useState<string[]>(rule.keywords);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(rule.platforms);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<SocialPlatform[]>(rule.platforms);
   const [threshold, setThreshold] = useState(rule.threshold.toString());
   const [thresholdUnit, setThresholdUnit] = useState(rule.thresholdUnit);
-  const [severity, setSeverity] = useState<IncidentSeverity>(rule.severity);
+  const [severity, setSeverity] = useState<"critical" | "high" | "medium" | "low">(rule.severity);
   const [active, setActive] = useState(rule.active);
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export function EditRuleDialog({
     }
   }, [open, rule]);
 
-  const togglePlatform = (platform: Platform) => {
+  const togglePlatform = (platform: SocialPlatform) => {
     setSelectedPlatforms((prev) =>
       prev.includes(platform)
         ? prev.filter((p) => p !== platform)
@@ -252,7 +252,7 @@ export function EditRuleDialog({
             <Label htmlFor="severity">Incident Severity</Label>
             <Select
               value={severity}
-              onValueChange={(v) => setSeverity(v as IncidentSeverity)}
+              onValueChange={(v) => setSeverity(v as "critical" | "high" | "medium" | "low")}
             >
               <SelectTrigger id="severity">
                 <SelectValue />

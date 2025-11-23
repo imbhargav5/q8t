@@ -25,14 +25,14 @@ import {
 import { Image, Send, Calendar as CalendarIcon, Clock, Upload } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
-import type { Platform } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface ComposePostDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onPost: (post: {
     content: string;
-    platforms: Platform[];
+    platforms: SocialPlatform[];
     media?: string[];
     action: "post-now" | "schedule" | "save-draft" | "add-to-queue";
     scheduledTime?: Date;
@@ -40,7 +40,7 @@ interface ComposePostDialogProps {
   }) => void;
 }
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
 
 const mockQueues = [
   { id: "queue-1", name: "Daily Updates" },
@@ -54,14 +54,14 @@ export function ComposePostDialog({
   onPost,
 }: ComposePostDialogProps) {
   const [content, setContent] = useState("");
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(["twitter"]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<SocialPlatform[]>(["twitter"]);
   const [media, setMedia] = useState<string[]>([]);
   const [publishTab, setPublishTab] = useState("now");
   const [scheduledDate, setScheduledDate] = useState<Date>();
   const [scheduledTime, setScheduledTime] = useState("12:00");
   const [selectedQueue, setSelectedQueue] = useState(mockQueues[0].id);
 
-  const togglePlatform = (platform: Platform) => {
+  const togglePlatform = (platform: SocialPlatform) => {
     setSelectedPlatforms((prev) =>
       prev.includes(platform)
         ? prev.filter((p) => p !== platform)

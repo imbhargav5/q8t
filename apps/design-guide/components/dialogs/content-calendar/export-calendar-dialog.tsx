@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
-import type { Platform } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface ExportCalendarDialogProps {
   open: boolean;
@@ -46,7 +46,7 @@ const includeOptions: ExportOption[] = [
   },
 ];
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
 
 export function ExportCalendarDialog({
   open,
@@ -56,9 +56,9 @@ export function ExportCalendarDialog({
     from: new Date(),
     to: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
   });
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(platforms);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<SocialPlatform[]>(platforms);
 
-  const togglePlatform = (platform: Platform) => {
+  const togglePlatform = (platform: SocialPlatform) => {
     setSelectedPlatforms((prev) =>
       prev.includes(platform)
         ? prev.filter((p) => p !== platform)
@@ -98,7 +98,7 @@ export function ExportCalendarDialog({
         )}
       </div>
 
-      {/* Platform Filter */}
+      {/* SocialPlatform Filter */}
       <div className="space-y-2">
         <Label>Platforms to Include</Label>
         <div className="grid grid-cols-2 gap-2">

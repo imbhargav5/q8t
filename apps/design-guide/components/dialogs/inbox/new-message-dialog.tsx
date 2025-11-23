@@ -21,27 +21,27 @@ import {
 } from "@/components/ui/select";
 import { Send, Upload, X } from "lucide-react";
 import { useState } from "react";
-import type { Platform } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface NewMessageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSendMessage: (message: {
     recipientId: string;
-    platform: Platform;
+    platform: SocialPlatform;
     content: string;
     attachments?: string[];
   }) => void;
 }
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin"];
 
 const mockContacts = [
-  { id: "contact-1", name: "Sarah Johnson", platform: "twitter" as Platform },
-  { id: "contact-2", name: "Mike Chen", platform: "facebook" as Platform },
-  { id: "contact-3", name: "Emily Rodriguez", platform: "instagram" as Platform },
-  { id: "contact-4", name: "David Kim", platform: "linkedin" as Platform },
-  { id: "contact-5", name: "Alex Rivera", platform: "twitter" as Platform },
+  { id: "contact-1", name: "Sarah Johnson", platform: "twitter" as SocialPlatform },
+  { id: "contact-2", name: "Mike Chen", platform: "facebook" as SocialPlatform },
+  { id: "contact-3", name: "Emily Rodriguez", platform: "instagram" as SocialPlatform },
+  { id: "contact-4", name: "David Kim", platform: "linkedin" as SocialPlatform },
+  { id: "contact-5", name: "Alex Rivera", platform: "twitter" as SocialPlatform },
 ];
 
 export function NewMessageDialog({
@@ -50,7 +50,7 @@ export function NewMessageDialog({
   onSendMessage,
 }: NewMessageDialogProps) {
   const [recipientId, setRecipientId] = useState("");
-  const [platform, setPlatform] = useState<Platform>("twitter");
+  const [platform, setPlatform] = useState<SocialPlatform>("twitter");
   const [content, setContent] = useState("");
   const [attachments, setAttachments] = useState<string[]>([]);
 
@@ -94,15 +94,15 @@ export function NewMessageDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Platform Selection */}
+          {/* SocialPlatform Selection */}
           <div className="space-y-2">
             <Label htmlFor="platform">
-              Platform <span className="text-destructive">*</span>
+              SocialPlatform <span className="text-destructive">*</span>
             </Label>
             <Select
               value={platform}
               onValueChange={(v) => {
-                setPlatform(v as Platform);
+                setPlatform(v as SocialPlatform);
                 setRecipientId(""); // Reset recipient when platform changes
               }}
             >

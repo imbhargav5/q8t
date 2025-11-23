@@ -21,24 +21,24 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
-import type { Platform, IncidentSeverity, IncidentStatus } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface CreateIncidentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreateIncident: (incident: {
     title: string;
-    severity: IncidentSeverity;
+    severity: "critical" | "high" | "medium" | "low";
     description: string;
-    platforms: Platform[];
+    platforms: SocialPlatform[];
     channels: string[];
-    status: IncidentStatus;
+    status: "detected" | "investigating" | "identified" | "monitoring" | "resolved";
   }) => void;
 }
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
-const severityOptions: IncidentSeverity[] = ["critical", "high", "medium", "low"];
-const statusOptions: IncidentStatus[] = ["detected", "investigating", "identified", "monitoring", "resolved"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const severityOptions: ("critical" | "high" | "medium" | "low")[] = ["critical", "high", "medium", "low"];
+const statusOptions: ("detected" | "investigating" | "identified" | "monitoring" | "resolved")[] = ["detected", "investigating", "identified", "monitoring", "resolved"];
 
 export function CreateIncidentDialog({
   open,
@@ -46,13 +46,13 @@ export function CreateIncidentDialog({
   onCreateIncident,
 }: CreateIncidentDialogProps) {
   const [title, setTitle] = useState("");
-  const [severity, setSeverity] = useState<IncidentSeverity>("medium");
+  const [severity, setSeverity] = useState<"critical" | "high" | "medium" | "low">("medium");
   const [description, setDescription] = useState("");
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<SocialPlatform[]>([]);
   const [channels, setChannels] = useState("");
-  const [status, setStatus] = useState<IncidentStatus>("detected");
+  const [status, setStatus] = useState<"detected" | "investigating" | "identified" | "monitoring" | "resolved">("detected");
 
-  const togglePlatform = (platform: Platform) => {
+  const togglePlatform = (platform: SocialPlatform) => {
     setSelectedPlatforms((prev) =>
       prev.includes(platform)
         ? prev.filter((p) => p !== platform)
@@ -111,7 +111,7 @@ export function CreateIncidentDialog({
             <Label htmlFor="severity">
               Severity <span className="text-destructive">*</span>
             </Label>
-            <Select value={severity} onValueChange={(v) => setSeverity(v as IncidentSeverity)}>
+            <Select value={severity} onValueChange={(v) => setSeverity(v as "critical" | "high" | "medium" | "low")}>
               <SelectTrigger id="severity">
                 <SelectValue />
               </SelectTrigger>
@@ -178,7 +178,7 @@ export function CreateIncidentDialog({
           {/* Status */}
           <div className="space-y-2">
             <Label htmlFor="status">Initial Status</Label>
-            <Select value={status} onValueChange={(v) => setStatus(v as IncidentStatus)}>
+            <Select value={status} onValueChange={(v) => setStatus(v as "detected" | "investigating" | "identified" | "monitoring" | "resolved")}>
               <SelectTrigger id="status">
                 <SelectValue />
               </SelectTrigger>

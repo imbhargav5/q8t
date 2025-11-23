@@ -23,7 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import type { Platform } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface NewQueryDialogProps {
   open: boolean;
@@ -33,13 +33,13 @@ interface NewQueryDialogProps {
     keywords: string[];
     booleanLogic: string;
     languages: string[];
-    platforms: Platform[];
+    platforms: SocialPlatform[];
     enableAlerts: boolean;
     alertThreshold?: number;
   }) => void;
 }
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
 
 const languages = [
   { code: "en", name: "English" },
@@ -66,7 +66,7 @@ export function NewQueryDialog({
   const [keywords, setKeywords] = useState<string[]>([]);
   const [booleanLogic, setBooleanLogic] = useState("AND");
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(["en"]);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<SocialPlatform[]>([]);
   const [enableAlerts, setEnableAlerts] = useState(false);
   const [alertThreshold, setAlertThreshold] = useState("50");
 
@@ -88,7 +88,7 @@ export function NewQueryDialog({
     );
   };
 
-  const togglePlatform = (platform: Platform) => {
+  const togglePlatform = (platform: SocialPlatform) => {
     setSelectedPlatforms((prev) =>
       prev.includes(platform)
         ? prev.filter((p) => p !== platform)

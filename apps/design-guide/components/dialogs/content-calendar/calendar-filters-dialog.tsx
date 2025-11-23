@@ -21,20 +21,21 @@ import {
 } from "@/components/ui/select";
 import { Filter, X } from "lucide-react";
 import { useState } from "react";
-import type { Platform, PostStatus } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
+import type { PostStatus } from "@/lib/zod-schemas/post.schema";
 
 interface CalendarFiltersDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onApplyFilters: (filters: {
-    platforms: Platform[];
+    platforms: SocialPlatform[];
     statuses: PostStatus[];
     assignedTo: string[];
     tags: string[];
     contentType: string[];
   }) => void;
   currentFilters?: {
-    platforms?: Platform[];
+    platforms?: SocialPlatform[];
     statuses?: PostStatus[];
     assignedTo?: string[];
     tags?: string[];
@@ -42,7 +43,7 @@ interface CalendarFiltersDialogProps {
   };
 }
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
 
 const statuses: PostStatus[] = ["draft", "scheduled", "published", "failed"];
 
@@ -78,7 +79,7 @@ export function CalendarFiltersDialog({
   onApplyFilters,
   currentFilters = {},
 }: CalendarFiltersDialogProps) {
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>(
+  const [selectedPlatforms, setSelectedPlatforms] = useState<SocialPlatform[]>(
     currentFilters.platforms || []
   );
   const [selectedStatuses, setSelectedStatuses] = useState<PostStatus[]>(
@@ -94,7 +95,7 @@ export function CalendarFiltersDialog({
     currentFilters.contentType || []
   );
 
-  const togglePlatform = (platform: Platform) => {
+  const togglePlatform = (platform: SocialPlatform) => {
     setSelectedPlatforms((prev) =>
       prev.includes(platform)
         ? prev.filter((p) => p !== platform)

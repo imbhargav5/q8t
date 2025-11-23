@@ -29,14 +29,13 @@ import {
   Activity,
 } from "lucide-react";
 import { useState } from "react";
-import type { IncidentSeverity, IncidentStatus } from "@/lib/zod-schemas/enums.schema";
 import { format } from "date-fns";
 
 interface IncidentData {
   id: string;
   title: string;
-  severity: IncidentSeverity;
-  status: IncidentStatus;
+  severity: "critical" | "high" | "medium" | "low";
+  status: "detected" | "investigating" | "identified" | "monitoring" | "resolved";
   description: string;
   detectedAt: Date;
   resolvedAt?: Date;
@@ -59,12 +58,12 @@ interface IncidentDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   incident: IncidentData;
-  onChangeStatus: (newStatus: IncidentStatus) => void;
+  onChangeStatus: (newStatus: "detected" | "investigating" | "identified" | "monitoring" | "resolved") => void;
   onAddUpdate: (update: string) => void;
   onResolve: () => void;
 }
 
-const statusOptions: IncidentStatus[] = [
+const statusOptions: ("detected" | "investigating" | "identified" | "monitoring" | "resolved")[] = [
   "detected",
   "investigating",
   "identified",
@@ -88,7 +87,7 @@ export function IncidentDetailsDialog({
   onResolve,
 }: IncidentDetailsDialogProps) {
   const [updateNote, setUpdateNote] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<IncidentStatus>(
+  const [selectedStatus, setSelectedStatus] = useState<"detected" | "investigating" | "identified" | "monitoring" | "resolved">(
     incident.status
   );
 
@@ -99,7 +98,7 @@ export function IncidentDetailsDialog({
     }
   };
 
-  const handleStatusChange = (newStatus: IncidentStatus) => {
+  const handleStatusChange = (newStatus: "detected" | "investigating" | "identified" | "monitoring" | "resolved") => {
     setSelectedStatus(newStatus);
     onChangeStatus(newStatus);
   };
@@ -237,7 +236,7 @@ export function IncidentDetailsDialog({
                 <Label htmlFor="status">Change Status</Label>
                 <Select
                   value={selectedStatus}
-                  onValueChange={(v) => handleStatusChange(v as IncidentStatus)}
+                  onValueChange={(v) => handleStatusChange(v as "detected" | "investigating" | "identified" | "monitoring" | "resolved")}
                 >
                   <SelectTrigger id="status">
                     <SelectValue />

@@ -21,7 +21,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import type { Platform } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface AddStreamDialogProps {
   open: boolean;
@@ -30,7 +30,7 @@ interface AddStreamDialogProps {
   onAddStream: (stream: {
     type: string;
     name: string;
-    platform: Platform;
+    platform: SocialPlatform;
     query: string;
     autoRefresh: boolean;
     refreshInterval?: number;
@@ -65,7 +65,7 @@ const streamTypes = [
   },
 ];
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
 
 const refreshIntervals = [
   { value: "1", label: "1 minute" },
@@ -83,7 +83,7 @@ export function AddStreamDialog({
 }: AddStreamDialogProps) {
   const [streamType, setStreamType] = useState("mentions");
   const [name, setName] = useState("");
-  const [platform, setPlatform] = useState<Platform>("twitter");
+  const [platform, setPlatform] = useState<SocialPlatform>("twitter");
   const [query, setQuery] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState("5");
@@ -177,12 +177,12 @@ export function AddStreamDialog({
             />
           </div>
 
-          {/* Platform */}
+          {/* SocialPlatform */}
           <div className="space-y-2">
             <Label htmlFor="platform">
-              Platform <span className="text-destructive">*</span>
+              SocialPlatform <span className="text-destructive">*</span>
             </Label>
-            <Select value={platform} onValueChange={(v) => setPlatform(v as Platform)}>
+            <Select value={platform} onValueChange={(v) => setPlatform(v as SocialPlatform)}>
               <SelectTrigger id="platform">
                 <SelectValue />
               </SelectTrigger>

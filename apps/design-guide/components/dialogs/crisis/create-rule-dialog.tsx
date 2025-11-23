@@ -24,7 +24,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useState } from "react";
-import type { Platform, IncidentSeverity } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface CreateRuleDialogProps {
   open: boolean;
@@ -33,16 +33,16 @@ interface CreateRuleDialogProps {
     name: string;
     description: string;
     keywords: string[];
-    platforms: Platform[];
+    platforms: SocialPlatform[];
     threshold: number;
     thresholdUnit: string;
-    severity: IncidentSeverity;
+    severity: "critical" | "high" | "medium" | "low";
     active: boolean;
   }) => void;
 }
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
-const severityOptions: IncidentSeverity[] = ["critical", "high", "medium", "low"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const severityOptions: ("critical" | "high" | "medium" | "low")[] = ["critical", "high", "medium", "low"];
 const thresholdUnits = [
   { value: "mentions_hour", label: "mentions/hour" },
   { value: "mentions_day", label: "mentions/day" },
@@ -58,13 +58,13 @@ export function CreateRuleDialog({
   const [description, setDescription] = useState("");
   const [keywordInput, setKeywordInput] = useState("");
   const [keywords, setKeywords] = useState<string[]>([]);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<SocialPlatform[]>([]);
   const [threshold, setThreshold] = useState("50");
   const [thresholdUnit, setThresholdUnit] = useState("mentions_hour");
-  const [severity, setSeverity] = useState<IncidentSeverity>("medium");
+  const [severity, setSeverity] = useState<"critical" | "high" | "medium" | "low">("medium");
   const [active, setActive] = useState(true);
 
-  const togglePlatform = (platform: Platform) => {
+  const togglePlatform = (platform: SocialPlatform) => {
     setSelectedPlatforms((prev) =>
       prev.includes(platform)
         ? prev.filter((p) => p !== platform)
@@ -245,7 +245,7 @@ export function CreateRuleDialog({
             <Label htmlFor="severity">Incident Severity</Label>
             <Select
               value={severity}
-              onValueChange={(v) => setSeverity(v as IncidentSeverity)}
+              onValueChange={(v) => setSeverity(v as "critical" | "high" | "medium" | "low")}
             >
               <SelectTrigger id="severity">
                 <SelectValue />

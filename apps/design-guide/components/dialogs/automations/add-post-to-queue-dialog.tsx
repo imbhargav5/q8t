@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Upload } from "lucide-react";
 import { useState } from "react";
-import type { Platform } from "@/lib/zod-schemas/enums.schema";
+import type { SocialPlatform } from "@/lib/zod-schemas/enums.schema";
 
 interface AddPostToQueueDialogProps {
   open: boolean;
@@ -33,7 +33,7 @@ interface AddPostToQueueDialogProps {
   onAddPost: (post: {
     type: "new" | "existing";
     content?: string;
-    platforms?: Platform[];
+    platforms?: SocialPlatform[];
     media?: string[];
     existingPostId?: string;
     position: "next" | "end" | "specific";
@@ -41,7 +41,7 @@ interface AddPostToQueueDialogProps {
   }) => void;
 }
 
-const platforms: Platform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
+const platforms: SocialPlatform[] = ["twitter", "facebook", "instagram", "linkedin", "youtube"];
 
 export function AddPostToQueueDialog({
   open,
@@ -51,12 +51,12 @@ export function AddPostToQueueDialog({
 }: AddPostToQueueDialogProps) {
   const [postType, setPostType] = useState<"new" | "existing">("new");
   const [content, setContent] = useState("");
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Platform[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<SocialPlatform[]>([]);
   const [existingPostId, setExistingPostId] = useState("");
   const [position, setPosition] = useState<"next" | "end" | "specific">("end");
   const [specificPosition, setSpecificPosition] = useState("1");
 
-  const togglePlatform = (platform: Platform) => {
+  const togglePlatform = (platform: SocialPlatform) => {
     setSelectedPlatforms((prev) =>
       prev.includes(platform)
         ? prev.filter((p) => p !== platform)

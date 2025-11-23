@@ -6,6 +6,7 @@ import {
   ExportOption,
 } from "../shared/export-dialog";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 
@@ -191,6 +192,3 @@ export function ExportContactsDialog({
   );
 }
 
-function Button({ children, ...props }: React.ComponentProps<"button">) {
-  return <button {...props}>{children}</button>;
-}
