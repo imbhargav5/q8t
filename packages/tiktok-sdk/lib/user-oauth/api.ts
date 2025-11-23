@@ -1,15 +1,13 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from OpenAPI specification
 
-import type { HttpClient } from "../../src/auth/client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
 export class UserOAuthApi {
-  private client: HttpClient;
-
-  constructor(client: HttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * Get user information
@@ -25,8 +23,10 @@ export class UserOAuthApi {
    *
    * @public
    */
-  async getUserInfo(params?: { fields?: string }): Promise<Types.UserInfoResponse> {
-    return this.client.get<Types.UserInfoResponse>("/user/info/", {
+  getUserInfo(params?: { fields?: string }): Effect.Effect<Types.UserInfoResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.UserInfoResponse>("/user/info/", {
       "fields": params?.fields,
     });
   }
@@ -44,8 +44,10 @@ export class UserOAuthApi {
    *
    * @public
    */
-  async listVideos(body: Types.VideoListRequest): Promise<Types.VideoListResponse> {
-    return this.client.post<Types.VideoListResponse>("/video/list/", body);
+  listVideos(body: Types.VideoListRequest): Effect.Effect<Types.VideoListResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.VideoListResponse>("/video/list/", body);
   }
 
   /**
@@ -61,8 +63,10 @@ export class UserOAuthApi {
    *
    * @public
    */
-  async queryVideos(body: Types.VideoQueryRequest): Promise<Types.VideoQueryResponse> {
-    return this.client.post<Types.VideoQueryResponse>("/video/query/", body);
+  queryVideos(body: Types.VideoQueryRequest): Effect.Effect<Types.VideoQueryResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.VideoQueryResponse>("/video/query/", body);
   }
 
   /**
@@ -78,8 +82,10 @@ export class UserOAuthApi {
    *
    * @public
    */
-  async queryCreatorInfo(): Promise<Types.CreatorInfoResponse> {
-    return this.client.post<Types.CreatorInfoResponse>("/post/publish/creator_info/query/");
+  queryCreatorInfo(): Effect.Effect<Types.CreatorInfoResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreatorInfoResponse>("/post/publish/creator_info/query/");
   }
 
   /**
@@ -95,8 +101,10 @@ export class UserOAuthApi {
    *
    * @public
    */
-  async initializeVideoPost(body: Types.VideoInitRequest): Promise<Types.VideoInitResponse> {
-    return this.client.post<Types.VideoInitResponse>("/post/publish/video/init/", body);
+  initializeVideoPost(body: Types.VideoInitRequest): Effect.Effect<Types.VideoInitResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.VideoInitResponse>("/post/publish/video/init/", body);
   }
 
   /**
@@ -112,8 +120,10 @@ export class UserOAuthApi {
    *
    * @public
    */
-  async uploadVideo(): Promise<Types.VideoUploadResponse> {
-    return this.client.post<Types.VideoUploadResponse>("/post/publish/video/upload/");
+  uploadVideo(): Effect.Effect<Types.VideoUploadResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.VideoUploadResponse>("/post/publish/video/upload/");
   }
 
   /**
@@ -129,8 +139,10 @@ export class UserOAuthApi {
    *
    * @public
    */
-  async fetchPublishStatus(body: Types.PublishStatusRequest): Promise<Types.PublishStatusResponse> {
-    return this.client.post<Types.PublishStatusResponse>("/post/publish/status/fetch/", body);
+  fetchPublishStatus(body: Types.PublishStatusRequest): Effect.Effect<Types.PublishStatusResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.PublishStatusResponse>("/post/publish/status/fetch/", body);
   }
 
 }
