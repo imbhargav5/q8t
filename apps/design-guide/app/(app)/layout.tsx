@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import {
   SidebarInset,
@@ -15,15 +16,18 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { NotificationsSheet } from "@/components/dialogs/notifications/notifications-sheet"
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+
   return (
     <SidebarProvider style={
         {
           "--sidebar-width": "280px",
         } as React.CSSProperties
       }>
-      <AppSidebar />
+      <AppSidebar onOpenNotifications={() => setIsNotificationsOpen(true)} />
       <SidebarInset>
         <header className="bg-background sticky top-0 z-50 flex shrink-0 items-center gap-2 border-b p-4">
           <SidebarTrigger className="-ml-1" />
@@ -47,6 +51,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </header>
         <main className="flex flex-1 flex-col">{children}</main>
       </SidebarInset>
+      <NotificationsSheet
+        open={isNotificationsOpen}
+        onOpenChange={setIsNotificationsOpen}
+      />
     </SidebarProvider>
   )
 }

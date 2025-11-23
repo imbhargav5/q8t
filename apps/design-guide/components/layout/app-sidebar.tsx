@@ -96,12 +96,16 @@ const userData = {
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=You",
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  onOpenNotifications?: () => void
+}
+
+export function AppSidebar({ onOpenNotifications, ...props }: AppSidebarProps) {
   const pathname = usePathname()
   const { setOpen } = useSidebar()
 
   return (
-    <Sidebar      
+    <Sidebar
       collapsible="icon"
       className="overflow-hidden *:data-[sidebar=sidebar]:flex-row"
       {...props}
@@ -161,7 +165,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={userData} />
+          <NavUser user={userData} onOpenNotifications={onOpenNotifications} />
         </SidebarFooter>
       </Sidebar>
     </Sidebar>
