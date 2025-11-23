@@ -16,16 +16,9 @@ import {
   Share2,
   CheckSquare,
 } from "lucide-react";
-import { use, useState } from "react";
+import { useState } from "react";
 
-interface IntegrationsPageProps {
-  params: Promise<{
-    workspaceId: string;
-  }>;
-}
-
-export default function IntegrationsPage({ params }: IntegrationsPageProps) {
-  const { workspaceId } = use(params);
+export default function IntegrationsPage() {
   const [activeTab, setActiveTab] = useState("all");
 
   const categoryIcons = {
@@ -82,14 +75,12 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="all" className="mt-0">
               <IntegrationList
                 integrations={mockIntegrations}
-                workspaceId={workspaceId}
               />
             </TabsContent>
 
             <TabsContent value="social-media" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("social-media")}
-                workspaceId={workspaceId}
                 category="social-media"
               />
             </TabsContent>
@@ -97,7 +88,6 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="communication" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("communication")}
-                workspaceId={workspaceId}
                 category="communication"
               />
             </TabsContent>
@@ -105,7 +95,6 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="productivity" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("productivity")}
-                workspaceId={workspaceId}
                 category="productivity"
               />
             </TabsContent>
@@ -113,7 +102,6 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="business" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("business")}
-                workspaceId={workspaceId}
                 category="business"
               />
             </TabsContent>
@@ -121,7 +109,6 @@ export default function IntegrationsPage({ params }: IntegrationsPageProps) {
             <TabsContent value="media" className="mt-0">
               <IntegrationList
                 integrations={getIntegrationsByCategory("media")}
-                workspaceId={workspaceId}
                 category="media"
               />
             </TabsContent>

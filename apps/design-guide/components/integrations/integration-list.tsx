@@ -8,13 +8,11 @@ import { Listbox, ListboxGroup, ListboxItem } from "@/components/ui/listbox";
 
 interface IntegrationListProps {
   integrations: Integration[];
-  workspaceId: string;
   category?: IntegrationCategory;
 }
 
 export function IntegrationList({
   integrations,
-  workspaceId,
   category,
 }: IntegrationListProps) {
   if (integrations.length === 0) {
@@ -40,7 +38,6 @@ export function IntegrationList({
           <ListboxItem key={integration.id} value={integration.id}>
             <IntegrationCard
               integration={integration}
-              workspaceId={workspaceId}
             />
           </ListboxItem>
         ))}

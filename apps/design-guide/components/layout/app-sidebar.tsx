@@ -35,7 +35,7 @@ import {
 const navItems = [
   {
     title: "Dashboard",
-    url: "/workspace/workspace-1",
+    url: "/",
     icon: Home,
     isActive: false,
   },
@@ -47,7 +47,7 @@ const navItems = [
   },
   {
     title: "Feeds",
-    url: "/workspace/workspace-1/feeds",
+    url: "/feeds",
     icon: LayoutGrid,
     isActive: false,
   },
@@ -71,13 +71,13 @@ const navItems = [
   },
   {
     title: "Automations",
-    url: "/workspace/workspace-1/automations",
+    url: "/automations",
     icon: Bot,
     isActive: false,
   },
   {
     title: "Crisis Management",
-    url: "/workspace/workspace-1/crisis-management",
+    url: "/crisis-management",
     icon: Shield,
     isActive: false,
   },
@@ -115,7 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                <a href="/workspace/workspace-1">
+                <a href="/">
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                     <Briefcase className="size-4" />
                   </div>

@@ -18,7 +18,6 @@ import type { PostWithAuthor, StreamConfig } from "@/lib/zod-schemas";
 
 interface FeedViewPageProps {
   params: Promise<{
-    workspaceId: string;
     feedId: string;
   }>;
 }
@@ -136,7 +135,8 @@ function getPostsForStream(
 }
 
 export default function FeedViewPage({ params }: FeedViewPageProps) {
-  const { workspaceId, feedId } = use(params);
+  const { feedId } = use(params);
+  const workspaceId = "workspace-1";
   const feed = getFeedById(feedId);
 
   if (!feed) {
@@ -147,7 +147,7 @@ export default function FeedViewPage({ params }: FeedViewPageProps) {
           <p className="text-muted-foreground mb-4">
             The feed you're looking for doesn't exist.
           </p>
-          <Link href={`/workspace/${workspaceId}/feeds`}>
+          <Link href="/feeds">
             <Button>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Feeds
@@ -168,7 +168,7 @@ export default function FeedViewPage({ params }: FeedViewPageProps) {
         <div className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Link href={`/workspace/${workspaceId}/feeds`}>
+              <Link href="/feeds">
                 <Button variant="ghost" size="icon">
                   <ArrowLeft className="h-4 w-4" />
                 </Button>

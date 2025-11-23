@@ -1,6 +1,5 @@
 "use client";
 
-import { use } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,15 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDistanceToNow } from "date-fns";
 
-interface FeedsPageProps {
-  params: Promise<{
-    workspaceId: string;
-  }>;
-}
-
-export default function FeedsPage({ params }: FeedsPageProps) {
-  const { workspaceId } = use(params);
-  const feeds = getFeedsByWorkspace(workspaceId);
+export default function FeedsPage() {
+  const feeds = getFeedsByWorkspace("workspace-1");
 
   return (
     <div className="flex h-full flex-col">
@@ -108,7 +100,7 @@ export default function FeedsPage({ params }: FeedsPageProps) {
                 </CardContent>
                 <CardFooter>
                   <Link
-                    href={`/workspace/${workspaceId}/feeds/${feed.id}`}
+                    href={`/feeds/${feed.id}`}
                     className="w-full"
                   >
                     <Button className="w-full" variant="outline">

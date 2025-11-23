@@ -9,14 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
-interface WorkspaceHomeProps {
-  params: Promise<{
-    workspaceId: string;
-  }>;
-}
-
-export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
-  const { workspaceId } = await params;
+export default function WorkspaceHome() {
   const workspace = mockWorkspace;
   const subscription = mockSubscription;
   const teamMembers = mockTeamMembers;
@@ -31,7 +24,7 @@ export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
             Workspace overview and quick actions
           </p>
         </div>
-        <Link href={`/workspace/${workspaceId}/settings`}>
+        <Link href="/settings">
           <Button variant="outline">
             <Settings className="h-4 w-4 mr-2" />
             Settings
@@ -104,7 +97,7 @@ export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
                   <p className="text-sm text-muted-foreground">
                     {subscription.seats - subscription.used_seats} seats available
                   </p>
-                  <Link href={`/workspace/${workspaceId}/settings?tab=plan`}>
+                  <Link href="/settings?tab=plan">
                     <Button variant="outline" size="sm">
                       Upgrade Plan
                     </Button>
@@ -123,7 +116,7 @@ export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
                       Active members in your workspace
                     </CardDescription>
                   </div>
-                  <Link href={`/workspace/${workspaceId}/settings?tab=members`}>
+                  <Link href="/settings?tab=members">
                     <Button variant="outline" size="sm">
                       Manage Team
                     </Button>
@@ -174,19 +167,19 @@ export default async function WorkspaceHome({ params }: WorkspaceHomeProps) {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Link href={`/workspace/${workspaceId}/settings?tab=members`}>
+                  <Link href="/settings?tab=members">
                     <Button variant="outline" className="w-full justify-start">
                       <Users className="h-4 w-4 mr-2" />
                       Invite Team Members
                     </Button>
                   </Link>
-                  <Link href={`/workspace/${workspaceId}/settings?tab=general`}>
+                  <Link href="/settings?tab=general">
                     <Button variant="outline" className="w-full justify-start">
                       <Settings className="h-4 w-4 mr-2" />
                       Workspace Settings
                     </Button>
                   </Link>
-                  <Link href={`/workspace/${workspaceId}/settings?tab=plan`}>
+                  <Link href="/settings?tab=plan">
                     <Button variant="outline" className="w-full justify-start">
                       <TrendingUp className="h-4 w-4 mr-2" />
                       Upgrade Plan

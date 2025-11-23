@@ -10,7 +10,6 @@ import { use } from "react";
 
 interface IntegrationDetailPageProps {
   params: Promise<{
-    workspaceId: string;
     integrationId: string;
   }>;
 }
@@ -18,7 +17,8 @@ interface IntegrationDetailPageProps {
 export default function IntegrationDetailPage({
   params,
 }: IntegrationDetailPageProps) {
-  const { workspaceId, integrationId } = use(params);
+  const { integrationId } = use(params);
+  const workspaceId = "workspace-1";
   const integration = getIntegrationById(integrationId);
 
   if (!integration) {
@@ -30,7 +30,7 @@ export default function IntegrationDetailPage({
       {/* Header */}
       <div className="border-b bg-background px-6 py-4">
         <div className="flex items-center gap-4">
-          <Link href={`/workspace/${workspaceId}/integrations`}>
+          <Link href={`integrations`}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4" />
             </Button>

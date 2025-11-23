@@ -6,12 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { mockRSSFeeds } from "@/lib/mock-data";
 import { Rss, Plus, Play, Pause, Settings, Trash2, Eye } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 export default function RSSFeedsPage() {
-  const params = useParams();
-  const workspaceId = params.workspaceId as string;
-
   const activeFeeds = mockRSSFeeds.filter(f => f.isActive);
   const inactiveFeeds = mockRSSFeeds.filter(f => !f.isActive);
 
@@ -29,7 +25,7 @@ export default function RSSFeedsPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href={`/workspace/${workspaceId}/automations/rss-feeds/new`}>
+          <Link href={`/automations/rss-feeds/new`}>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
               New RSS Feed
@@ -145,13 +141,13 @@ export default function RSSFeedsPage() {
                   )}
 
                   <div className="flex gap-2 pt-2">
-                    <Link href={`/workspace/${workspaceId}/automations/rss-feeds/${feed.id}`}>
+                    <Link href={`/automations/rss-feeds/${feed.id}`}>
                       <Button size="sm" variant="outline">
                         <Eye className="h-3 w-3 mr-1" />
                         View Details
                       </Button>
                     </Link>
-                    <Link href={`/workspace/${workspaceId}/automations/rss-feeds/${feed.id}/edit`}>
+                    <Link href={`/automations/rss-feeds/${feed.id}/edit`}>
                       <Button size="sm" variant="outline">
                         <Settings className="h-3 w-3 mr-1" />
                         Edit
@@ -196,7 +192,7 @@ export default function RSSFeedsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-2">
-                    <Link href={`/workspace/${workspaceId}/automations/rss-feeds/${feed.id}/edit`}>
+                    <Link href={`/automations/rss-feeds/${feed.id}/edit`}>
                       <Button size="sm" variant="outline">
                         <Settings className="h-3 w-3 mr-1" />
                         Edit

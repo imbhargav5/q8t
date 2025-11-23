@@ -7,7 +7,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { mockCrisisIncidents, mockCrisisDetectionRules, mockStatusComponents } from "@/lib/mock-data";
 import { AlertTriangle, CheckCircle, Clock, Shield, Activity, Plus, Settings } from "lucide-react";
 import type { CrisisSeverity, CrisisStatus, ComponentStatus } from "@/lib/zod-schemas";
-import { useParams } from "next/navigation";
 
 const severityConfig: Record<CrisisSeverity, { color: string; icon: typeof AlertTriangle }> = {
   low: { color: "bg-blue-500/10 text-blue-700 border-blue-200", icon: Activity },
@@ -33,9 +32,6 @@ const componentStatusConfig: Record<ComponentStatus, { color: string; label: str
 };
 
 export default function CrisisManagementPage() {
-  const params = useParams();
-  const workspaceId = params.workspaceId as string;
-
   const activeIncidents = mockCrisisIncidents.filter(i => i.status !== "resolved");
   const resolvedIncidents = mockCrisisIncidents.filter(i => i.status === "resolved");
 

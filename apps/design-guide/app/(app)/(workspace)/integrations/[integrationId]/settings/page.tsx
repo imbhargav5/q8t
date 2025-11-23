@@ -14,7 +14,6 @@ import { use } from "react";
 
 interface IntegrationSettingsPageProps {
   params: Promise<{
-    workspaceId: string;
     integrationId: string;
   }>;
 }
@@ -22,7 +21,7 @@ interface IntegrationSettingsPageProps {
 export default function IntegrationSettingsPage({
   params,
 }: IntegrationSettingsPageProps) {
-  const { workspaceId, integrationId } = use(params);
+  const { integrationId } = use(params);
   const integration = getIntegrationById(integrationId);
 
   if (!integration) {
@@ -60,7 +59,7 @@ export default function IntegrationSettingsPage({
       <div className="border-b bg-background px-6 py-4">
         <div className="flex items-center gap-4">
           <Link
-            href={`/workspace/${workspaceId}/integrations/${integrationId}`}
+            href={`integrations/${integrationId}`}
           >
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4" />
