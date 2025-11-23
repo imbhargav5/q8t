@@ -1,8 +1,9 @@
 {
-  "name": "@q8t/listening",
+  "name": "@q8t/sentiment",
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "description": "Sentiment and emotion analysis for social media content",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
@@ -13,18 +14,17 @@
     "dev": "tsc --watch",
     "check": "tsc --noEmit",
     "lint": "biome check .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
-    "inngest": "^3.22.13",
-    "zod": "^3.23.8",
-    "lodash": "^4.17.21",
-    "@supabase/supabase-js": "^2.45.4",
-    "@q8t/sentiment": "workspace:*"
+    "effect": "^3.10.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.8.6",
-    "@types/lodash": "^4.17.13",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }
