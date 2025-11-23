@@ -1,15 +1,13 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from OpenAPI specification
 
-import type { HttpClient } from "../../src/auth/client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
 export class BusinessApi {
-  private client: HttpClient;
-
-  constructor(client: HttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * Create campaign
@@ -24,8 +22,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async createCampaign(body: Types.CampaignCreateRequest): Promise<Types.CampaignCreateResponse> {
-    return this.client.post<Types.CampaignCreateResponse>("/campaign/create/", body);
+  createCampaign(body: Types.CampaignCreateRequest): Effect.Effect<Types.CampaignCreateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CampaignCreateResponse>("/campaign/create/", body);
   }
 
   /**
@@ -46,8 +46,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async getCampaigns(params?: { advertiser_id?: string; campaign_ids?: string; filtering?: string; page?: number; page_size?: number }): Promise<Types.CampaignGetResponse> {
-    return this.client.get<Types.CampaignGetResponse>("/campaign/get/", {
+  getCampaigns(params?: { advertiser_id?: string; campaign_ids?: string; filtering?: string; page?: number; page_size?: number }): Effect.Effect<Types.CampaignGetResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.CampaignGetResponse>("/campaign/get/", {
       "advertiser_id": params?.advertiser_id,
       "campaign_ids": params?.campaign_ids,
       "filtering": params?.filtering,
@@ -69,8 +71,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async updateCampaign(body: Types.CampaignUpdateRequest): Promise<Types.CampaignUpdateResponse> {
-    return this.client.post<Types.CampaignUpdateResponse>("/campaign/update/", body);
+  updateCampaign(body: Types.CampaignUpdateRequest): Effect.Effect<Types.CampaignUpdateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CampaignUpdateResponse>("/campaign/update/", body);
   }
 
   /**
@@ -86,8 +90,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async updateCampaignStatus(body: Types.CampaignStatusUpdateRequest): Promise<Types.StatusUpdateResponse> {
-    return this.client.post<Types.StatusUpdateResponse>("/campaign/status/update/", body);
+  updateCampaignStatus(body: Types.CampaignStatusUpdateRequest): Effect.Effect<Types.StatusUpdateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.StatusUpdateResponse>("/campaign/status/update/", body);
   }
 
   /**
@@ -103,8 +109,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async createAdGroup(body: Types.AdGroupCreateRequest): Promise<Types.AdGroupCreateResponse> {
-    return this.client.post<Types.AdGroupCreateResponse>("/adgroup/create/", body);
+  createAdGroup(body: Types.AdGroupCreateRequest): Effect.Effect<Types.AdGroupCreateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.AdGroupCreateResponse>("/adgroup/create/", body);
   }
 
   /**
@@ -126,8 +134,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async getAdGroups(params?: { advertiser_id?: string; adgroup_ids?: string; campaign_ids?: string; filtering?: string; page?: number; page_size?: number }): Promise<Types.AdGroupGetResponse> {
-    return this.client.get<Types.AdGroupGetResponse>("/adgroup/get/", {
+  getAdGroups(params?: { advertiser_id?: string; adgroup_ids?: string; campaign_ids?: string; filtering?: string; page?: number; page_size?: number }): Effect.Effect<Types.AdGroupGetResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.AdGroupGetResponse>("/adgroup/get/", {
       "advertiser_id": params?.advertiser_id,
       "adgroup_ids": params?.adgroup_ids,
       "campaign_ids": params?.campaign_ids,
@@ -150,8 +160,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async updateAdGroup(body: Types.AdGroupUpdateRequest): Promise<Types.AdGroupUpdateResponse> {
-    return this.client.post<Types.AdGroupUpdateResponse>("/adgroup/update/", body);
+  updateAdGroup(body: Types.AdGroupUpdateRequest): Effect.Effect<Types.AdGroupUpdateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.AdGroupUpdateResponse>("/adgroup/update/", body);
   }
 
   /**
@@ -167,8 +179,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async updateAdGroupStatus(body: Types.AdGroupStatusUpdateRequest): Promise<Types.StatusUpdateResponse> {
-    return this.client.post<Types.StatusUpdateResponse>("/adgroup/status/update/", body);
+  updateAdGroupStatus(body: Types.AdGroupStatusUpdateRequest): Effect.Effect<Types.StatusUpdateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.StatusUpdateResponse>("/adgroup/status/update/", body);
   }
 
   /**
@@ -184,8 +198,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async createAd(body: Types.AdCreateRequest): Promise<Types.AdCreateResponse> {
-    return this.client.post<Types.AdCreateResponse>("/ad/create/", body);
+  createAd(body: Types.AdCreateRequest): Effect.Effect<Types.AdCreateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.AdCreateResponse>("/ad/create/", body);
   }
 
   /**
@@ -208,8 +224,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async getAds(params?: { advertiser_id?: string; ad_ids?: string; adgroup_ids?: string; campaign_ids?: string; filtering?: string; page?: number; page_size?: number }): Promise<Types.AdGetResponse> {
-    return this.client.get<Types.AdGetResponse>("/ad/get/", {
+  getAds(params?: { advertiser_id?: string; ad_ids?: string; adgroup_ids?: string; campaign_ids?: string; filtering?: string; page?: number; page_size?: number }): Effect.Effect<Types.AdGetResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.AdGetResponse>("/ad/get/", {
       "advertiser_id": params?.advertiser_id,
       "ad_ids": params?.ad_ids,
       "adgroup_ids": params?.adgroup_ids,
@@ -233,8 +251,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async updateAd(body: Types.AdUpdateRequest): Promise<Types.AdUpdateResponse> {
-    return this.client.post<Types.AdUpdateResponse>("/ad/update/", body);
+  updateAd(body: Types.AdUpdateRequest): Effect.Effect<Types.AdUpdateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.AdUpdateResponse>("/ad/update/", body);
   }
 
   /**
@@ -250,8 +270,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async updateAdStatus(body: Types.AdStatusUpdateRequest): Promise<Types.StatusUpdateResponse> {
-    return this.client.post<Types.StatusUpdateResponse>("/ad/status/update/", body);
+  updateAdStatus(body: Types.AdStatusUpdateRequest): Effect.Effect<Types.StatusUpdateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.StatusUpdateResponse>("/ad/status/update/", body);
   }
 
   /**
@@ -267,8 +289,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async uploadVideo(): Promise<Types.VideoUploadResponse> {
-    return this.client.post<Types.VideoUploadResponse>("/file/video/upload/");
+  uploadVideo(): Effect.Effect<Types.VideoUploadResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.VideoUploadResponse>("/file/video/upload/");
   }
 
   /**
@@ -284,8 +308,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async uploadImage(): Promise<Types.ImageUploadResponse> {
-    return this.client.post<Types.ImageUploadResponse>("/file/image/upload/");
+  uploadImage(): Effect.Effect<Types.ImageUploadResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.ImageUploadResponse>("/file/image/upload/");
   }
 
   /**
@@ -311,8 +337,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async getIntegratedReport(params?: { advertiser_id?: string; report_type?: string; dimensions?: string; metrics?: string; data_level?: string; start_date?: string; end_date?: string; filtering?: string; page?: number; page_size?: number }): Promise<Types.IntegratedReportResponse> {
-    return this.client.get<Types.IntegratedReportResponse>("/report/integrated/get/", {
+  getIntegratedReport(params?: { advertiser_id?: string; report_type?: string; dimensions?: string; metrics?: string; data_level?: string; start_date?: string; end_date?: string; filtering?: string; page?: number; page_size?: number }): Effect.Effect<Types.IntegratedReportResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.IntegratedReportResponse>("/report/integrated/get/", {
       "advertiser_id": params?.advertiser_id,
       "report_type": params?.report_type,
       "dimensions": params?.dimensions,
@@ -342,8 +370,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async listCustomAudiences(params?: { advertiser_id?: string; page?: number; page_size?: number }): Promise<Types.CustomAudienceListResponse> {
-    return this.client.get<Types.CustomAudienceListResponse>("/dmp/custom_audience/list/", {
+  listCustomAudiences(params?: { advertiser_id?: string; page?: number; page_size?: number }): Effect.Effect<Types.CustomAudienceListResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.CustomAudienceListResponse>("/dmp/custom_audience/list/", {
       "advertiser_id": params?.advertiser_id,
       "page": params?.page,
       "page_size": params?.page_size,
@@ -363,8 +393,10 @@ export class BusinessApi {
    *
    * @public
    */
-  async createCustomAudience(body: Types.CustomAudienceCreateRequest): Promise<Types.CustomAudienceCreateResponse> {
-    return this.client.post<Types.CustomAudienceCreateResponse>("/dmp/custom_audience/create/", body);
+  createCustomAudience(body: Types.CustomAudienceCreateRequest): Effect.Effect<Types.CustomAudienceCreateResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CustomAudienceCreateResponse>("/dmp/custom_audience/create/", body);
   }
 
 }

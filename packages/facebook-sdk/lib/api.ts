@@ -1,376 +1,460 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from api/openapi.yaml
 
-import type { HttpClient } from "../src/auth/client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
 export class FacebookApi {
-  private client: HttpClient;
-
-  constructor(client: HttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * Get current user profile
    */
-  async getMe(options?: { fields?: string }): Promise<Types.UserProfile> {
+  getMe(options?: { fields?: string }): Effect.Effect<Types.UserProfile, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.UserProfile>("/me", params);
+    return yield* client.get<Types.UserProfile>("/me", params);
   }
 
   /**
    * Get user by ID
    */
-  async getUser(user_id: string, options?: { fields?: string }): Promise<Types.UserProfile> {
+  getUser(user_id: string, options?: { fields?: string }): Effect.Effect<Types.UserProfile, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.UserProfile>(`/${user_id}`, params);
+    return yield* client.get<Types.UserProfile>(`/${user_id}`, params);
   }
 
   /**
    * Get user posts
    */
-  async getUserPosts(user_id: string, options?: { limit?: number; fields?: string }): Promise<Types.PostFeed> {
+  getUserPosts(user_id: string, options?: { limit?: number; fields?: string }): Effect.Effect<Types.PostFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.PostFeed>(`/${user_id}/posts`, params);
+    return yield* client.get<Types.PostFeed>(`/${user_id}/posts`, params);
   }
 
   /**
    * Get user photos
    */
-  async getUserPhotos(user_id: string, options?: { limit?: number; fields?: string }): Promise<Types.PhotoFeed> {
+  getUserPhotos(user_id: string, options?: { limit?: number; fields?: string }): Effect.Effect<Types.PhotoFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.PhotoFeed>(`/${user_id}/photos`, params);
+    return yield* client.get<Types.PhotoFeed>(`/${user_id}/photos`, params);
   }
 
   /**
    * Upload a photo for user
    */
-  async createUserPhoto(user_id: string, body: Types.CreatePhotoRequest): Promise<Types.CreatePhotoResponse> {
-    return this.client.post<Types.CreatePhotoResponse>(`/${user_id}/photos`, body);
+  createUserPhoto(user_id: string, body: Types.CreatePhotoRequest): Effect.Effect<Types.CreatePhotoResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreatePhotoResponse>(`/${user_id}/photos`, body);
   }
 
   /**
    * Get user albums
    */
-  async getUserAlbums(user_id: string, options?: { limit?: number; fields?: string }): Promise<Types.AlbumFeed> {
+  getUserAlbums(user_id: string, options?: { limit?: number; fields?: string }): Effect.Effect<Types.AlbumFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.AlbumFeed>(`/${user_id}/albums`, params);
+    return yield* client.get<Types.AlbumFeed>(`/${user_id}/albums`, params);
   }
 
   /**
    * Create an album for user
    */
-  async createUserAlbum(user_id: string, body: Types.CreateAlbumRequest): Promise<Types.CreateAlbumResponse> {
-    return this.client.post<Types.CreateAlbumResponse>(`/${user_id}/albums`, body);
+  createUserAlbum(user_id: string, body: Types.CreateAlbumRequest): Effect.Effect<Types.CreateAlbumResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreateAlbumResponse>(`/${user_id}/albums`, body);
   }
 
   /**
    * Get user friends
    */
-  async getUserFriends(user_id: string, options?: { limit?: number }): Promise<Types.FriendsFeed> {
+  getUserFriends(user_id: string, options?: { limit?: number }): Effect.Effect<Types.FriendsFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
-    return this.client.get<Types.FriendsFeed>(`/${user_id}/friends`, params);
+    return yield* client.get<Types.FriendsFeed>(`/${user_id}/friends`, params);
   }
 
   /**
    * Get page by ID
    */
-  async getPage(page_id: string, options?: { fields?: string }): Promise<Types.Page> {
+  getPage(page_id: string, options?: { fields?: string }): Effect.Effect<Types.Page, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.Page>(`/${page_id}`, params);
+    return yield* client.get<Types.Page>(`/${page_id}`, params);
   }
 
   /**
    * Get page feed posts
    */
-  async getPageFeed(page_id: string, options?: { limit?: number; fields?: string }): Promise<Types.PageFeed> {
+  getPageFeed(page_id: string, options?: { limit?: number; fields?: string }): Effect.Effect<Types.PageFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.PageFeed>(`/${page_id}/feed`, params);
+    return yield* client.get<Types.PageFeed>(`/${page_id}/feed`, params);
   }
 
   /**
    * Create a post on page
    */
-  async createPagePost(page_id: string, body: Types.CreatePostRequest): Promise<Types.CreatePostResponse> {
-    return this.client.post<Types.CreatePostResponse>(`/${page_id}/feed`, body);
+  createPagePost(page_id: string, body: Types.CreatePostRequest): Effect.Effect<Types.CreatePostResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreatePostResponse>(`/${page_id}/feed`, body);
   }
 
   /**
    * Get page posts
    */
-  async getPagePosts(page_id: string, options?: { limit?: number; fields?: string }): Promise<Types.PostFeed> {
+  getPagePosts(page_id: string, options?: { limit?: number; fields?: string }): Effect.Effect<Types.PostFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.PostFeed>(`/${page_id}/posts`, params);
+    return yield* client.get<Types.PostFeed>(`/${page_id}/posts`, params);
   }
 
   /**
    * Get page insights and analytics
    */
-  async getPageInsights(page_id: string, options?: { metric?: string; period?: string }): Promise<Types.PageInsights> {
+  getPageInsights(page_id: string, options?: { metric?: string; period?: string }): Effect.Effect<Types.PageInsights, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.metric !== undefined) params["metric"] = options.metric;
     if (options?.period !== undefined) params["period"] = options.period;
-    return this.client.get<Types.PageInsights>(`/${page_id}/insights`, params);
+    return yield* client.get<Types.PageInsights>(`/${page_id}/insights`, params);
   }
 
   /**
    * Get page photos
    */
-  async getPagePhotos(page_id: string, options?: { limit?: number; fields?: string }): Promise<Types.PhotoFeed> {
+  getPagePhotos(page_id: string, options?: { limit?: number; fields?: string }): Effect.Effect<Types.PhotoFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.PhotoFeed>(`/${page_id}/photos`, params);
+    return yield* client.get<Types.PhotoFeed>(`/${page_id}/photos`, params);
   }
 
   /**
    * Upload a photo to page
    */
-  async createPagePhoto(page_id: string, body: Types.CreatePhotoRequest): Promise<Types.CreatePhotoResponse> {
-    return this.client.post<Types.CreatePhotoResponse>(`/${page_id}/photos`, body);
+  createPagePhoto(page_id: string, body: Types.CreatePhotoRequest): Effect.Effect<Types.CreatePhotoResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreatePhotoResponse>(`/${page_id}/photos`, body);
   }
 
   /**
    * Get page albums
    */
-  async getPageAlbums(page_id: string, options?: { limit?: number; fields?: string }): Promise<Types.AlbumFeed> {
+  getPageAlbums(page_id: string, options?: { limit?: number; fields?: string }): Effect.Effect<Types.AlbumFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.AlbumFeed>(`/${page_id}/albums`, params);
+    return yield* client.get<Types.AlbumFeed>(`/${page_id}/albums`, params);
   }
 
   /**
    * Create an album on page
    */
-  async createPageAlbum(page_id: string, body: Types.CreateAlbumRequest): Promise<Types.CreateAlbumResponse> {
-    return this.client.post<Types.CreateAlbumResponse>(`/${page_id}/albums`, body);
+  createPageAlbum(page_id: string, body: Types.CreateAlbumRequest): Effect.Effect<Types.CreateAlbumResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreateAlbumResponse>(`/${page_id}/albums`, body);
   }
 
   /**
    * Get post by ID
    */
-  async getPost(post_id: string, options?: { fields?: string }): Promise<Types.Post> {
+  getPost(post_id: string, options?: { fields?: string }): Effect.Effect<Types.Post, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.Post>(`/${post_id}`, params);
+    return yield* client.get<Types.Post>(`/${post_id}`, params);
   }
 
   /**
    * Delete a post
    */
-  async deletePost(post_id: string): Promise<Types.DeleteResponse> {
-    return this.client.delete<Types.DeleteResponse>(`/${post_id}`);
+  deletePost(post_id: string): Effect.Effect<Types.DeleteResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.DeleteResponse>(`/${post_id}`);
   }
 
   /**
    * Get post comments
    */
-  async getPostComments(post_id: string, options?: { limit?: number; filter?: string }): Promise<Types.CommentFeed> {
+  getPostComments(post_id: string, options?: { limit?: number; filter?: string }): Effect.Effect<Types.CommentFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.filter !== undefined) params["filter"] = options.filter;
-    return this.client.get<Types.CommentFeed>(`/${post_id}/comments`, params);
+    return yield* client.get<Types.CommentFeed>(`/${post_id}/comments`, params);
   }
 
   /**
    * Create a comment on post
    */
-  async createPostComment(post_id: string, body: Types.CreateCommentRequest): Promise<Types.CreateCommentResponse> {
-    return this.client.post<Types.CreateCommentResponse>(`/${post_id}/comments`, body);
+  createPostComment(post_id: string, body: Types.CreateCommentRequest): Effect.Effect<Types.CreateCommentResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreateCommentResponse>(`/${post_id}/comments`, body);
   }
 
   /**
    * Get post likes
    */
-  async getPostLikes(post_id: string, options?: { limit?: number }): Promise<Types.LikesFeed> {
+  getPostLikes(post_id: string, options?: { limit?: number }): Effect.Effect<Types.LikesFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
-    return this.client.get<Types.LikesFeed>(`/${post_id}/likes`, params);
+    return yield* client.get<Types.LikesFeed>(`/${post_id}/likes`, params);
   }
 
   /**
    * Like a post
    */
-  async createPostLike(post_id: string): Promise<Types.LikeResponse> {
-    return this.client.post<Types.LikeResponse>(`/${post_id}/likes`);
+  createPostLike(post_id: string): Effect.Effect<Types.LikeResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.LikeResponse>(`/${post_id}/likes`);
   }
 
   /**
    * Unlike a post
    */
-  async deletePostLike(post_id: string): Promise<Types.DeleteResponse> {
-    return this.client.delete<Types.DeleteResponse>(`/${post_id}/likes`);
+  deletePostLike(post_id: string): Effect.Effect<Types.DeleteResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.DeleteResponse>(`/${post_id}/likes`);
   }
 
   /**
    * Get post reactions
    */
-  async getPostReactions(post_id: string, options?: { type?: string; limit?: number }): Promise<Types.ReactionsFeed> {
+  getPostReactions(post_id: string, options?: { type?: string; limit?: number }): Effect.Effect<Types.ReactionsFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.type !== undefined) params["type"] = options.type;
     if (options?.limit !== undefined) params["limit"] = options.limit;
-    return this.client.get<Types.ReactionsFeed>(`/${post_id}/reactions`, params);
+    return yield* client.get<Types.ReactionsFeed>(`/${post_id}/reactions`, params);
   }
 
   /**
    * Get post shares
    */
-  async getPostShares(post_id: string, options?: { limit?: number }): Promise<Types.SharesFeed> {
+  getPostShares(post_id: string, options?: { limit?: number }): Effect.Effect<Types.SharesFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
-    return this.client.get<Types.SharesFeed>(`/${post_id}/shares`, params);
+    return yield* client.get<Types.SharesFeed>(`/${post_id}/shares`, params);
   }
 
   /**
    * Get post insights
    */
-  async getPostInsights(post_id: string, options?: { metric?: string }): Promise<Types.PostInsights> {
+  getPostInsights(post_id: string, options?: { metric?: string }): Effect.Effect<Types.PostInsights, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.metric !== undefined) params["metric"] = options.metric;
-    return this.client.get<Types.PostInsights>(`/${post_id}/insights`, params);
+    return yield* client.get<Types.PostInsights>(`/${post_id}/insights`, params);
   }
 
   /**
    * Get photo by ID
    */
-  async getPhoto(photo_id: string, options?: { fields?: string }): Promise<Types.Photo> {
+  getPhoto(photo_id: string, options?: { fields?: string }): Effect.Effect<Types.Photo, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.Photo>(`/${photo_id}`, params);
+    return yield* client.get<Types.Photo>(`/${photo_id}`, params);
   }
 
   /**
    * Delete a photo
    */
-  async deletePhoto(photo_id: string): Promise<Types.DeleteResponse> {
-    return this.client.delete<Types.DeleteResponse>(`/${photo_id}`);
+  deletePhoto(photo_id: string): Effect.Effect<Types.DeleteResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.DeleteResponse>(`/${photo_id}`);
   }
 
   /**
    * Get photo comments
    */
-  async getPhotoComments(photo_id: string, options?: { limit?: number }): Promise<Types.CommentFeed> {
+  getPhotoComments(photo_id: string, options?: { limit?: number }): Effect.Effect<Types.CommentFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
-    return this.client.get<Types.CommentFeed>(`/${photo_id}/comments`, params);
+    return yield* client.get<Types.CommentFeed>(`/${photo_id}/comments`, params);
   }
 
   /**
    * Create a comment on photo
    */
-  async createPhotoComment(photo_id: string, body: Types.CreateCommentRequest): Promise<Types.CreateCommentResponse> {
-    return this.client.post<Types.CreateCommentResponse>(`/${photo_id}/comments`, body);
+  createPhotoComment(photo_id: string, body: Types.CreateCommentRequest): Effect.Effect<Types.CreateCommentResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreateCommentResponse>(`/${photo_id}/comments`, body);
   }
 
   /**
    * Get photo likes
    */
-  async getPhotoLikes(photo_id: string, options?: { limit?: number }): Promise<Types.LikesFeed> {
+  getPhotoLikes(photo_id: string, options?: { limit?: number }): Effect.Effect<Types.LikesFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
-    return this.client.get<Types.LikesFeed>(`/${photo_id}/likes`, params);
+    return yield* client.get<Types.LikesFeed>(`/${photo_id}/likes`, params);
   }
 
   /**
    * Like a photo
    */
-  async createPhotoLike(photo_id: string): Promise<Types.LikeResponse> {
-    return this.client.post<Types.LikeResponse>(`/${photo_id}/likes`);
+  createPhotoLike(photo_id: string): Effect.Effect<Types.LikeResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.LikeResponse>(`/${photo_id}/likes`);
   }
 
   /**
    * Unlike a photo
    */
-  async deletePhotoLike(photo_id: string): Promise<Types.DeleteResponse> {
-    return this.client.delete<Types.DeleteResponse>(`/${photo_id}/likes`);
+  deletePhotoLike(photo_id: string): Effect.Effect<Types.DeleteResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.DeleteResponse>(`/${photo_id}/likes`);
   }
 
   /**
    * Get album by ID
    */
-  async getAlbum(album_id: string, options?: { fields?: string }): Promise<Types.Album> {
+  getAlbum(album_id: string, options?: { fields?: string }): Effect.Effect<Types.Album, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.Album>(`/${album_id}`, params);
+    return yield* client.get<Types.Album>(`/${album_id}`, params);
   }
 
   /**
    * Delete an album
    */
-  async deleteAlbum(album_id: string): Promise<Types.DeleteResponse> {
-    return this.client.delete<Types.DeleteResponse>(`/${album_id}`);
+  deleteAlbum(album_id: string): Effect.Effect<Types.DeleteResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.DeleteResponse>(`/${album_id}`);
   }
 
   /**
    * Get album photos
    */
-  async getAlbumPhotos(album_id: string, options?: { limit?: number; fields?: string }): Promise<Types.PhotoFeed> {
+  getAlbumPhotos(album_id: string, options?: { limit?: number; fields?: string }): Effect.Effect<Types.PhotoFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.PhotoFeed>(`/${album_id}/photos`, params);
+    return yield* client.get<Types.PhotoFeed>(`/${album_id}/photos`, params);
   }
 
   /**
    * Add a photo to album
    */
-  async addPhotoToAlbum(album_id: string, body: Types.CreatePhotoRequest): Promise<Types.CreatePhotoResponse> {
-    return this.client.post<Types.CreatePhotoResponse>(`/${album_id}/photos`, body);
+  addPhotoToAlbum(album_id: string, body: Types.CreatePhotoRequest): Effect.Effect<Types.CreatePhotoResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CreatePhotoResponse>(`/${album_id}/photos`, body);
   }
 
   /**
    * Get comment by ID
    */
-  async getComment(comment_id: string, options?: { fields?: string }): Promise<Types.Comment> {
+  getComment(comment_id: string, options?: { fields?: string }): Effect.Effect<Types.Comment, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.fields !== undefined) params["fields"] = options.fields;
-    return this.client.get<Types.Comment>(`/${comment_id}`, params);
+    return yield* client.get<Types.Comment>(`/${comment_id}`, params);
   }
 
   /**
    * Delete a comment
    */
-  async deleteComment(comment_id: string): Promise<Types.DeleteResponse> {
-    return this.client.delete<Types.DeleteResponse>(`/${comment_id}`);
+  deleteComment(comment_id: string): Effect.Effect<Types.DeleteResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.DeleteResponse>(`/${comment_id}`);
   }
 
   /**
    * Get comment likes
    */
-  async getCommentLikes(comment_id: string, options?: { limit?: number }): Promise<Types.LikesFeed> {
+  getCommentLikes(comment_id: string, options?: { limit?: number }): Effect.Effect<Types.LikesFeed, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     const params: Record<string, any> = {};
     if (options?.limit !== undefined) params["limit"] = options.limit;
-    return this.client.get<Types.LikesFeed>(`/${comment_id}/likes`, params);
+    return yield* client.get<Types.LikesFeed>(`/${comment_id}/likes`, params);
   }
 
   /**
    * Like a comment
    */
-  async createCommentLike(comment_id: string): Promise<Types.LikeResponse> {
-    return this.client.post<Types.LikeResponse>(`/${comment_id}/likes`);
+  createCommentLike(comment_id: string): Effect.Effect<Types.LikeResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.LikeResponse>(`/${comment_id}/likes`);
   }
 
   /**
    * Unlike a comment
    */
-  async deleteCommentLike(comment_id: string): Promise<Types.DeleteResponse> {
-    return this.client.delete<Types.DeleteResponse>(`/${comment_id}/likes`);
+  deleteCommentLike(comment_id: string): Effect.Effect<Types.DeleteResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Types.DeleteResponse>(`/${comment_id}/likes`);
   }
 
 }

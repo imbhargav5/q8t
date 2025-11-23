@@ -1,35 +1,39 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from api/openapi.yaml
 
-import type { HttpClient } from "../src/auth/client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
 export class LinkedInApi {
-  private client: HttpClient;
-
-  constructor(client: HttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * Get user profile
    */
-  async getProfile(): Promise<Types.Profile> {
-    return this.client.get<Types.Profile>("/me");
+  getProfile(): Effect.Effect<Types.Profile, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.Profile>("/me");
   }
 
   /**
    * Create a post
    */
-  async createPost(body: Types.CreatePostRequest): Promise<Types.PostResponse> {
-    return this.client.post<Types.PostResponse>("/ugcPosts", body);
+  createPost(body: Types.CreatePostRequest): Effect.Effect<Types.PostResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.PostResponse>("/ugcPosts", body);
   }
 
   /**
    * Get user connections
    */
-  async getConnections({ start?: number, count?: number }: { start?: number; count?: number } = {}): Promise<Types.ConnectionsResponse> {
-    return this.client.get<Types.ConnectionsResponse>("/connections", {
+  getConnections({ start?: number, count?: number }: { start?: number; count?: number } = {}): Effect.Effect<Types.ConnectionsResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Types.ConnectionsResponse>("/connections", {
       "start": start,
       "count": count,
     });

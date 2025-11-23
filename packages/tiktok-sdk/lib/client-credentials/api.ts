@@ -1,15 +1,13 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
 // Generated from OpenAPI specification
 
-import type { HttpClient } from "../../src/auth/client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
 export class ClientCredentialsApi {
-  private client: HttpClient;
-
-  constructor(client: HttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * Query research videos
@@ -24,8 +22,10 @@ export class ClientCredentialsApi {
    *
    * @public
    */
-  async queryResearchVideos(body: Types.ResearchVideoQueryRequest): Promise<Types.ResearchVideoQueryResponse> {
-    return this.client.post<Types.ResearchVideoQueryResponse>("/research/video/query/", body);
+  queryResearchVideos(body: Types.ResearchVideoQueryRequest): Effect.Effect<Types.ResearchVideoQueryResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.ResearchVideoQueryResponse>("/research/video/query/", body);
   }
 
   /**
@@ -41,8 +41,10 @@ export class ClientCredentialsApi {
    *
    * @public
    */
-  async queryResearchUserInfo(body: Types.ResearchUserInfoRequest): Promise<Types.ResearchUserInfoResponse> {
-    return this.client.post<Types.ResearchUserInfoResponse>("/research/user/info/", body);
+  queryResearchUserInfo(body: Types.ResearchUserInfoRequest): Effect.Effect<Types.ResearchUserInfoResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.ResearchUserInfoResponse>("/research/user/info/", body);
   }
 
   /**
@@ -58,8 +60,10 @@ export class ClientCredentialsApi {
    *
    * @public
    */
-  async listVideoComments(body: Types.VideoCommentsRequest): Promise<Types.VideoCommentsResponse> {
-    return this.client.post<Types.VideoCommentsResponse>("/research/video/comment/list/", body);
+  listVideoComments(body: Types.VideoCommentsRequest): Effect.Effect<Types.VideoCommentsResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.VideoCommentsResponse>("/research/video/comment/list/", body);
   }
 
   /**
@@ -75,8 +79,10 @@ export class ClientCredentialsApi {
    *
    * @public
    */
-  async queryAds(body: Types.AdQueryRequest): Promise<Types.AdQueryResponse> {
-    return this.client.post<Types.AdQueryResponse>("/research/adlib/ad/query/", body);
+  queryAds(body: Types.AdQueryRequest): Effect.Effect<Types.AdQueryResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.AdQueryResponse>("/research/adlib/ad/query/", body);
   }
 
   /**
@@ -92,8 +98,10 @@ export class ClientCredentialsApi {
    *
    * @public
    */
-  async getAdDetails(body: Types.AdDetailRequest): Promise<Types.AdDetailResponse> {
-    return this.client.post<Types.AdDetailResponse>("/research/adlib/ad/detail/", body);
+  getAdDetails(body: Types.AdDetailRequest): Effect.Effect<Types.AdDetailResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.AdDetailResponse>("/research/adlib/ad/detail/", body);
   }
 
   /**
@@ -109,8 +117,10 @@ export class ClientCredentialsApi {
    *
    * @public
    */
-  async queryCommercialContent(body: Types.CommercialContentRequest): Promise<Types.CommercialContentResponse> {
-    return this.client.post<Types.CommercialContentResponse>("/research/adlib/commercial_content/report/", body);
+  queryCommercialContent(body: Types.CommercialContentRequest): Effect.Effect<Types.CommercialContentResponse, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Types.CommercialContentResponse>("/research/adlib/commercial_content/report/", body);
   }
 
 }

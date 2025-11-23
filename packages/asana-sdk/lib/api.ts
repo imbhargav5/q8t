@@ -1,22 +1,13 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
-// Generated from api/asana_oas.yaml
+// Generated from api/openapi.yaml
 
-import type { HttpClient } from "../src/auth/pat-client";
+import { Effect } from "effect";
+import { HttpClient } from "@q8t/effect-sdk-base";
+import type { HttpError, NetworkError, ParseError } from "@q8t/effect-sdk-base";
 import type * as Types from "./types";
 
-/**
- * Asana API client with all available endpoints
- * 
- * This class provides type-safe access to all Asana API endpoints.
- * Use createPATClient or createOAuth2Client to create an authenticated HTTP client,
- * then pass it to this class constructor.
- */
 export class AsanaApi {
-  private client: HttpClient;
-
-  constructor(client: HttpClient) {
-    this.client = client;
-  }
+  constructor() {}
 
   /**
    * Get access requests
@@ -24,13 +15,16 @@ export class AsanaApi {
    * Returns the pending access requests for a target object or a target object filtered by user.
    * @param params - Query parameters
    */
-  async getAccessRequests(params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getAccessRequests(params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/access_requests", {
+      return yield* client.get<Record<string, unknown>>("/access_requests", {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/access_requests");
+    return yield* client.get<Record<string, unknown>>("/access_requests");
+    });
   }
 
   /**
@@ -39,8 +33,11 @@ export class AsanaApi {
    * Submits a new access request for a private object. Currently supports projects and portfolios.
    * @param body - Request body
    */
-  async createAccessRequest(body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>("/access_requests", { data: body });
+  createAccessRequest(body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>("/access_requests", { data: body });
+    });
   }
 
   /**
@@ -49,8 +46,11 @@ export class AsanaApi {
    * Approves an access request for a target object.
    * @param access_request_gid - Path parameter
    */
-  async approveAccessRequest(access_request_gid: string): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/access_requests/${access_request_gid}/approve`);
+  approveAccessRequest(access_request_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/access_requests/${access_request_gid}/approve`);
+    });
   }
 
   /**
@@ -59,8 +59,11 @@ export class AsanaApi {
    * Rejects an access request for a target object.
    * @param access_request_gid - Path parameter
    */
-  async rejectAccessRequest(access_request_gid: string): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/access_requests/${access_request_gid}/reject`);
+  rejectAccessRequest(access_request_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/access_requests/${access_request_gid}/reject`);
+    });
   }
 
   /**
@@ -70,13 +73,16 @@ export class AsanaApi {
    * @param allocation_gid - Path parameter
    * @param params - Query parameters
    */
-  async getAllocation(allocation_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getAllocation(allocation_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/allocations/${allocation_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/allocations/${allocation_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/allocations/${allocation_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/allocations/${allocation_gid}`);
+    });
   }
 
   /**
@@ -91,13 +97,16 @@ Returns the complete updated allocation record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateAllocation(allocation_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateAllocation(allocation_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/allocations/${allocation_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/allocations/${allocation_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/allocations/${allocation_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/allocations/${allocation_gid}`, { data: body });
+    });
   }
 
   /**
@@ -108,8 +117,11 @@ Returns the complete updated allocation record.
 Returns an empty data record.
    * @param allocation_gid - Path parameter
    */
-  async deleteAllocation(allocation_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/allocations/${allocation_gid}`);
+  deleteAllocation(allocation_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/allocations/${allocation_gid}`);
+    });
   }
 
   /**
@@ -118,16 +130,19 @@ Returns an empty data record.
    * Returns a list of allocations filtered to a specific project, user or placeholder.
    * @param params - Query parameters
    */
-  async getAllocations(params?: { parent?: string; assignee?: string; workspace?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getAllocations(params?: { parent?: string; assignee?: string; workspace?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/allocations", {
+      return yield* client.get<Record<string, unknown>>("/allocations", {
         "parent": params.parent,
         "assignee": params.assignee,
         "workspace": params.workspace,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/allocations");
+    return yield* client.get<Record<string, unknown>>("/allocations");
+    });
   }
 
   /**
@@ -139,13 +154,16 @@ Returns the full record of the newly created allocation.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createAllocation(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createAllocation(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/allocations", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/allocations", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/allocations", { data: body });
+    return yield* client.post<Record<string, unknown>>("/allocations", { data: body });
+    });
   }
 
   /**
@@ -157,13 +175,16 @@ Get the full record for a single attachment.
    * @param attachment_gid - Path parameter
    * @param params - Query parameters
    */
-  async getAttachment(attachment_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getAttachment(attachment_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/attachments/${attachment_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/attachments/${attachment_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/attachments/${attachment_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/attachments/${attachment_gid}`);
+    });
   }
 
   /**
@@ -176,8 +197,11 @@ Deletes a specific, existing attachment.
 Returns an empty data record.
    * @param attachment_gid - Path parameter
    */
-  async deleteAttachment(attachment_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/attachments/${attachment_gid}`);
+  deleteAttachment(attachment_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/attachments/${attachment_gid}`);
+    });
   }
 
   /**
@@ -191,14 +215,17 @@ There are three possible `parent` values for this request: `project`, `project_b
 Note that within the Asana app, inline images in the task description do not appear in the index of image thumbnails nor as stories in the task. However, requests made to `GET /attachments` for a task will return all of the images in the task, including inline images.
    * @param params - Query parameters
    */
-  async getAttachmentsForObject(params?: { parent?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getAttachmentsForObject(params?: { parent?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/attachments", {
+      return yield* client.get<Record<string, unknown>>("/attachments", {
         "parent": params.parent,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/attachments");
+    return yield* client.get<Record<string, unknown>>("/attachments");
+    });
   }
 
   /**
@@ -241,13 +268,16 @@ curl --location 'https://app.asana.com/api/1.0/attachments' \
 ```
    * @param params - Query parameters
    */
-  async createAttachmentForObject(params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createAttachmentForObject(params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/attachments", undefined, {
+      return yield* client.post<Record<string, unknown>>("/attachments", undefined, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/attachments");
+    return yield* client.post<Record<string, unknown>>("/attachments");
+    });
   }
 
   /**
@@ -266,8 +296,11 @@ The list of events will always be [paginated](/docs/pagination). The default lim
 When no `offset` is provided, the response will begin with the oldest events that match the provided filters. It is important to note that [AuditLogEvent](/reference/audit-log-api) objects will be permanently deleted from our systems after 90 days. If you wish to keep a permanent record of these events, we recommend using a SIEM tool to ingest and store these logs.
    * @param workspace_gid - Path parameter
    */
-  async getAuditLogEvents(workspace_gid: string): Promise<Record<string, unknown>> {
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/audit_log_events`);
+  getAuditLogEvents(workspace_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/audit_log_events`);
+    });
   }
 
   /**
@@ -277,13 +310,16 @@ When no `offset` is provided, the response will begin with the oldest events tha
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createBatchRequest(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createBatchRequest(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/batch", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/batch", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/batch", { data: body });
+    return yield* client.post<Record<string, unknown>>("/batch", { data: body });
+    });
   }
 
   /**
@@ -292,13 +328,16 @@ When no `offset` is provided, the response will begin with the oldest events tha
    * Gets all budgets for a given *parent*. This will at most return a list of size 1 for a given *parent*.
    * @param params - Query parameters
    */
-  async getBudgets(params?: { parent?: string }): Promise<Record<string, unknown>> {
+  getBudgets(params?: { parent?: string }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/budgets", {
+      return yield* client.get<Record<string, unknown>>("/budgets", {
         "parent": params.parent,
       });
     }
-    return this.client.get<Record<string, unknown>>("/budgets");
+    return yield* client.get<Record<string, unknown>>("/budgets");
+    });
   }
 
   /**
@@ -307,8 +346,11 @@ When no `offset` is provided, the response will begin with the oldest events tha
    * Creates a new budget.
    * @param body - Request body
    */
-  async createBudget(body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>("/budgets", { data: body });
+  createBudget(body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>("/budgets", { data: body });
+    });
   }
 
   /**
@@ -318,13 +360,16 @@ When no `offset` is provided, the response will begin with the oldest events tha
    * @param budget_gid - Path parameter
    * @param params - Query parameters
    */
-  async getBudget(budget_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getBudget(budget_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/budgets/${budget_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/budgets/${budget_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/budgets/${budget_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/budgets/${budget_gid}`);
+    });
   }
 
   /**
@@ -337,13 +382,16 @@ any unspecified fields will remain unchanged.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateBudget(budget_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateBudget(budget_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/budgets/${budget_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/budgets/${budget_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/budgets/${budget_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/budgets/${budget_gid}`, { data: body });
+    });
   }
 
   /**
@@ -354,8 +402,11 @@ any unspecified fields will remain unchanged.
 Returns an empty data record.
    * @param budget_gid - Path parameter
    */
-  async deleteBudget(budget_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/budgets/${budget_gid}`);
+  deleteBudget(budget_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/budgets/${budget_gid}`);
+    });
   }
 
   /**
@@ -365,13 +416,16 @@ Returns an empty data record.
    * @param project_gid - Path parameter
    * @param params - Query parameters
    */
-  async getCustomFieldSettingsForProject(project_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getCustomFieldSettingsForProject(project_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/custom_field_settings`, {
+      return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/custom_field_settings`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/custom_field_settings`);
+    return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/custom_field_settings`);
+    });
   }
 
   /**
@@ -381,13 +435,16 @@ Returns an empty data record.
    * @param portfolio_gid - Path parameter
    * @param params - Query parameters
    */
-  async getCustomFieldSettingsForPortfolio(portfolio_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getCustomFieldSettingsForPortfolio(portfolio_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/custom_field_settings`, {
+      return yield* client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/custom_field_settings`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/custom_field_settings`);
+    return yield* client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/custom_field_settings`);
+    });
   }
 
   /**
@@ -397,13 +454,16 @@ Returns an empty data record.
    * @param team_gid - Path parameter
    * @param params - Query parameters
    */
-  async getCustomFieldSettingsForTeam(team_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getCustomFieldSettingsForTeam(team_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/custom_field_settings`, {
+      return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/custom_field_settings`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/custom_field_settings`);
+    return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/custom_field_settings`);
+    });
   }
 
   /**
@@ -424,13 +484,16 @@ Returns the full record of the newly created custom field.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createCustomField(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createCustomField(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/custom_fields", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/custom_fields", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/custom_fields", { data: body });
+    return yield* client.post<Record<string, unknown>>("/custom_fields", { data: body });
+    });
   }
 
   /**
@@ -449,13 +512,16 @@ type-specific custom field definitions.
    * @param custom_field_gid - Path parameter
    * @param params - Query parameters
    */
-  async getCustomField(custom_field_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getCustomField(custom_field_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`);
+    });
   }
 
   /**
@@ -473,13 +539,16 @@ Returns the complete updated custom field record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateCustomField(custom_field_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateCustomField(custom_field_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`, { data: body });
+    });
   }
 
   /**
@@ -490,8 +559,11 @@ Locked custom fields can only be deleted by the user who locked the field.
 Returns an empty data record.
    * @param custom_field_gid - Path parameter
    */
-  async deleteCustomField(custom_field_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`);
+  deleteCustomField(custom_field_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/custom_fields/${custom_field_gid}`);
+    });
   }
 
   /**
@@ -503,13 +575,16 @@ Returns a list of the compact representation of all of the custom fields in a wo
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async getCustomFieldsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getCustomFieldsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/custom_fields`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/custom_fields`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/custom_fields`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/custom_fields`);
+    });
   }
 
   /**
@@ -524,13 +599,16 @@ Returns the full record of the newly created enum option.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createEnumOptionForCustomField(custom_field_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createEnumOptionForCustomField(custom_field_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/custom_fields/${custom_field_gid}/enum_options`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/custom_fields/${custom_field_gid}/enum_options`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/custom_fields/${custom_field_gid}/enum_options`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/custom_fields/${custom_field_gid}/enum_options`, { data: body });
+    });
   }
 
   /**
@@ -544,13 +622,16 @@ Locked custom fields can only be reordered by the user who locked the field.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async insertEnumOptionForCustomField(custom_field_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  insertEnumOptionForCustomField(custom_field_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/custom_fields/${custom_field_gid}/enum_options/insert`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/custom_fields/${custom_field_gid}/enum_options/insert`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/custom_fields/${custom_field_gid}/enum_options/insert`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/custom_fields/${custom_field_gid}/enum_options/insert`, { data: body });
+    });
   }
 
   /**
@@ -565,13 +646,16 @@ Returns the full record of the updated enum option.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateEnumOption(enum_option_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateEnumOption(enum_option_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/enum_options/${enum_option_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/enum_options/${enum_option_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/enum_options/${enum_option_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/enum_options/${enum_option_gid}`, { data: body });
+    });
   }
 
   /**
@@ -580,13 +664,16 @@ Returns the full record of the updated enum option.
    * Returns a list of all of the custom types associated with an object. Currently, only projects are supported. Note that, as in all queries to collections which return compact representation, `opt_fields` can be used to include more data than is returned in the compact representation. See the [documentation for input/output options](https://developers.asana.com/docs/inputoutput-options) for more information.
    * @param params - Query parameters
    */
-  async getCustomTypes(params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getCustomTypes(params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/custom_types", {
+      return yield* client.get<Record<string, unknown>>("/custom_types", {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/custom_types");
+    return yield* client.get<Record<string, unknown>>("/custom_types");
+    });
   }
 
   /**
@@ -596,13 +683,16 @@ Returns the full record of the updated enum option.
    * @param custom_type_gid - Path parameter
    * @param params - Query parameters
    */
-  async getCustomType(custom_type_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getCustomType(custom_type_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/custom_types/${custom_type_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/custom_types/${custom_type_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/custom_types/${custom_type_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/custom_types/${custom_type_gid}`);
+    });
   }
 
   /**
@@ -624,13 +714,16 @@ for. For example, a subscription to a project will contain events for
 tasks contained within the project.*
    * @param params - Query parameters
    */
-  async getEvents(params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getEvents(params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/events", {
+      return yield* client.get<Record<string, unknown>>("/events", {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/events");
+    return yield* client.get<Record<string, unknown>>("/events");
+    });
   }
 
   /**
@@ -643,8 +736,11 @@ Once initiated, use the [jobs](/reference/getjob) endpoint to monitor progress.
 **Export Caching:** When exporting more than 1,000 tasks, the results are cached for 4 hours. Any new export requests made within this 4-hour window will return the same cached results rather than generating a fresh export.
    * @param body - Request body
    */
-  async createGraphExport(body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>("/exports/graph", { data: body });
+  createGraphExport(body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>("/exports/graph", { data: body });
+    });
   }
 
   /**
@@ -714,8 +810,11 @@ However, this approach may result in duplicate resources being returned.
 A workspace is currently limited to *one* in progress export request at a given time. The request will return with a 403 Forbidden status code if the limit is exceeded.
    * @param body - Request body
    */
-  async createResourceExport(body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>("/exports/resource", { data: body });
+  createResourceExport(body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>("/exports/resource", { data: body });
+    });
   }
 
   /**
@@ -725,13 +824,16 @@ A workspace is currently limited to *one* in progress export request at a given 
    * @param goal_relationship_gid - Path parameter
    * @param params - Query parameters
    */
-  async getGoalRelationship(goal_relationship_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getGoalRelationship(goal_relationship_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/goal_relationships/${goal_relationship_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/goal_relationships/${goal_relationship_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/goal_relationships/${goal_relationship_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/goal_relationships/${goal_relationship_gid}`);
+    });
   }
 
   /**
@@ -746,13 +848,16 @@ Returns the complete updated goal relationship record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateGoalRelationship(goal_relationship_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateGoalRelationship(goal_relationship_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/goal_relationships/${goal_relationship_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/goal_relationships/${goal_relationship_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/goal_relationships/${goal_relationship_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/goal_relationships/${goal_relationship_gid}`, { data: body });
+    });
   }
 
   /**
@@ -761,15 +866,18 @@ Returns the complete updated goal relationship record.
    * Returns compact goal relationship records.
    * @param params - Query parameters
    */
-  async getGoalRelationships(params?: { supported_goal?: string; resource_subtype?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getGoalRelationships(params?: { supported_goal?: string; resource_subtype?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/goal_relationships", {
+      return yield* client.get<Record<string, unknown>>("/goal_relationships", {
         "supported_goal": params.supported_goal,
         "resource_subtype": params.resource_subtype,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/goal_relationships");
+    return yield* client.get<Record<string, unknown>>("/goal_relationships");
+    });
   }
 
   /**
@@ -782,13 +890,16 @@ Returns the newly created goal relationship record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addSupportingRelationship(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addSupportingRelationship(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/addSupportingRelationship`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/addSupportingRelationship`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/addSupportingRelationship`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/addSupportingRelationship`, { data: body });
+    });
   }
 
   /**
@@ -798,8 +909,11 @@ Returns the newly created goal relationship record.
    * @param goal_gid - Path parameter
    * @param body - Request body
    */
-  async removeSupportingRelationship(goal_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/removeSupportingRelationship`, { data: body });
+  removeSupportingRelationship(goal_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/removeSupportingRelationship`, { data: body });
+    });
   }
 
   /**
@@ -826,13 +940,16 @@ Returns the complete goal record for a single goal.
    * @param goal_gid - Path parameter
    * @param params - Query parameters
    */
-  async getGoal(goal_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getGoal(goal_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/goals/${goal_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/goals/${goal_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/goals/${goal_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/goals/${goal_gid}`);
+    });
   }
 
   /**
@@ -847,13 +964,16 @@ Returns the complete updated goal record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateGoal(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateGoal(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/goals/${goal_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/goals/${goal_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/goals/${goal_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/goals/${goal_gid}`, { data: body });
+    });
   }
 
   /**
@@ -864,8 +984,11 @@ Returns the complete updated goal record.
 Returns an empty data record.
    * @param goal_gid - Path parameter
    */
-  async deleteGoal(goal_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/goals/${goal_gid}`);
+  deleteGoal(goal_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/goals/${goal_gid}`);
+    });
   }
 
   /**
@@ -876,9 +999,11 @@ Returns an empty data record.
 Returns compact goal records.
    * @param params - Query parameters
    */
-  async getGoals(params?: { portfolio?: string; project?: string; task?: string; is_workspace_level?: boolean; team?: string; workspace?: string; time_periods?: string[]; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getGoals(params?: { portfolio?: string; project?: string; task?: string; is_workspace_level?: boolean; team?: string; workspace?: string; time_periods?: string[]; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/goals", {
+      return yield* client.get<Record<string, unknown>>("/goals", {
         "portfolio": params.portfolio,
         "project": params.project,
         "task": params.task,
@@ -889,7 +1014,8 @@ Returns compact goal records.
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/goals");
+    return yield* client.get<Record<string, unknown>>("/goals");
+    });
   }
 
   /**
@@ -901,13 +1027,16 @@ Returns the full record of the newly created goal.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createGoal(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createGoal(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/goals", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/goals", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/goals", { data: body });
+    return yield* client.post<Record<string, unknown>>("/goals", { data: body });
+    });
   }
 
   /**
@@ -918,13 +1047,16 @@ Returns the full record of the newly created goal.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createGoalMetric(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createGoalMetric(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/setMetric`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/setMetric`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/setMetric`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/setMetric`, { data: body });
+    });
   }
 
   /**
@@ -938,13 +1070,16 @@ Returns the complete updated goal metric record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateGoalMetric(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateGoalMetric(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/setMetricCurrentValue`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/setMetricCurrentValue`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/setMetricCurrentValue`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/setMetricCurrentValue`, { data: body });
+    });
   }
 
   /**
@@ -957,13 +1092,16 @@ Requests to add/remove followers, if successful, will return the complete update
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addFollowers(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addFollowers(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/addFollowers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/addFollowers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/addFollowers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/addFollowers`, { data: body });
+    });
   }
 
   /**
@@ -976,13 +1114,16 @@ Requests to add/remove followers, if successful, will return the complete update
    * @param body - Request body
    * @param params - Query parameters
    */
-  async removeFollowers(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  removeFollowers(goal_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/removeFollowers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/removeFollowers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/goals/${goal_gid}/removeFollowers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/goals/${goal_gid}/removeFollowers`, { data: body });
+    });
   }
 
   /**
@@ -994,13 +1135,16 @@ Returns a compact representation of all of the parent goals of a goal.
    * @param goal_gid - Path parameter
    * @param params - Query parameters
    */
-  async getParentGoalsForGoal(goal_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getParentGoalsForGoal(goal_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/goals/${goal_gid}/parentGoals`, {
+      return yield* client.get<Record<string, unknown>>(`/goals/${goal_gid}/parentGoals`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/goals/${goal_gid}/parentGoals`);
+    return yield* client.get<Record<string, unknown>>(`/goals/${goal_gid}/parentGoals`);
+    });
   }
 
   /**
@@ -1010,13 +1154,16 @@ Returns a compact representation of all of the parent goals of a goal.
    * @param job_gid - Path parameter
    * @param params - Query parameters
    */
-  async getJob(job_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getJob(job_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/jobs/${job_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/jobs/${job_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/jobs/${job_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/jobs/${job_gid}`);
+    });
   }
 
   /**
@@ -1025,15 +1172,18 @@ Returns a compact representation of all of the parent goals of a goal.
    * Returns compact `goal_membership`, `project_membership`, `portfolio_membership`, or `custom_field_membership` records. The possible types for `parent` in this request are `goal`, `project`, `portfolio`, or `custom_field`. An additional member (user GID or team GID) can be passed in to filter to a specific membership.
    * @param params - Query parameters
    */
-  async getMemberships(params?: { parent?: string; member?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getMemberships(params?: { parent?: string; member?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/memberships", {
+      return yield* client.get<Record<string, unknown>>("/memberships", {
         "parent": params.parent,
         "member": params.member,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/memberships");
+    return yield* client.get<Record<string, unknown>>("/memberships");
+    });
   }
 
   /**
@@ -1044,8 +1194,11 @@ Returns a compact representation of all of the parent goals of a goal.
 Returns the full record of the newly created membership.
    * @param body - Request body
    */
-  async createMembership(body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>("/memberships", { data: body });
+  createMembership(body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>("/memberships", { data: body });
+    });
   }
 
   /**
@@ -1054,8 +1207,11 @@ Returns the full record of the newly created membership.
    * Returns a `project_membership`, `goal_membership`, `portfolio_membership`, or `custom_field_membership` record for a membership id.
    * @param membership_gid - Path parameter
    */
-  async getMembership(membership_gid: string): Promise<Record<string, unknown>> {
-    return this.client.get<Record<string, unknown>>(`/memberships/${membership_gid}`);
+  getMembership(membership_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Record<string, unknown>>(`/memberships/${membership_gid}`);
+    });
   }
 
   /**
@@ -1068,8 +1224,11 @@ Returns the full record of the updated membership.
    * @param membership_gid - Path parameter
    * @param body - Request body
    */
-  async updateMembership(membership_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.put<Record<string, unknown>>(`/memberships/${membership_gid}`, { data: body });
+  updateMembership(membership_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.put<Record<string, unknown>>(`/memberships/${membership_gid}`, { data: body });
+    });
   }
 
   /**
@@ -1081,8 +1240,11 @@ on the URL for that membership.
 Returns an empty data record.
    * @param membership_gid - Path parameter
    */
-  async deleteMembership(membership_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/memberships/${membership_gid}`);
+  deleteMembership(membership_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/memberships/${membership_gid}`);
+    });
   }
 
   /**
@@ -1092,13 +1254,16 @@ Returns an empty data record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createOrganizationExport(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createOrganizationExport(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/organization_exports", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/organization_exports", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/organization_exports", { data: body });
+    return yield* client.post<Record<string, unknown>>("/organization_exports", { data: body });
+    });
   }
 
   /**
@@ -1108,13 +1273,16 @@ Returns an empty data record.
    * @param organization_export_gid - Path parameter
    * @param params - Query parameters
    */
-  async getOrganizationExport(organization_export_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getOrganizationExport(organization_export_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/organization_exports/${organization_export_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/organization_exports/${organization_export_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/organization_exports/${organization_export_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/organization_exports/${organization_export_gid}`);
+    });
   }
 
   /**
@@ -1123,13 +1291,16 @@ Returns an empty data record.
    * Returns a list of portfolio memberships in compact representation. You must specify `portfolio`, `portfolio` and `user`, or `workspace` and `user`.
    * @param params - Query parameters
    */
-  async getPortfolioMemberships(params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getPortfolioMemberships(params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/portfolio_memberships", {
+      return yield* client.get<Record<string, unknown>>("/portfolio_memberships", {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/portfolio_memberships");
+    return yield* client.get<Record<string, unknown>>("/portfolio_memberships");
+    });
   }
 
   /**
@@ -1139,13 +1310,16 @@ Returns an empty data record.
    * @param portfolio_membership_gid - Path parameter
    * @param params - Query parameters
    */
-  async getPortfolioMembership(portfolio_membership_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getPortfolioMembership(portfolio_membership_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/portfolio_memberships/${portfolio_membership_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/portfolio_memberships/${portfolio_membership_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/portfolio_memberships/${portfolio_membership_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/portfolio_memberships/${portfolio_membership_gid}`);
+    });
   }
 
   /**
@@ -1155,13 +1329,16 @@ Returns an empty data record.
    * @param portfolio_gid - Path parameter
    * @param params - Query parameters
    */
-  async getPortfolioMembershipsForPortfolio(portfolio_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getPortfolioMembershipsForPortfolio(portfolio_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/portfolio_memberships`, {
+      return yield* client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/portfolio_memberships`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/portfolio_memberships`);
+    return yield* client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/portfolio_memberships`);
+    });
   }
 
   /**
@@ -1172,15 +1349,18 @@ Returns an empty data record.
 Returns a list of the portfolios in compact representation that are owned by the current API user.
    * @param params - Query parameters
    */
-  async getPortfolios(params?: { workspace?: string; owner?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getPortfolios(params?: { workspace?: string; owner?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/portfolios", {
+      return yield* client.get<Record<string, unknown>>("/portfolios", {
         "workspace": params.workspace,
         "owner": params.owner,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/portfolios");
+    return yield* client.get<Record<string, unknown>>("/portfolios");
+    });
   }
 
   /**
@@ -1198,13 +1378,16 @@ integrations to create their own starting state on a portfolio.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createPortfolio(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createPortfolio(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/portfolios", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/portfolios", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/portfolios", { data: body });
+    return yield* client.post<Record<string, unknown>>("/portfolios", { data: body });
+    });
   }
 
   /**
@@ -1227,13 +1410,16 @@ Returns the complete portfolio record for a single portfolio.
    * @param portfolio_gid - Path parameter
    * @param params - Query parameters
    */
-  async getPortfolio(portfolio_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getPortfolio(portfolio_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}`);
+    });
   }
 
   /**
@@ -1250,13 +1436,16 @@ Returns the complete updated portfolio record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updatePortfolio(portfolio_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updatePortfolio(portfolio_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/portfolios/${portfolio_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/portfolios/${portfolio_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/portfolios/${portfolio_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/portfolios/${portfolio_gid}`, { data: body });
+    });
   }
 
   /**
@@ -1268,8 +1457,11 @@ the URL for that portfolio.
 Returns an empty data record.
    * @param portfolio_gid - Path parameter
    */
-  async deletePortfolio(portfolio_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/portfolios/${portfolio_gid}`);
+  deletePortfolio(portfolio_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/portfolios/${portfolio_gid}`);
+    });
   }
 
   /**
@@ -1281,13 +1473,16 @@ Get a list of the items in compact form in a portfolio.
    * @param portfolio_gid - Path parameter
    * @param params - Query parameters
    */
-  async getItemsForPortfolio(portfolio_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getItemsForPortfolio(portfolio_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/items`, {
+      return yield* client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/items`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/items`);
+    return yield* client.get<Record<string, unknown>>(`/portfolios/${portfolio_gid}/items`);
+    });
   }
 
   /**
@@ -1300,8 +1495,11 @@ Returns an empty data block.
    * @param portfolio_gid - Path parameter
    * @param body - Request body
    */
-  async addItemForPortfolio(portfolio_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/addItem`, { data: body });
+  addItemForPortfolio(portfolio_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/addItem`, { data: body });
+    });
   }
 
   /**
@@ -1314,8 +1512,11 @@ Returns an empty data block.
    * @param portfolio_gid - Path parameter
    * @param body - Request body
    */
-  async removeItemForPortfolio(portfolio_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/removeItem`, { data: body });
+  removeItemForPortfolio(portfolio_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/removeItem`, { data: body });
+    });
   }
 
   /**
@@ -1327,8 +1528,11 @@ Custom fields are associated with portfolios by way of custom field settings.  T
    * @param portfolio_gid - Path parameter
    * @param body - Request body
    */
-  async addCustomFieldSettingForPortfolio(portfolio_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/addCustomFieldSetting`, { data: body });
+  addCustomFieldSettingForPortfolio(portfolio_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/addCustomFieldSetting`, { data: body });
+    });
   }
 
   /**
@@ -1340,8 +1544,11 @@ Removes a custom field setting from a portfolio.
    * @param portfolio_gid - Path parameter
    * @param body - Request body
    */
-  async removeCustomFieldSettingForPortfolio(portfolio_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/removeCustomFieldSetting`, { data: body });
+  removeCustomFieldSettingForPortfolio(portfolio_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/removeCustomFieldSetting`, { data: body });
+    });
   }
 
   /**
@@ -1353,13 +1560,16 @@ Returns the updated portfolio record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addMembersForPortfolio(portfolio_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addMembersForPortfolio(portfolio_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/addMembers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/addMembers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/addMembers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/addMembers`, { data: body });
+    });
   }
 
   /**
@@ -1371,13 +1581,16 @@ Returns the updated portfolio record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async removeMembersForPortfolio(portfolio_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  removeMembersForPortfolio(portfolio_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/removeMembers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/removeMembers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/removeMembers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/portfolios/${portfolio_gid}/removeMembers`, { data: body });
+    });
   }
 
   /**
@@ -1387,13 +1600,16 @@ Returns the updated portfolio record.
    * @param project_brief_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectBrief(project_brief_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectBrief(project_brief_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`);
+    });
   }
 
   /**
@@ -1408,13 +1624,16 @@ Returns the complete updated project brief record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateProjectBrief(project_brief_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateProjectBrief(project_brief_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`, { data: body });
+    });
   }
 
   /**
@@ -1425,8 +1644,11 @@ Returns the complete updated project brief record.
 Returns an empty data record.
    * @param project_brief_gid - Path parameter
    */
-  async deleteProjectBrief(project_brief_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`);
+  deleteProjectBrief(project_brief_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/project_briefs/${project_brief_gid}`);
+    });
   }
 
   /**
@@ -1439,13 +1661,16 @@ Returns the full record of the newly created project brief.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createProjectBrief(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createProjectBrief(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/project_briefs`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/project_briefs`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/project_briefs`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/project_briefs`, { data: body });
+    });
   }
 
   /**
@@ -1455,13 +1680,16 @@ Returns the full record of the newly created project brief.
    * @param project_membership_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectMembership(project_membership_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectMembership(project_membership_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/project_memberships/${project_membership_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/project_memberships/${project_membership_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/project_memberships/${project_membership_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/project_memberships/${project_membership_gid}`);
+    });
   }
 
   /**
@@ -1471,13 +1699,16 @@ Returns the full record of the newly created project brief.
    * @param project_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectMembershipsForProject(project_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectMembershipsForProject(project_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/project_memberships`, {
+      return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/project_memberships`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/project_memberships`);
+    return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/project_memberships`);
+    });
   }
 
   /**
@@ -1489,13 +1720,16 @@ Returns the complete record for a single status update.
    * @param project_status_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectStatus(project_status_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectStatus(project_status_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/project_statuses/${project_status_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/project_statuses/${project_status_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/project_statuses/${project_status_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/project_statuses/${project_status_gid}`);
+    });
   }
 
   /**
@@ -1508,8 +1742,11 @@ Deletes a specific, existing project status update.
 Returns an empty data record.
    * @param project_status_gid - Path parameter
    */
-  async deleteProjectStatus(project_status_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/project_statuses/${project_status_gid}`);
+  deleteProjectStatus(project_status_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/project_statuses/${project_status_gid}`);
+    });
   }
 
   /**
@@ -1521,13 +1758,16 @@ Returns the compact project status update records for all updates on the project
    * @param project_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectStatusesForProject(project_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectStatusesForProject(project_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/project_statuses`, {
+      return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/project_statuses`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/project_statuses`);
+    return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/project_statuses`);
+    });
   }
 
   /**
@@ -1542,13 +1782,16 @@ Returns the full record of the newly created project status update.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createProjectStatusForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createProjectStatusForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/project_statuses`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/project_statuses`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/project_statuses`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/project_statuses`, { data: body });
+    });
   }
 
   /**
@@ -1560,13 +1803,16 @@ Returns the complete project template record for a single project template.
    * @param project_template_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectTemplate(project_template_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectTemplate(project_template_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/project_templates/${project_template_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/project_templates/${project_template_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/project_templates/${project_template_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/project_templates/${project_template_gid}`);
+    });
   }
 
   /**
@@ -1577,8 +1823,11 @@ Returns the complete project template record for a single project template.
 Returns an empty data record.
    * @param project_template_gid - Path parameter
    */
-  async deleteProjectTemplate(project_template_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/project_templates/${project_template_gid}`);
+  deleteProjectTemplate(project_template_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/project_templates/${project_template_gid}`);
+    });
   }
 
   /**
@@ -1589,13 +1838,16 @@ Returns an empty data record.
 Returns the compact project template records for all project templates in the given team or workspace.
    * @param params - Query parameters
    */
-  async getProjectTemplates(params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectTemplates(params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/project_templates", {
+      return yield* client.get<Record<string, unknown>>("/project_templates", {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/project_templates");
+    return yield* client.get<Record<string, unknown>>("/project_templates");
+    });
   }
 
   /**
@@ -1607,13 +1859,16 @@ Returns the compact project template records for all project templates in the te
    * @param team_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectTemplatesForTeam(team_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectTemplatesForTeam(team_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/project_templates`, {
+      return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/project_templates`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/project_templates`);
+    return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/project_templates`);
+    });
   }
 
   /**
@@ -1630,13 +1885,16 @@ _Note: The body of this request will differ if your workspace is an organization
    * @param body - Request body
    * @param params - Query parameters
    */
-  async instantiateProject(project_template_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  instantiateProject(project_template_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/project_templates/${project_template_gid}/instantiateProject`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/project_templates/${project_template_gid}/instantiateProject`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/project_templates/${project_template_gid}/instantiateProject`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/project_templates/${project_template_gid}/instantiateProject`, { data: body });
+    });
   }
 
   /**
@@ -1648,15 +1906,18 @@ Returns the compact project records for some filtered set of projects. Use one o
 *Note: This endpoint may timeout for large domains. Try filtering by team!*
    * @param params - Query parameters
    */
-  async getProjects(params?: { workspace?: string; team?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjects(params?: { workspace?: string; team?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/projects", {
+      return yield* client.get<Record<string, unknown>>("/projects", {
         "workspace": params.workspace,
         "team": params.team,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/projects");
+    return yield* client.get<Record<string, unknown>>("/projects");
+    });
   }
 
   /**
@@ -1678,13 +1939,16 @@ Returns the full record of the newly created project.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createProject(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createProject(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/projects", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/projects", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/projects", { data: body });
+    return yield* client.post<Record<string, unknown>>("/projects", { data: body });
+    });
   }
 
   /**
@@ -1711,13 +1975,16 @@ Returns the complete project record for a single project.
    * @param project_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProject(project_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProject(project_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/projects/${project_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/projects/${project_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}`);
+    });
   }
 
   /**
@@ -1738,13 +2005,16 @@ Returns the complete updated project record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/projects/${project_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/projects/${project_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/projects/${project_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/projects/${project_gid}`, { data: body });
+    });
   }
 
   /**
@@ -1758,8 +2028,11 @@ the URL for that project.
 Returns an empty data record.
    * @param project_gid - Path parameter
    */
-  async deleteProject(project_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/projects/${project_gid}`);
+  deleteProject(project_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/projects/${project_gid}`);
+    });
   }
 
   /**
@@ -1772,13 +2045,16 @@ Creates and returns a job that will asynchronously handle the duplication.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async duplicateProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  duplicateProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/duplicate`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/duplicate`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/duplicate`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/duplicate`, { data: body });
+    });
   }
 
   /**
@@ -1790,13 +2066,16 @@ Returns a compact representation of all of the projects the task is in.
    * @param task_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectsForTask(task_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectsForTask(task_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/projects`, {
+      return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/projects`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/projects`);
+    return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/projects`);
+    });
   }
 
   /**
@@ -1808,13 +2087,16 @@ Returns the compact project records for all projects in the team.
    * @param team_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectsForTeam(team_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectsForTeam(team_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/projects`, {
+      return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/projects`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/projects`);
+    return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/projects`);
+    });
   }
 
   /**
@@ -1829,13 +2111,16 @@ Returns the full record of the newly created project.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createProjectForTeam(team_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createProjectForTeam(team_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/teams/${team_gid}/projects`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/teams/${team_gid}/projects`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/teams/${team_gid}/projects`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/teams/${team_gid}/projects`, { data: body });
+    });
   }
 
   /**
@@ -1848,13 +2133,16 @@ Returns the compact project records for all projects in the workspace.
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async getProjectsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getProjectsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/projects`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/projects`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/projects`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/projects`);
+    });
   }
 
   /**
@@ -1872,13 +2160,16 @@ Returns the full record of the newly created project.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createProjectForWorkspace(workspace_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createProjectForWorkspace(workspace_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/projects`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/projects`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/projects`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/projects`, { data: body });
+    });
   }
 
   /**
@@ -1891,13 +2182,16 @@ Custom fields are associated with projects by way of custom field settings.  Thi
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addCustomFieldSettingForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addCustomFieldSettingForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/addCustomFieldSetting`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/addCustomFieldSetting`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/addCustomFieldSetting`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/addCustomFieldSetting`, { data: body });
+    });
   }
 
   /**
@@ -1909,8 +2203,11 @@ Removes a custom field setting from a project.
    * @param project_gid - Path parameter
    * @param body - Request body
    */
-  async removeCustomFieldSettingForProject(project_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/removeCustomFieldSetting`, { data: body });
+  removeCustomFieldSettingForProject(project_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/removeCustomFieldSetting`, { data: body });
+    });
   }
 
   /**
@@ -1941,13 +2238,16 @@ Milestones are just tasks, so they are included in the `num_tasks`, `num_incompl
    * @param project_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTaskCountsForProject(project_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTaskCountsForProject(project_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/task_counts`, {
+      return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/task_counts`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/task_counts`);
+    return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/task_counts`);
+    });
   }
 
   /**
@@ -1959,13 +2259,16 @@ Returns the updated project record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addMembersForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addMembersForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/addMembers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/addMembers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/addMembers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/addMembers`, { data: body });
+    });
   }
 
   /**
@@ -1977,13 +2280,16 @@ Returns the updated project record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async removeMembersForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  removeMembersForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/removeMembers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/removeMembers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/removeMembers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/removeMembers`, { data: body });
+    });
   }
 
   /**
@@ -1995,13 +2301,16 @@ Returns the updated project record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addFollowersForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addFollowersForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/addFollowers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/addFollowers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/addFollowers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/addFollowers`, { data: body });
+    });
   }
 
   /**
@@ -2013,13 +2322,16 @@ Returns the updated project record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async removeFollowersForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  removeFollowersForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/removeFollowers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/removeFollowers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/removeFollowers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/removeFollowers`, { data: body });
+    });
   }
 
   /**
@@ -2030,13 +2342,16 @@ Returns the updated project record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async projectSaveAsTemplate(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  projectSaveAsTemplate(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/saveAsTemplate`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/saveAsTemplate`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/saveAsTemplate`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/saveAsTemplate`, { data: body });
+    });
   }
 
   /**
@@ -2047,15 +2362,18 @@ Returns the updated project record.
 Modifying placeholder rates is only available for Enterprise and Enterprise+ users.
    * @param params - Query parameters
    */
-  async getRates(params?: { parent?: string; resource?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getRates(params?: { parent?: string; resource?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/rates", {
+      return yield* client.get<Record<string, unknown>>("/rates", {
         "parent": params.parent,
         "resource": params.resource,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/rates");
+    return yield* client.get<Record<string, unknown>>("/rates");
+    });
   }
 
   /**
@@ -2065,13 +2383,16 @@ Modifying placeholder rates is only available for Enterprise and Enterprise+ use
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createRate(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createRate(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/rates", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/rates", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/rates", { data: body });
+    return yield* client.post<Record<string, unknown>>("/rates", { data: body });
+    });
   }
 
   /**
@@ -2081,13 +2402,16 @@ Modifying placeholder rates is only available for Enterprise and Enterprise+ use
    * @param rate_gid - Path parameter
    * @param params - Query parameters
    */
-  async getRate(rate_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getRate(rate_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/rates/${rate_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/rates/${rate_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/rates/${rate_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/rates/${rate_gid}`);
+    });
   }
 
   /**
@@ -2102,13 +2426,16 @@ Returns the complete updated rate record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateRate(rate_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateRate(rate_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/rates/${rate_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/rates/${rate_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/rates/${rate_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/rates/${rate_gid}`, { data: body });
+    });
   }
 
   /**
@@ -2117,8 +2444,11 @@ Returns the complete updated rate record.
    * Deletes a rate.
    * @param rate_gid - Path parameter
    */
-  async deleteRate(rate_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/rates/${rate_gid}`);
+  deleteRate(rate_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/rates/${rate_gid}`);
+    });
   }
 
   /**
@@ -2127,14 +2457,17 @@ Returns the complete updated rate record.
    * Returns the reactions with a specified emoji base character on the object.
    * @param params - Query parameters
    */
-  async getReactionsOnObject(params?: { target?: string; emoji_base?: string }): Promise<Record<string, unknown>> {
+  getReactionsOnObject(params?: { target?: string; emoji_base?: string }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/reactions", {
+      return yield* client.get<Record<string, unknown>>("/reactions", {
         "target": params.target,
         "emoji_base": params.emoji_base,
       });
     }
-    return this.client.get<Record<string, unknown>>("/reactions");
+    return yield* client.get<Record<string, unknown>>("/reactions");
+    });
   }
 
   /**
@@ -2144,8 +2477,11 @@ Returns the complete updated rate record.
    * @param rule_trigger_gid - Path parameter
    * @param body - Request body
    */
-  async triggerRule(rule_trigger_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/rule_triggers/${rule_trigger_gid}/run`, { data: body });
+  triggerRule(rule_trigger_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/rule_triggers/${rule_trigger_gid}/run`, { data: body });
+    });
   }
 
   /**
@@ -2155,13 +2491,16 @@ Returns the complete updated rate record.
    * @param section_gid - Path parameter
    * @param params - Query parameters
    */
-  async getSection(section_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getSection(section_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/sections/${section_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/sections/${section_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/sections/${section_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/sections/${section_gid}`);
+    });
   }
 
   /**
@@ -2181,13 +2520,16 @@ Returns the complete updated section record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateSection(section_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateSection(section_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/sections/${section_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/sections/${section_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/sections/${section_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/sections/${section_gid}`, { data: body });
+    });
   }
 
   /**
@@ -2203,8 +2545,11 @@ The last remaining section cannot be deleted.
 Returns an empty data block.
    * @param section_gid - Path parameter
    */
-  async deleteSection(section_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/sections/${section_gid}`);
+  deleteSection(section_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/sections/${section_gid}`);
+    });
   }
 
   /**
@@ -2214,13 +2559,16 @@ Returns an empty data block.
    * @param project_gid - Path parameter
    * @param params - Query parameters
    */
-  async getSectionsForProject(project_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getSectionsForProject(project_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/sections`, {
+      return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/sections`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/sections`);
+    return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/sections`);
+    });
   }
 
   /**
@@ -2232,13 +2580,16 @@ Returns the full record of the newly created section.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createSectionForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createSectionForProject(project_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/sections`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/sections`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/sections`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/sections`, { data: body });
+    });
   }
 
   /**
@@ -2254,8 +2605,11 @@ This does not work for separators (tasks with the resource_subtype of section).
    * @param section_gid - Path parameter
    * @param body - Request body
    */
-  async addTaskForSection(section_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/sections/${section_gid}/addTask`, { data: body });
+  addTaskForSection(section_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/sections/${section_gid}/addTask`, { data: body });
+    });
   }
 
   /**
@@ -2270,8 +2624,11 @@ Returns an empty data block.
    * @param project_gid - Path parameter
    * @param body - Request body
    */
-  async insertSectionForProject(project_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/projects/${project_gid}/sections/insert`, { data: body });
+  insertSectionForProject(project_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/projects/${project_gid}/sections/insert`, { data: body });
+    });
   }
 
   /**
@@ -2281,13 +2638,16 @@ Returns an empty data block.
    * @param status_update_gid - Path parameter
    * @param params - Query parameters
    */
-  async getStatus(status_update_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getStatus(status_update_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/status_updates/${status_update_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/status_updates/${status_update_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/status_updates/${status_update_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/status_updates/${status_update_gid}`);
+    });
   }
 
   /**
@@ -2298,8 +2658,11 @@ Returns an empty data block.
 Returns an empty data record.
    * @param status_update_gid - Path parameter
    */
-  async deleteStatus(status_update_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/status_updates/${status_update_gid}`);
+  deleteStatus(status_update_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/status_updates/${status_update_gid}`);
+    });
   }
 
   /**
@@ -2308,15 +2671,18 @@ Returns an empty data record.
    * Returns the compact status update records for all updates on the object.
    * @param params - Query parameters
    */
-  async getStatusesForObject(params?: { parent?: string; created_since?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getStatusesForObject(params?: { parent?: string; created_since?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/status_updates", {
+      return yield* client.get<Record<string, unknown>>("/status_updates", {
         "parent": params.parent,
         "created_since": params.created_since,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/status_updates");
+    return yield* client.get<Record<string, unknown>>("/status_updates");
+    });
   }
 
   /**
@@ -2327,13 +2693,16 @@ Returns the full record of the newly created status update.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createStatusForObject(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createStatusForObject(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/status_updates", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/status_updates", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/status_updates", { data: body });
+    return yield* client.post<Record<string, unknown>>("/status_updates", { data: body });
+    });
   }
 
   /**
@@ -2360,13 +2729,16 @@ Returns the full record for a single story.
    * @param story_gid - Path parameter
    * @param params - Query parameters
    */
-  async getStory(story_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getStory(story_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/stories/${story_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/stories/${story_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/stories/${story_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/stories/${story_gid}`);
+    });
   }
 
   /**
@@ -2379,13 +2751,16 @@ Updates the story and returns the full record for the updated story. Only commen
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateStory(story_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateStory(story_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/stories/${story_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/stories/${story_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/stories/${story_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/stories/${story_gid}`, { data: body });
+    });
   }
 
   /**
@@ -2396,8 +2771,11 @@ Updates the story and returns the full record for the updated story. Only commen
 Returns an empty data record.
    * @param story_gid - Path parameter
    */
-  async deleteStory(story_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/stories/${story_gid}`);
+  deleteStory(story_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/stories/${story_gid}`);
+    });
   }
 
   /**
@@ -2409,13 +2787,16 @@ Returns the compact records for all stories on the task.
    * @param task_gid - Path parameter
    * @param params - Query parameters
    */
-  async getStoriesForTask(task_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getStoriesForTask(task_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/stories`, {
+      return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/stories`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/stories`);
+    return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/stories`);
+    });
   }
 
   /**
@@ -2432,13 +2813,16 @@ Returns the full record for the new story added to the task.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createStoryForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createStoryForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/stories`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/stories`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/stories`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/stories`, { data: body });
+    });
   }
 
   /**
@@ -2449,14 +2833,17 @@ Returns the full record for the new story added to the task.
 Returns the compact tag records for some filtered set of tags. Use one or more of the parameters provided to filter the tags returned.
    * @param params - Query parameters
    */
-  async getTags(params?: { workspace?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTags(params?: { workspace?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/tags", {
+      return yield* client.get<Record<string, unknown>>("/tags", {
         "workspace": params.workspace,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/tags");
+    return yield* client.get<Record<string, unknown>>("/tags");
+    });
   }
 
   /**
@@ -2475,13 +2862,16 @@ Returns the full record of the newly created tag.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createTag(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createTag(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/tags", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/tags", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/tags", { data: body });
+    return yield* client.post<Record<string, unknown>>("/tags", { data: body });
+    });
   }
 
   /**
@@ -2493,13 +2883,16 @@ Returns the complete tag record for a single tag.
    * @param tag_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTag(tag_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTag(tag_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tags/${tag_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/tags/${tag_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tags/${tag_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/tags/${tag_gid}`);
+    });
   }
 
   /**
@@ -2519,13 +2912,16 @@ Returns the complete updated tag record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateTag(tag_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateTag(tag_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/tags/${tag_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/tags/${tag_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/tags/${tag_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/tags/${tag_gid}`, { data: body });
+    });
   }
 
   /**
@@ -2537,8 +2933,11 @@ the URL for that tag.
 Returns an empty data record.
    * @param tag_gid - Path parameter
    */
-  async deleteTag(tag_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/tags/${tag_gid}`);
+  deleteTag(tag_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/tags/${tag_gid}`);
+    });
   }
 
   /**
@@ -2550,13 +2949,16 @@ Get a compact representation of all of the tags the task has.
    * @param task_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTagsForTask(task_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTagsForTask(task_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/tags`, {
+      return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/tags`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/tags`);
+    return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/tags`);
+    });
   }
 
   /**
@@ -2568,13 +2970,16 @@ Returns the compact tag records for some filtered set of tags. Use one or more o
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTagsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTagsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tags`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tags`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tags`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tags`);
+    });
   }
 
   /**
@@ -2594,13 +2999,16 @@ Returns the full record of the newly created tag.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createTagForWorkspace(workspace_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createTagForWorkspace(workspace_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/tags`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/tags`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/tags`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/tags`, { data: body });
+    });
   }
 
   /**
@@ -2611,14 +3019,17 @@ Returns the full record of the newly created tag.
 Returns the compact task template records for some filtered set of task templates. You must specify a `project`
    * @param params - Query parameters
    */
-  async getTaskTemplates(params?: { project?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTaskTemplates(params?: { project?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/task_templates", {
+      return yield* client.get<Record<string, unknown>>("/task_templates", {
         "project": params.project,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/task_templates");
+    return yield* client.get<Record<string, unknown>>("/task_templates");
+    });
   }
 
   /**
@@ -2630,13 +3041,16 @@ Returns the complete task template record for a single task template.
    * @param task_template_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTaskTemplate(task_template_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTaskTemplate(task_template_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/task_templates/${task_template_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/task_templates/${task_template_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/task_templates/${task_template_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/task_templates/${task_template_gid}`);
+    });
   }
 
   /**
@@ -2645,8 +3059,11 @@ Returns the complete task template record for a single task template.
    * A specific, existing task template can be deleted by making a DELETE request on the URL for that task template. Returns an empty data record.
    * @param task_template_gid - Path parameter
    */
-  async deleteTaskTemplate(task_template_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/task_templates/${task_template_gid}`);
+  deleteTaskTemplate(task_template_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/task_templates/${task_template_gid}`);
+    });
   }
 
   /**
@@ -2657,13 +3074,16 @@ Returns the complete task template record for a single task template.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async instantiateTask(task_template_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  instantiateTask(task_template_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/task_templates/${task_template_gid}/instantiateTask`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/task_templates/${task_template_gid}/instantiateTask`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/task_templates/${task_template_gid}/instantiateTask`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/task_templates/${task_template_gid}/instantiateTask`, { data: body });
+    });
   }
 
   /**
@@ -2676,9 +3096,11 @@ Returns the compact task records for some filtered set of tasks. Use one or more
 For more complex task retrieval, use [workspaces/{workspace_gid}/tasks/search](/reference/searchtasksforworkspace).
    * @param params - Query parameters
    */
-  async getTasks(params?: { assignee?: string; project?: string; section?: string; workspace?: string; completed_since?: string; modified_since?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTasks(params?: { assignee?: string; project?: string; section?: string; workspace?: string; completed_since?: string; modified_since?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/tasks", {
+      return yield* client.get<Record<string, unknown>>("/tasks", {
         "assignee": params.assignee,
         "project": params.project,
         "section": params.section,
@@ -2688,7 +3110,8 @@ For more complex task retrieval, use [workspaces/{workspace_gid}/tasks/search](/
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/tasks");
+    return yield* client.get<Record<string, unknown>>("/tasks");
+    });
   }
 
   /**
@@ -2706,13 +3129,16 @@ explicitly if you specify `projects` or a `parent` task instead.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createTask(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createTask(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/tasks", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/tasks", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/tasks", { data: body });
+    return yield* client.post<Record<string, unknown>>("/tasks", { data: body });
+    });
   }
 
   /**
@@ -2739,13 +3165,16 @@ Returns the complete task record for a single task.
    * @param task_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTask(task_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTask(task_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}`);
+    });
   }
 
   /**
@@ -2766,13 +3195,16 @@ Returns the complete updated task record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/tasks/${task_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/tasks/${task_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/tasks/${task_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/tasks/${task_gid}`, { data: body });
+    });
   }
 
   /**
@@ -2788,8 +3220,11 @@ period of 30 days; afterward they are completely removed from the system.
 Returns an empty data record.
    * @param task_gid - Path parameter
    */
-  async deleteTask(task_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/tasks/${task_gid}`);
+  deleteTask(task_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/tasks/${task_gid}`);
+    });
   }
 
   /**
@@ -2802,13 +3237,16 @@ Creates and returns a job that will asynchronously handle the duplication.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async duplicateTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  duplicateTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/duplicate`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/duplicate`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/duplicate`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/duplicate`, { data: body });
+    });
   }
 
   /**
@@ -2820,13 +3258,16 @@ Returns the compact task records for all tasks within the given project, ordered
    * @param project_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTasksForProject(project_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTasksForProject(project_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/tasks`, {
+      return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/tasks`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/projects/${project_gid}/tasks`);
+    return yield* client.get<Record<string, unknown>>(`/projects/${project_gid}/tasks`);
+    });
   }
 
   /**
@@ -2838,13 +3279,16 @@ Returns the compact task records for all tasks within the given project, ordered
    * @param section_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTasksForSection(section_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTasksForSection(section_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/sections/${section_gid}/tasks`, {
+      return yield* client.get<Record<string, unknown>>(`/sections/${section_gid}/tasks`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/sections/${section_gid}/tasks`);
+    return yield* client.get<Record<string, unknown>>(`/sections/${section_gid}/tasks`);
+    });
   }
 
   /**
@@ -2856,13 +3300,16 @@ Returns the compact task records for all tasks with the given tag. Tasks can hav
    * @param tag_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTasksForTag(tag_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTasksForTag(tag_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tags/${tag_gid}/tasks`, {
+      return yield* client.get<Record<string, unknown>>(`/tags/${tag_gid}/tasks`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tags/${tag_gid}/tasks`);
+    return yield* client.get<Record<string, unknown>>(`/tags/${tag_gid}/tasks`);
+    });
   }
 
   /**
@@ -2876,13 +3323,16 @@ Returns the compact list of tasks in a user’s My Tasks list.
    * @param user_task_list_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTasksForUserTaskList(user_task_list_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTasksForUserTaskList(user_task_list_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/user_task_lists/${user_task_list_gid}/tasks`, {
+      return yield* client.get<Record<string, unknown>>(`/user_task_lists/${user_task_list_gid}/tasks`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/user_task_lists/${user_task_list_gid}/tasks`);
+    return yield* client.get<Record<string, unknown>>(`/user_task_lists/${user_task_list_gid}/tasks`);
+    });
   }
 
   /**
@@ -2894,13 +3344,16 @@ Returns a compact representation of all of the subtasks of a task.
    * @param task_gid - Path parameter
    * @param params - Query parameters
    */
-  async getSubtasksForTask(task_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getSubtasksForTask(task_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/subtasks`, {
+      return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/subtasks`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/subtasks`);
+    return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/subtasks`);
+    });
   }
 
   /**
@@ -2913,13 +3366,16 @@ Creates a new subtask and adds it to the parent task. Returns the full record fo
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createSubtaskForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createSubtaskForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/subtasks`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/subtasks`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/subtasks`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/subtasks`, { data: body });
+    });
   }
 
   /**
@@ -2934,13 +3390,16 @@ Returns the complete, updated record of the affected [task](/reference/tasks#/ta
    * @param body - Request body
    * @param params - Query parameters
    */
-  async setParentForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  setParentForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/setParent`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/setParent`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/setParent`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/setParent`, { data: body });
+    });
   }
 
   /**
@@ -2952,13 +3411,16 @@ Returns the compact representations of all of the dependencies of a task.
    * @param task_gid - Path parameter
    * @param params - Query parameters
    */
-  async getDependenciesForTask(task_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getDependenciesForTask(task_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/dependencies`, {
+      return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/dependencies`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/dependencies`);
+    return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/dependencies`);
+    });
   }
 
   /**
@@ -2970,8 +3432,11 @@ Marks a set of tasks as dependencies of this task, if they are not already depen
    * @param task_gid - Path parameter
    * @param body - Request body
    */
-  async addDependenciesForTask(task_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/addDependencies`, { data: body });
+  addDependenciesForTask(task_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/addDependencies`, { data: body });
+    });
   }
 
   /**
@@ -2983,8 +3448,11 @@ Unlinks a set of dependencies from this task.
    * @param task_gid - Path parameter
    * @param body - Request body
    */
-  async removeDependenciesForTask(task_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeDependencies`, { data: body });
+  removeDependenciesForTask(task_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeDependencies`, { data: body });
+    });
   }
 
   /**
@@ -2996,13 +3464,16 @@ Returns the compact representations of all of the dependents of a task.
    * @param task_gid - Path parameter
    * @param params - Query parameters
    */
-  async getDependentsForTask(task_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getDependentsForTask(task_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/dependents`, {
+      return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/dependents`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/dependents`);
+    return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/dependents`);
+    });
   }
 
   /**
@@ -3014,8 +3485,11 @@ Marks a set of tasks as dependents of this task, if they are not already depende
    * @param task_gid - Path parameter
    * @param body - Request body
    */
-  async addDependentsForTask(task_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/addDependents`, { data: body });
+  addDependentsForTask(task_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/addDependents`, { data: body });
+    });
   }
 
   /**
@@ -3027,8 +3501,11 @@ Unlinks a set of dependents from this task.
    * @param task_gid - Path parameter
    * @param body - Request body
    */
-  async removeDependentsForTask(task_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeDependents`, { data: body });
+  removeDependentsForTask(task_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeDependents`, { data: body });
+    });
   }
 
   /**
@@ -3055,8 +3532,11 @@ Returns an empty data block.
    * @param task_gid - Path parameter
    * @param body - Request body
    */
-  async addProjectForTask(task_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/addProject`, { data: body });
+  addProjectForTask(task_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/addProject`, { data: body });
+    });
   }
 
   /**
@@ -3071,8 +3551,11 @@ Returns an empty data block.
    * @param task_gid - Path parameter
    * @param body - Request body
    */
-  async removeProjectForTask(task_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeProject`, { data: body });
+  removeProjectForTask(task_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeProject`, { data: body });
+    });
   }
 
   /**
@@ -3084,8 +3567,11 @@ Adds a tag to a task. Returns an empty data block.
    * @param task_gid - Path parameter
    * @param body - Request body
    */
-  async addTagForTask(task_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/addTag`, { data: body });
+  addTagForTask(task_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/addTag`, { data: body });
+    });
   }
 
   /**
@@ -3097,8 +3583,11 @@ Removes a tag from a task. Returns an empty data block.
    * @param task_gid - Path parameter
    * @param body - Request body
    */
-  async removeTagForTask(task_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeTag`, { data: body });
+  removeTagForTask(task_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeTag`, { data: body });
+    });
   }
 
   /**
@@ -3113,13 +3602,16 @@ Requests to add/remove followers, if successful, will return the complete update
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addFollowersForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addFollowersForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/addFollowers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/addFollowers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/addFollowers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/addFollowers`, { data: body });
+    });
   }
 
   /**
@@ -3132,13 +3624,16 @@ Removes each of the specified followers from the task if they are following. Ret
    * @param body - Request body
    * @param params - Query parameters
    */
-  async removeFollowerForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  removeFollowerForTask(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeFollowers`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeFollowers`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeFollowers`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/removeFollowers`, { data: body });
+    });
   }
 
   /**
@@ -3165,8 +3660,11 @@ Returns a task given a custom ID shortcode.
    * @param workspace_gid - Path parameter
    * @param custom_id - Path parameter
    */
-  async getTaskForCustomID(workspace_gid: string, custom_id: string): Promise<Record<string, unknown>> {
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tasks/custom_id/${custom_id}`);
+  getTaskForCustomID(workspace_gid: string, custom_id: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tasks/custom_id/${custom_id}`);
+    });
   }
 
   /**
@@ -3209,13 +3707,16 @@ For example, if the gid of the custom field is 12345, these query parameter to f
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async searchTasksForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  searchTasksForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tasks/search`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tasks/search`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tasks/search`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/tasks/search`);
+    });
   }
 
   /**
@@ -3238,13 +3739,16 @@ Returns the complete team membership record for a single team membership.
    * @param team_membership_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTeamMembership(team_membership_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTeamMembership(team_membership_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/team_memberships/${team_membership_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/team_memberships/${team_membership_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/team_memberships/${team_membership_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/team_memberships/${team_membership_gid}`);
+    });
   }
 
   /**
@@ -3255,16 +3759,19 @@ Returns the complete team membership record for a single team membership.
 Returns compact team membership records.
    * @param params - Query parameters
    */
-  async getTeamMemberships(params?: { team?: string; user?: string; workspace?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTeamMemberships(params?: { team?: string; user?: string; workspace?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/team_memberships", {
+      return yield* client.get<Record<string, unknown>>("/team_memberships", {
         "team": params.team,
         "user": params.user,
         "workspace": params.workspace,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/team_memberships");
+    return yield* client.get<Record<string, unknown>>("/team_memberships");
+    });
   }
 
   /**
@@ -3276,13 +3783,16 @@ Returns the compact team memberships for the team.
    * @param team_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTeamMembershipsForTeam(team_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTeamMembershipsForTeam(team_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/team_memberships`, {
+      return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/team_memberships`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/team_memberships`);
+    return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/team_memberships`);
+    });
   }
 
   /**
@@ -3294,14 +3804,17 @@ Returns the compact team membership records for the user.
    * @param user_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTeamMembershipsForUser(user_gid: string, params?: { workspace?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTeamMembershipsForUser(user_gid: string, params?: { workspace?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/users/${user_gid}/team_memberships`, {
+      return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/team_memberships`, {
         "workspace": params.workspace,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/users/${user_gid}/team_memberships`);
+    return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/team_memberships`);
+    });
   }
 
   /**
@@ -3311,13 +3824,16 @@ Returns the compact team membership records for the user.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createTeam(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createTeam(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/teams", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/teams", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/teams", { data: body });
+    return yield* client.post<Record<string, unknown>>("/teams", { data: body });
+    });
   }
 
   /**
@@ -3329,13 +3845,16 @@ Returns the full record for a single team.
    * @param team_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTeam(team_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTeam(team_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/teams/${team_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/teams/${team_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}`);
+    });
   }
 
   /**
@@ -3346,13 +3865,16 @@ Returns the full record for a single team.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateTeam(team_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateTeam(team_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/teams/${team_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/teams/${team_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/teams/${team_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/teams/${team_gid}`, { data: body });
+    });
   }
 
   /**
@@ -3364,13 +3886,16 @@ Returns the compact records for all teams in the workspace visible to the author
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTeamsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTeamsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/teams`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/teams`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/teams`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/teams`);
+    });
   }
 
   /**
@@ -3382,13 +3907,16 @@ Returns the compact records for all teams to which the given user is assigned.
    * @param user_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTeamsForUser(user_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTeamsForUser(user_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/users/${user_gid}/teams`, {
+      return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/teams`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/users/${user_gid}/teams`);
+    return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/teams`);
+    });
   }
 
   /**
@@ -3401,13 +3929,16 @@ Returns the complete team membership record for the newly added user.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addUserForTeam(team_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addUserForTeam(team_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/teams/${team_gid}/addUser`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/teams/${team_gid}/addUser`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/teams/${team_gid}/addUser`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/teams/${team_gid}/addUser`, { data: body });
+    });
   }
 
   /**
@@ -3417,8 +3948,11 @@ Returns the complete team membership record for the newly added user.
    * @param team_gid - Path parameter
    * @param body - Request body
    */
-  async removeUserForTeam(team_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/teams/${team_gid}/removeUser`, { data: body });
+  removeUserForTeam(team_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/teams/${team_gid}/removeUser`, { data: body });
+    });
   }
 
   /**
@@ -3428,13 +3962,16 @@ Returns the complete team membership record for the newly added user.
    * @param time_period_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTimePeriod(time_period_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTimePeriod(time_period_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/time_periods/${time_period_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/time_periods/${time_period_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/time_periods/${time_period_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/time_periods/${time_period_gid}`);
+    });
   }
 
   /**
@@ -3443,16 +3980,19 @@ Returns the complete team membership record for the newly added user.
    * Returns compact time period records.
    * @param params - Query parameters
    */
-  async getTimePeriods(params?: { start_on?: string; end_on?: string; workspace?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTimePeriods(params?: { start_on?: string; end_on?: string; workspace?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/time_periods", {
+      return yield* client.get<Record<string, unknown>>("/time_periods", {
         "start_on": params.start_on,
         "end_on": params.end_on,
         "workspace": params.workspace,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/time_periods");
+    return yield* client.get<Record<string, unknown>>("/time_periods");
+    });
   }
 
   /**
@@ -3464,13 +4004,16 @@ Returns time tracking entries for a given task.
    * @param task_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTimeTrackingEntriesForTask(task_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTimeTrackingEntriesForTask(task_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/time_tracking_entries`, {
+      return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/time_tracking_entries`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/tasks/${task_gid}/time_tracking_entries`);
+    return yield* client.get<Record<string, unknown>>(`/tasks/${task_gid}/time_tracking_entries`);
+    });
   }
 
   /**
@@ -3483,13 +4026,16 @@ Returns the record of the newly created time tracking entry.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createTimeTrackingEntry(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createTimeTrackingEntry(task_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/time_tracking_entries`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/time_tracking_entries`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/tasks/${task_gid}/time_tracking_entries`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/tasks/${task_gid}/time_tracking_entries`, { data: body });
+    });
   }
 
   /**
@@ -3501,13 +4047,16 @@ Returns the complete time tracking entry record for a single time tracking entry
    * @param time_tracking_entry_gid - Path parameter
    * @param params - Query parameters
    */
-  async getTimeTrackingEntry(time_tracking_entry_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTimeTrackingEntry(time_tracking_entry_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`);
+    });
   }
 
   /**
@@ -3526,13 +4075,16 @@ Returns the complete updated time tracking entry record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateTimeTrackingEntry(time_tracking_entry_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateTimeTrackingEntry(time_tracking_entry_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`, { data: body });
+    });
   }
 
   /**
@@ -3544,8 +4096,11 @@ the URL for that time tracking entry.
 Returns an empty data record.
    * @param time_tracking_entry_gid - Path parameter
    */
-  async deleteTimeTrackingEntry(time_tracking_entry_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`);
+  deleteTimeTrackingEntry(time_tracking_entry_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/time_tracking_entries/${time_tracking_entry_gid}`);
+    });
   }
 
   /**
@@ -3556,9 +4111,11 @@ Returns an empty data record.
 Returns a list of time tracking entries filtered to a task, attributed project, portfolio or user.
    * @param params - Query parameters
    */
-  async getTimeTrackingEntries(params?: { task?: string; attributable_to?: string; portfolio?: string; user?: string; workspace?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getTimeTrackingEntries(params?: { task?: string; attributable_to?: string; portfolio?: string; user?: string; workspace?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/time_tracking_entries", {
+      return yield* client.get<Record<string, unknown>>("/time_tracking_entries", {
         "task": params.task,
         "attributable_to": params.attributable_to,
         "portfolio": params.portfolio,
@@ -3567,7 +4124,8 @@ Returns a list of time tracking entries filtered to a task, attributed project, 
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/time_tracking_entries");
+    return yield* client.get<Record<string, unknown>>("/time_tracking_entries");
+    });
   }
 
   /**
@@ -3614,13 +4172,16 @@ projects that are relevant for the requesting user's api token.
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async typeaheadForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  typeaheadForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/typeahead`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/typeahead`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/typeahead`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/typeahead`);
+    });
   }
 
   /**
@@ -3632,13 +4193,16 @@ Returns the full record for a user task list.
    * @param user_task_list_gid - Path parameter
    * @param params - Query parameters
    */
-  async getUserTaskList(user_task_list_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getUserTaskList(user_task_list_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/user_task_lists/${user_task_list_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/user_task_lists/${user_task_list_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/user_task_lists/${user_task_list_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/user_task_lists/${user_task_list_gid}`);
+    });
   }
 
   /**
@@ -3650,13 +4214,16 @@ Returns the full record for a user's task list.
    * @param user_gid - Path parameter
    * @param params - Query parameters
    */
-  async getUserTaskListForUser(user_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getUserTaskListForUser(user_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/users/${user_gid}/user_task_list`, {
+      return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/user_task_list`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/users/${user_gid}/user_task_list`);
+    return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/user_task_list`);
+    });
   }
 
   /**
@@ -3668,13 +4235,16 @@ Returns the user records for all users in all workspaces and organizations acces
 Results are sorted by user ID.
    * @param params - Query parameters
    */
-  async getUsers(params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getUsers(params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/users", {
+      return yield* client.get<Record<string, unknown>>("/users", {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/users");
+    return yield* client.get<Record<string, unknown>>("/users");
+    });
   }
 
   /**
@@ -3686,13 +4256,16 @@ Returns the full user record for the single user with the provided ID.
    * @param user_gid - Path parameter
    * @param params - Query parameters
    */
-  async getUser(user_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getUser(user_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/users/${user_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/users/${user_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/users/${user_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/users/${user_gid}`);
+    });
   }
 
   /**
@@ -3707,13 +4280,16 @@ Returns the complete updated user record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateUser(user_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateUser(user_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/users/${user_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/users/${user_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/users/${user_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/users/${user_gid}`, { data: body });
+    });
   }
 
   /**
@@ -3725,13 +4301,16 @@ Returns all of a user's favorites within a specified workspace and of a given ty
    * @param user_gid - Path parameter
    * @param params - Query parameters
    */
-  async getFavoritesForUser(user_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getFavoritesForUser(user_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/users/${user_gid}/favorites`, {
+      return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/favorites`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/users/${user_gid}/favorites`);
+    return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/favorites`);
+    });
   }
 
   /**
@@ -3744,13 +4323,16 @@ Results are sorted alphabetically and limited to 2000. For more results use the 
    * @param team_gid - Path parameter
    * @param params - Query parameters
    */
-  async getUsersForTeam(team_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getUsersForTeam(team_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/users`, {
+      return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/users`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/teams/${team_gid}/users`);
+    return yield* client.get<Record<string, unknown>>(`/teams/${team_gid}/users`);
+    });
   }
 
   /**
@@ -3763,13 +4345,16 @@ Results are sorted alphabetically and limited to 2000. For more results use the 
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async getUsersForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getUsersForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/users`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/users`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/users`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/users`);
+    });
   }
 
   /**
@@ -3782,13 +4367,16 @@ Returns the full user record for the single user with the provided ID in the spe
    * @param user_gid - Path parameter
    * @param params - Query parameters
    */
-  async getUserForWorkspace(workspace_gid: string, user_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getUserForWorkspace(workspace_gid: string, user_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/users/${user_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/users/${user_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/users/${user_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/users/${user_gid}`);
+    });
   }
 
   /**
@@ -3800,13 +4388,16 @@ Returns the full user record for the single user with the provided ID in the spe
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateUserForWorkspace(workspace_gid: string, user_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateUserForWorkspace(workspace_gid: string, user_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/workspaces/${workspace_gid}/users/${user_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/workspaces/${workspace_gid}/users/${user_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/workspaces/${workspace_gid}/users/${user_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/workspaces/${workspace_gid}/users/${user_gid}`, { data: body });
+    });
   }
 
   /**
@@ -3817,15 +4408,18 @@ Returns the full user record for the single user with the provided ID in the spe
 Get the compact representation of all webhooks your app has registered for the authenticated user in the given workspace.
    * @param params - Query parameters
    */
-  async getWebhooks(params?: { workspace?: string; resource?: string; opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getWebhooks(params?: { workspace?: string; resource?: string; opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/webhooks", {
+      return yield* client.get<Record<string, unknown>>("/webhooks", {
         "workspace": params.workspace,
         "resource": params.resource,
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/webhooks");
+    return yield* client.get<Record<string, unknown>>("/webhooks");
+    });
   }
 
   /**
@@ -3894,13 +4488,16 @@ HTTP/1.1 201
    * @param body - Request body
    * @param params - Query parameters
    */
-  async createWebhook(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  createWebhook(body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>("/webhooks", { data: body }, {
+      return yield* client.post<Record<string, unknown>>("/webhooks", { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>("/webhooks", { data: body });
+    return yield* client.post<Record<string, unknown>>("/webhooks", { data: body });
+    });
   }
 
   /**
@@ -3912,13 +4509,16 @@ Returns the full record for the given webhook.
    * @param webhook_gid - Path parameter
    * @param params - Query parameters
    */
-  async getWebhook(webhook_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getWebhook(webhook_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/webhooks/${webhook_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/webhooks/${webhook_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/webhooks/${webhook_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/webhooks/${webhook_gid}`);
+    });
   }
 
   /**
@@ -3931,13 +4531,16 @@ An existing webhook's filters can be updated by making a PUT request on the URL 
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateWebhook(webhook_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateWebhook(webhook_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/webhooks/${webhook_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/webhooks/${webhook_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/webhooks/${webhook_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/webhooks/${webhook_gid}`, { data: body });
+    });
   }
 
   /**
@@ -3948,8 +4551,11 @@ An existing webhook's filters can be updated by making a PUT request on the URL 
 This method *permanently* removes a webhook. Note that it may be possible to receive a request that was already in flight after deleting the webhook, but no further requests will be issued.
    * @param webhook_gid - Path parameter
    */
-  async deleteWebhook(webhook_gid: string): Promise<Record<string, unknown>> {
-    return this.client.delete<Record<string, unknown>>(`/webhooks/${webhook_gid}`);
+  deleteWebhook(webhook_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.delete<Record<string, unknown>>(`/webhooks/${webhook_gid}`);
+    });
   }
 
   /**
@@ -3959,13 +4565,16 @@ This method *permanently* removes a webhook. Note that it may be possible to rec
    * @param workspace_membership_gid - Path parameter
    * @param params - Query parameters
    */
-  async getWorkspaceMembership(workspace_membership_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getWorkspaceMembership(workspace_membership_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspace_memberships/${workspace_membership_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/workspace_memberships/${workspace_membership_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspace_memberships/${workspace_membership_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/workspace_memberships/${workspace_membership_gid}`);
+    });
   }
 
   /**
@@ -3975,13 +4584,16 @@ This method *permanently* removes a webhook. Note that it may be possible to rec
    * @param user_gid - Path parameter
    * @param params - Query parameters
    */
-  async getWorkspaceMembershipsForUser(user_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getWorkspaceMembershipsForUser(user_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/users/${user_gid}/workspace_memberships`, {
+      return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/workspace_memberships`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/users/${user_gid}/workspace_memberships`);
+    return yield* client.get<Record<string, unknown>>(`/users/${user_gid}/workspace_memberships`);
+    });
   }
 
   /**
@@ -3991,13 +4603,16 @@ This method *permanently* removes a webhook. Note that it may be possible to rec
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async getWorkspaceMembershipsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getWorkspaceMembershipsForWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/workspace_memberships`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/workspace_memberships`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/workspace_memberships`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/workspace_memberships`);
+    });
   }
 
   /**
@@ -4008,13 +4623,16 @@ This method *permanently* removes a webhook. Note that it may be possible to rec
 Returns the compact records for all workspaces visible to the authorized user.
    * @param params - Query parameters
    */
-  async getWorkspaces(params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getWorkspaces(params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>("/workspaces", {
+      return yield* client.get<Record<string, unknown>>("/workspaces", {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>("/workspaces");
+    return yield* client.get<Record<string, unknown>>("/workspaces");
+    });
   }
 
   /**
@@ -4026,13 +4644,16 @@ Returns the full workspace record for a single workspace.
    * @param workspace_gid - Path parameter
    * @param params - Query parameters
    */
-  async getWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  getWorkspace(workspace_gid: string, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}`, {
+      return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}`, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}`);
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}`);
+    });
   }
 
   /**
@@ -4045,13 +4666,16 @@ Returns the complete, updated workspace record.
    * @param body - Request body
    * @param params - Query parameters
    */
-  async updateWorkspace(workspace_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  updateWorkspace(workspace_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.put<Record<string, unknown>>(`/workspaces/${workspace_gid}`, { data: body }, {
+      return yield* client.put<Record<string, unknown>>(`/workspaces/${workspace_gid}`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.put<Record<string, unknown>>(`/workspaces/${workspace_gid}`, { data: body });
+    return yield* client.put<Record<string, unknown>>(`/workspaces/${workspace_gid}`, { data: body });
+    });
   }
 
   /**
@@ -4063,13 +4687,16 @@ The user can be referenced by their globally unique user ID or their email addre
    * @param body - Request body
    * @param params - Query parameters
    */
-  async addUserForWorkspace(workspace_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Promise<Record<string, unknown>> {
+  addUserForWorkspace(workspace_gid: string, body: Record<string, unknown>, params?: { opt_fields?: string[] }): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
     if (params) {
-      return this.client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/addUser`, { data: body }, {
+      return yield* client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/addUser`, { data: body }, {
         "opt_fields": params.opt_fields,
       });
     }
-    return this.client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/addUser`, { data: body });
+    return yield* client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/addUser`, { data: body });
+    });
   }
 
   /**
@@ -4097,8 +4724,11 @@ Returns an empty data record.
    * @param workspace_gid - Path parameter
    * @param body - Request body
    */
-  async removeUserForWorkspace(workspace_gid: string, body: Record<string, unknown>): Promise<Record<string, unknown>> {
-    return this.client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/removeUser`, { data: body });
+  removeUserForWorkspace(workspace_gid: string, body: Record<string, unknown>): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.post<Record<string, unknown>>(`/workspaces/${workspace_gid}/removeUser`, { data: body });
+    });
   }
 
   /**
@@ -4109,8 +4739,11 @@ The response is a list of events and the schema of each event is as described [h
 Asana limits a single sync token to 1000 events. If more than 1000 events exist for a given domain, `has_more: true` will be returned in the response, indicating that there are more events to pull.
    * @param workspace_gid - Path parameter
    */
-  async getWorkspaceEvents(workspace_gid: string): Promise<Record<string, unknown>> {
-    return this.client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/events`);
+  getWorkspaceEvents(workspace_gid: string): Effect.Effect<Record<string, unknown>, HttpError | NetworkError | ParseError, HttpClient> {
+    return Effect.gen(function* () {
+      const client = yield* HttpClient;
+    return yield* client.get<Record<string, unknown>>(`/workspaces/${workspace_gid}/events`);
+    });
   }
 
 }
