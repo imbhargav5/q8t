@@ -6,12 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { mockContentQueues } from "@/lib/mock-data";
 import { Calendar, Plus, Play, Pause, Settings, Trash2, Eye } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 export default function ContentQueuesPage() {
-  const params = useParams();
-  const workspaceId = params.workspaceId as string;
-
   const activeQueues = mockContentQueues.filter(q => q.isActive);
   const inactiveQueues = mockContentQueues.filter(q => !q.isActive);
 
@@ -29,7 +25,7 @@ export default function ContentQueuesPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href={`/workspace/${workspaceId}/automations/content-queues/new`}>
+          <Link href={`/automations/content-queues/new`}>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
               New Queue
@@ -144,13 +140,13 @@ export default function ContentQueuesPage() {
                   )}
 
                   <div className="flex gap-2 pt-2">
-                    <Link href={`/workspace/${workspaceId}/automations/content-queues/${queue.id}`}>
+                    <Link href={`/automations/content-queues/${queue.id}`}>
                       <Button size="sm" variant="outline">
                         <Eye className="h-3 w-3 mr-1" />
                         View Details
                       </Button>
                     </Link>
-                    <Link href={`/workspace/${workspaceId}/automations/content-queues/${queue.id}/edit`}>
+                    <Link href={`/automations/content-queues/${queue.id}/edit`}>
                       <Button size="sm" variant="outline">
                         <Settings className="h-3 w-3 mr-1" />
                         Edit
@@ -195,7 +191,7 @@ export default function ContentQueuesPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-2">
-                    <Link href={`/workspace/${workspaceId}/automations/content-queues/${queue.id}/edit`}>
+                    <Link href={`/automations/content-queues/${queue.id}/edit`}>
                       <Button size="sm" variant="outline">
                         <Settings className="h-3 w-3 mr-1" />
                         Edit

@@ -34,7 +34,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/workspace/workspace-1">
+                <BreadcrumbLink href="/">
                   Workspace
                 </BreadcrumbLink>
               </BreadcrumbItem>

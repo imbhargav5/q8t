@@ -6,12 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { mockEvergreenContent } from "@/lib/mock-data";
 import { Repeat, Plus, Play, Pause, Settings, Trash2, Eye, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 export default function EvergreenContentPage() {
-  const params = useParams();
-  const workspaceId = params.workspaceId as string;
-
   const activeContent = mockEvergreenContent.filter(c => c.isActive);
   const inactiveContent = mockEvergreenContent.filter(c => !c.isActive);
 
@@ -34,7 +30,7 @@ export default function EvergreenContentPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href={`/workspace/${workspaceId}/automations/evergreen-content/new`}>
+          <Link href={`/automations/evergreen-content/new`}>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
               New Evergreen Post
@@ -165,13 +161,13 @@ export default function EvergreenContentPage() {
                   )}
 
                   <div className="flex gap-2 pt-2">
-                    <Link href={`/workspace/${workspaceId}/automations/evergreen-content/${content.id}`}>
+                    <Link href={`/automations/evergreen-content/${content.id}`}>
                       <Button size="sm" variant="outline">
                         <Eye className="h-3 w-3 mr-1" />
                         View Details
                       </Button>
                     </Link>
-                    <Link href={`/workspace/${workspaceId}/automations/evergreen-content/${content.id}/edit`}>
+                    <Link href={`/automations/evergreen-content/${content.id}/edit`}>
                       <Button size="sm" variant="outline">
                         <Settings className="h-3 w-3 mr-1" />
                         Edit
@@ -220,7 +216,7 @@ export default function EvergreenContentPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-2">
-                    <Link href={`/workspace/${workspaceId}/automations/evergreen-content/${content.id}/edit`}>
+                    <Link href={`/automations/evergreen-content/${content.id}/edit`}>
                       <Button size="sm" variant="outline">
                         <Settings className="h-3 w-3 mr-1" />
                         Edit

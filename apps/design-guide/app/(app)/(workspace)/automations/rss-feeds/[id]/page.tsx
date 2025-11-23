@@ -16,7 +16,6 @@ import { useState } from "react";
 
 export default function RSSFeedDetailPage() {
   const params = useParams();
-  const workspaceId = params.workspaceId as string;
   const feedId = params.id as string;
 
   const feed = mockRSSFeeds.find(f => f.id === feedId);
@@ -56,7 +55,7 @@ export default function RSSFeedDetailPage() {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Link href={`/workspace/${workspaceId}/automations/rss-feeds`}>
+            <Link href={`automations/rss-feeds`}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back to RSS Feeds

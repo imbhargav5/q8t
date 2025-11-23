@@ -29,7 +29,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 const automationCategories = [
   {
@@ -135,9 +134,6 @@ const automationCategories = [
 ];
 
 export default function AutomationsPage() {
-  const params = useParams();
-  const workspaceId = params.workspaceId as string;
-
   const totalAutomations = automationCategories.reduce(
     (acc, cat) => acc + cat.items.reduce((sum, item) => sum + item.count, 0),
     0
@@ -229,7 +225,7 @@ export default function AutomationsPage() {
                           </div>
                           <Badge variant="outline">{item.count} total</Badge>
                         </div>
-                        <Link href={`/workspace/${workspaceId}/automations/${item.href}`}>
+                        <Link href={`/automations/${item.href}`}>
                           <Button variant="outline" size="sm" className="w-full">
                             Manage {item.name}
                             <ArrowRight className="ml-2 h-4 w-4" />

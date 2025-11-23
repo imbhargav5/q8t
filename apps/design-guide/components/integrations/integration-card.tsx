@@ -11,12 +11,10 @@ import { IntegrationStatusBadge } from "./integration-status-badge";
 
 interface IntegrationCardProps {
   integration: Integration;
-  workspaceId: string;
 }
 
 export function IntegrationCard({
   integration,
-  workspaceId,
 }: IntegrationCardProps) {
   const statusIcons = {
     connected: <CheckCircle2 className="h-4 w-4 text-primary" />,
@@ -67,7 +65,7 @@ export function IntegrationCard({
       </CardContent>
       <CardFooter className="pt-0">
         <Link
-          href={`/workspace/${workspaceId}/integrations/${integration.id}`}
+          href={`/integrations/${integration.id}`}
           className="w-full"
         >
           <Button

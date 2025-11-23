@@ -17,7 +17,6 @@ import { useState } from "react";
 
 export default function ContentQueueDetailPage() {
   const params = useParams();
-  const workspaceId = params.workspaceId as string;
   const queueId = params.id as string;
 
   const queue = mockContentQueues.find(q => q.id === queueId);
@@ -59,7 +58,7 @@ export default function ContentQueueDetailPage() {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Link href={`/workspace/${workspaceId}/automations/content-queues`}>
+            <Link href={`automations/content-queues`}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back to Content Queues
