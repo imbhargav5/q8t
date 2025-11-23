@@ -12,6 +12,7 @@ import {
   Command,
   Briefcase,
   Home,
+  Shield,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 
@@ -70,8 +71,14 @@ const navItems = [
   },
   {
     title: "Automations",
-    url: "/automations",
+    url: "/workspace/workspace-1/automations",
     icon: Bot,
+    isActive: false,
+  },
+  {
+    title: "Crisis Management",
+    url: "/workspace/workspace-1/crisis-management",
+    icon: Shield,
     isActive: false,
   },
   {
