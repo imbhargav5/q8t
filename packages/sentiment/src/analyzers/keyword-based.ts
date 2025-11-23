@@ -193,7 +193,7 @@ export class KeywordAnalyzer {
       id: input.id,
       ...this.analyze({
         text: input.text,
-        language: input.language,
+        language: input.language || 'en',
       }),
     }))
   }

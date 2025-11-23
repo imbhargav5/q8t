@@ -541,6 +541,28 @@ importers:
         specifier: ^2.1.0
         version: 2.1.9(@types/node@20.19.25)(lightningcss@1.30.2)
 
+  packages/data-access:
+    dependencies:
+      '@supabase/supabase-js':
+        specifier: ^2.39.7
+        version: 2.84.0
+      effect:
+        specifier: ^3.10.0
+        version: 3.19.6
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.8.6
+        version: 22.19.1
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.19.1)(lightningcss@1.30.2)
+
   packages/discord-sdk:
     dependencies:
       '@q8t/effect-sdk-base':
