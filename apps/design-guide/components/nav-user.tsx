@@ -31,12 +31,14 @@ import { CaretSortIcon, ComponentPlaceholderIcon } from "@radix-ui/react-icons"
 
 export function NavUser({
   user,
+  onOpenNotifications,
 }: {
   user: {
     name: string
     email: string
     avatar: string
   }
+  onOpenNotifications?: () => void
 }) {
   const { isMobile } = useSidebar()
 
@@ -95,7 +97,7 @@ export function NavUser({
                 <ComponentPlaceholderIcon />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={onOpenNotifications}>
                 <Bell />
                 Notifications
               </DropdownMenuItem>
