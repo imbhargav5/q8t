@@ -23,4 +23,6 @@ export * from "./listening";
 
 // Automation mock data
 export * from "./crisis-management";
+export * from "./social-signals";
+export * from "./crisis-analytics";
 export * from "./automations";
