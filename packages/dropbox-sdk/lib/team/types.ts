@@ -2,16 +2,7 @@
 // Generated from Dropbox Team API
 
 export interface TeamMemberInfo {
-  profile?: {
-    team_member_id?: string;
-    email?: string;
-    email_verified?: boolean;
-    status?: { ".tag"?: "active" | "invited" | "suspended" | "removed" };
-    name?: { given_name?: string; surname?: string; familiar_name?: string; display_name?: string };
-    membership_type?: { ".tag"?: "full" | "limited" };
-    joined_on?: string;
-    account_id?: string;
-  };
+  profile?: { team_member_id?: string; email?: string; email_verified?: boolean; status?: { ".tag"?: "active" | "invited" | "suspended" | "removed" }; name?: { given_name?: string; surname?: string; familiar_name?: string; display_name?: string }; membership_type?: { ".tag"?: "full" | "limited" }; joined_on?: string; account_id?: string };
   role?: { ".tag"?: "team_admin" | "user_management_admin" | "support_admin" | "member_only" };
 }
 
@@ -44,25 +35,14 @@ export interface DeviceSession {
 export interface MemberDevices {
   team_member_id?: string;
   web_sessions?: DeviceSession[];
-  desktop_clients?: {
-    session_id?: string;
-    host_name?: string;
-    client_type?: { ".tag"?: string };
-    platform?: string;
-  }[];
-  mobile_clients?: {
-    session_id?: string;
-    device_name?: string;
-    client_type?: { ".tag"?: string };
-  }[];
+  desktop_clients?: { session_id?: string; host_name?: string; client_type?: { ".tag"?: string }; platform?: string }[];
+  mobile_clients?: { session_id?: string; device_name?: string; client_type?: { ".tag"?: string } }[];
 }
 
 export interface TeamNamespace {
   name?: string;
   namespace_id?: string;
-  namespace_type?: {
-    ".tag"?: "app_folder" | "shared_folder" | "team_folder" | "team_member_folder";
-  };
+  namespace_type?: { ".tag"?: "app_folder" | "shared_folder" | "team_folder" | "team_member_folder" };
   team_member_id?: string;
 }
 

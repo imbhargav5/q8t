@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Empty } from "@/components/ui/empty";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import {
   mockNotifications,
   getUnreadNotifications,
@@ -271,11 +271,15 @@ export default function NotificationsPage() {
         <ScrollArea className="flex-1">
           <div className="p-6">
             {filteredNotifications.length === 0 ? (
-              <Empty
-                icon={Bell}
-                title="No notifications"
-                description="You're all caught up! Check back later for updates."
-              />
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <Bell />
+                  </EmptyMedia>
+                  <EmptyTitle>No notifications</EmptyTitle>
+                  <EmptyDescription>You're all caught up! Check back later for updates.</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
             ) : (
               <div className="space-y-2">
                 {filteredNotifications.map((notification) => (

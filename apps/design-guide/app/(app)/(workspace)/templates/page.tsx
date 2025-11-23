@@ -29,7 +29,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Empty } from "@/components/ui/empty";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { mockTemplates, getTemplatesByCategory, getPublicTemplates } from "@/lib/mock-data/templates";
 import type { ContentTemplate } from "@/lib/zod-schemas/template.schema";
@@ -202,11 +202,15 @@ export default function TemplatesPage() {
           <div className="p-6">
             <TabsContent value="my-templates" className="m-0">
               {filteredTemplates.length === 0 ? (
-                <Empty
-                  icon={FileText}
-                  title="No templates found"
-                  description="Create your first template to get started"
-                />
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <FileText />
+                    </EmptyMedia>
+                    <EmptyTitle>No templates found</EmptyTitle>
+                    <EmptyDescription>Create your first template to get started</EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
               ) : viewMode === "grid" ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredTemplates.map((template) => (

@@ -26,7 +26,7 @@ export const NotificationSchema = z.object({
   actor_name: z.string().nullable(),
   actor_avatar: z.string().nullable(),
   platform: z.string().nullable(),
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.string(), z.any()).default({}),
   read_at: z.string().nullable(),
   created_at: z.string(),
 });

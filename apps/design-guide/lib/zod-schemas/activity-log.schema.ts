@@ -14,7 +14,7 @@ export const ActivityLogSchema = z.object({
   details: z.string(),
   ip_address: z.string().nullable(),
   user_agent: z.string().nullable(),
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.string(), z.any()).default({}),
   created_at: z.string(),
 });
 

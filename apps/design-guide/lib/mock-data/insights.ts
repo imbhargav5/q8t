@@ -33,29 +33,31 @@ function generateHeatmapData(): BestTimeData[] {
 
       // Increase score during peak times
       if (isWeekend) {
-        if (pattern.morning.includes(hour)) {
+        const weekendPattern = peakPatterns.weekend;
+        if (weekendPattern.morning.includes(hour)) {
           score += 40 + Math.random() * 20;
           postCount += 15;
           avgImpressions += 3000;
-        } else if (pattern.afternoon.includes(hour)) {
+        } else if (weekendPattern.afternoon.includes(hour)) {
           score += 35 + Math.random() * 15;
           postCount += 12;
           avgImpressions += 2500;
-        } else if (pattern.evening.includes(hour)) {
+        } else if (weekendPattern.evening.includes(hour)) {
           score += 45 + Math.random() * 25;
           postCount += 20;
           avgImpressions += 4000;
         }
       } else {
-        if (pattern.morning.includes(hour)) {
+        const weekdayPattern = peakPatterns.weekday;
+        if (weekdayPattern.morning.includes(hour)) {
           score += 50 + Math.random() * 25;
           postCount += 25;
           avgImpressions += 5000;
-        } else if (pattern.lunch.includes(hour)) {
+        } else if (weekdayPattern.lunch.includes(hour)) {
           score += 55 + Math.random() * 20;
           postCount += 30;
           avgImpressions += 5500;
-        } else if (pattern.evening.includes(hour)) {
+        } else if (weekdayPattern.evening.includes(hour)) {
           score += 60 + Math.random() * 30;
           postCount += 35;
           avgImpressions += 6000;
