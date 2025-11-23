@@ -41,6 +41,15 @@ export function MiniCalendar({
 }: MiniCalendarProps) {
   const [currentDate, setCurrentDate] = React.useState(defaultDate);
 
+  // Separate navigation buttons from other children
+  const childrenArray = React.Children.toArray(children);
+  const navigationButtons = childrenArray.filter(
+    (child) => React.isValidElement(child) && child.type === MiniCalendarNavigation
+  );
+  const otherChildren = childrenArray.filter(
+    (child) => !React.isValidElement(child) || child.type !== MiniCalendarNavigation
+  );
+
   return (
     <MiniCalendarContext.Provider
       value={{ currentDate, setCurrentDate, selectedDate, onSelectDate }}
@@ -53,8 +62,9 @@ export function MiniCalendar({
               year: "numeric",
             })}
           </div>
-          <div className="flex gap-1">{children}</div>
+          <div className="flex gap-1">{navigationButtons}</div>
         </div>
+        {otherChildren}
       </div>
     </MiniCalendarContext.Provider>
   );

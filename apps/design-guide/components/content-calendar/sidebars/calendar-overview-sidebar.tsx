@@ -75,10 +75,10 @@ export function CalendarOverviewSidebar({
           <MiniCalendar defaultDate={currentDate} selectedDate={currentDate} onSelectDate={onDateChange}>
             <MiniCalendarNavigation direction="prev" />
             <MiniCalendarNavigation direction="next" />
+            <MiniCalendarDays>
+              {(date) => <MiniCalendarDay date={date} key={date.toISOString()} />}
+            </MiniCalendarDays>
           </MiniCalendar>
-          <MiniCalendarDays>
-            {(date) => <MiniCalendarDay date={date} key={date.toISOString()} />}
-          </MiniCalendarDays>
         </CardContent>
       </Card>
 
