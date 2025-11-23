@@ -180,13 +180,13 @@ export function SocialSignalCard({ signal, compact = false }: SocialSignalCardPr
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span className="truncate">{signal.authorHandle}</span>
-                {signal.authorFollowerCount && (
+                {signal.followerCount && (
                   <>
                     <span>•</span>
                     <span className="flex-shrink-0">
-                      {signal.authorFollowerCount >= 1000
-                        ? `${(signal.authorFollowerCount / 1000).toFixed(1)}K`
-                        : signal.authorFollowerCount}{" "}
+                      {signal.followerCount >= 1000
+                        ? `${(signal.followerCount / 1000).toFixed(1)}K`
+                        : signal.followerCount}{" "}
                       followers
                     </span>
                   </>
