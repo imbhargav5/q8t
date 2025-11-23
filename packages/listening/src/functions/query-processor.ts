@@ -5,10 +5,10 @@
  * that match the query configuration
  */
 
-import { inngest } from '../../client';
-import { EVENT_NAMES, FUNCTION_IDS } from '../../constants';
-import { createSupabaseAdapter } from '../../adapters';
-import { ListeningQueryProcessEventSchema } from '../../types';
+import { inngest } from '../client';
+import { EVENT_NAMES, FUNCTION_IDS } from '../constants';
+import { createSupabaseAdapter } from '../adapters';
+import { ListeningQueryProcessEventSchema } from '../types';
 
 /**
  * Process a listening query

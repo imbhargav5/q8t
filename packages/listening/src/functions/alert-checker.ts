@@ -4,10 +4,10 @@
  * Checks listening alerts and triggers notifications when conditions are met
  */
 
-import { inngest } from '../../client';
-import { EVENT_NAMES, FUNCTION_IDS } from '../../constants';
-import { createSupabaseAdapter } from '../../adapters';
-import { ListeningAlertCheckEventSchema } from '../../types';
+import { inngest } from '../client';
+import { EVENT_NAMES, FUNCTION_IDS } from '../constants';
+import { createSupabaseAdapter } from '../adapters';
+import { ListeningAlertCheckEventSchema } from '../types';
 
 interface AlertTrigger {
   alert: any;
