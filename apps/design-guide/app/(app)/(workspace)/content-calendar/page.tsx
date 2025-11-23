@@ -144,7 +144,11 @@ export default function ContentCalendarPage() {
         {selectedPost ? (
           <PostDetailSidebar post={selectedPost} />
         ) : (
-          <CalendarOverviewSidebar posts={mockPosts} currentDate={currentDate} />
+          <CalendarOverviewSidebar
+            posts={mockPosts}
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+          />
         )}
       </RightSidebarContainer>
 
