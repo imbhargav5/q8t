@@ -1,0 +1,31 @@
+{
+  "name": "@q8t/analytics-engine",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Pure analytics calculations for social media metrics",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "effect": "^3.10.0",
+    "zod": "^3.23.8",
+    "date-fns": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.8.6",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
