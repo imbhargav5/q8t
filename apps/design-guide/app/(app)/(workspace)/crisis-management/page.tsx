@@ -7,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { mockCrisisIncidents, mockCrisisDetectionRules, mockStatusComponents } from "@/lib/mock-data";
 import { AlertTriangle, CheckCircle, Clock, Shield, Activity, Plus, Settings } from "lucide-react";
 import type { CrisisSeverity, CrisisStatus, ComponentStatus } from "@/lib/zod-schemas";
+import Link from "next/link";
 
 const severityConfig: Record<CrisisSeverity, { color: string; icon: typeof AlertTriangle }> = {
   low: { color: "bg-blue-500/10 text-blue-700 border-blue-200", icon: Activity },
@@ -61,45 +62,47 @@ export default function CrisisManagementPage() {
             {activeIncidents.map((incident) => {
               const SeverityIcon = severityConfig[incident.severity].icon;
               return (
-                <Alert key={incident.id} className={`${severityConfig[incident.severity].color} cursor-pointer hover:shadow-md transition-shadow`}>
-                  <SeverityIcon className="h-5 w-5" />
-                  <AlertTitle className="flex items-center gap-2">
-                    {incident.title}
-                    <Badge className={statusConfig[incident.status].color}>
-                      {statusConfig[incident.status].label}
-                    </Badge>
-                    <Badge variant="outline">{incident.severity.toUpperCase()}</Badge>
-                  </AlertTitle>
-                  <AlertDescription className="mt-2">
-                    <p className="mb-2">{incident.description}</p>
-                    <div className="flex gap-4 text-sm">
-                      <span>
-                        <strong>Platforms:</strong> {incident.platforms.join(", ")}
-                      </span>
-                      <span>
-                        <strong>Detected:</strong> {new Date(incident.detectedAt).toLocaleString()}
-                      </span>
-                      {incident.negativeMessageCount > 0 && (
+                <Link key={incident.id} href={`/crisis-management/${incident.id}`}>
+                  <Alert className={`${severityConfig[incident.severity].color} cursor-pointer hover:shadow-md transition-shadow`}>
+                    <SeverityIcon className="h-5 w-5" />
+                    <AlertTitle className="flex items-center gap-2">
+                      {incident.title}
+                      <Badge className={statusConfig[incident.status].color}>
+                        {statusConfig[incident.status].label}
+                      </Badge>
+                      <Badge variant="outline">{incident.severity.toUpperCase()}</Badge>
+                    </AlertTitle>
+                    <AlertDescription className="mt-2">
+                      <p className="mb-2">{incident.description}</p>
+                      <div className="flex gap-4 text-sm">
                         <span>
-                          <strong>Negative Messages:</strong> {incident.negativeMessageCount}
+                          <strong>Platforms:</strong> {incident.platforms.join(", ")}
                         </span>
+                        <span>
+                          <strong>Detected:</strong> {new Date(incident.detectedAt).toLocaleString()}
+                        </span>
+                        {incident.negativeMessageCount > 0 && (
+                          <span>
+                            <strong>Negative Messages:</strong> {incident.negativeMessageCount}
+                          </span>
+                        )}
+                      </div>
+                      {incident.impactNotes && (
+                        <p className="mt-2 text-sm italic">{incident.impactNotes}</p>
                       )}
-                    </div>
-                    {incident.impactNotes && (
-                      <p className="mt-2 text-sm italic">{incident.impactNotes}</p>
-                    )}
-                    <div className="flex gap-2 mt-3">
-                      <Button size="sm" variant="secondary">
-                        View Details
-                      </Button>
-                      {incident.status === "detected" && (
-                        <Button size="sm">
-                          Acknowledge
+                      <div className="flex gap-2 mt-3">
+                        <Button size="sm" variant="secondary">
+                          View Details
                         </Button>
-                      )}
-                    </div>
-                  </AlertDescription>
-                </Alert>
+                        {incident.status === "detected" && (
+                          <Button size="sm" onClick={(e) => e.preventDefault()}>
+                            Acknowledge
+                          </Button>
+                        )}
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                </Link>
               );
             })}
           </div>
@@ -203,32 +206,34 @@ export default function CrisisManagementPage() {
           <h2 className="text-xl font-semibold">Recently Resolved</h2>
           <div className="grid gap-4">
             {resolvedIncidents.map((incident) => (
-              <Card key={incident.id} className="opacity-75 hover:opacity-100 transition-opacity cursor-pointer">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    {incident.title}
-                    <Badge className="bg-green-500">Resolved</Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 text-sm">
-                    <p>{incident.description}</p>
-                    {incident.resolutionNotes && (
-                      <div className="mt-2 p-3 bg-muted rounded">
-                        <p className="font-semibold mb-1">Resolution:</p>
-                        <p>{incident.resolutionNotes}</p>
-                      </div>
-                    )}
-                    <div className="flex gap-4 text-muted-foreground">
-                      <span>Detected: {new Date(incident.detectedAt).toLocaleDateString()}</span>
-                      {incident.resolvedAt && (
-                        <span>Resolved: {new Date(incident.resolvedAt).toLocaleDateString()}</span>
+              <Link key={incident.id} href={`/crisis-management/${incident.id}`}>
+                <Card className="opacity-75 hover:opacity-100 transition-opacity cursor-pointer">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      {incident.title}
+                      <Badge className="bg-green-500">Resolved</Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      <p>{incident.description}</p>
+                      {incident.resolutionNotes && (
+                        <div className="mt-2 p-3 bg-muted rounded">
+                          <p className="font-semibold mb-1">Resolution:</p>
+                          <p>{incident.resolutionNotes}</p>
+                        </div>
                       )}
+                      <div className="flex gap-4 text-muted-foreground">
+                        <span>Detected: {new Date(incident.detectedAt).toLocaleDateString()}</span>
+                        {incident.resolvedAt && (
+                          <span>Resolved: {new Date(incident.resolvedAt).toLocaleDateString()}</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>
