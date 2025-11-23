@@ -192,7 +192,7 @@ export default function ContentQueueDetailPage() {
                   <Label htmlFor="scheduleType">Schedule Type</Label>
                   <Select
                     value={formData.scheduleType}
-                    onValueChange={(value) => setFormData({ ...formData, scheduleType: value })}
+                    onValueChange={(value) => setFormData({ ...formData, scheduleType: value as "interval" | "time_slots" | "optimal" })}
                     disabled={!isEditing}
                   >
                     <SelectTrigger id="scheduleType">
