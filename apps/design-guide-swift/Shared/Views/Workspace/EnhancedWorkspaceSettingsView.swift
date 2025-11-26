@@ -2,7 +2,7 @@ import SwiftUI
 
 struct EnhancedWorkspaceSettingsView: View {
     @State private var selectedTab = 0
-    private let workspace = MockWorkspaces.currentWorkspace
+    private let workspace = MockWorkspaces.workspace
 
     var body: some View {
         VStack(spacing: 0) {
@@ -73,17 +73,15 @@ struct EnhancedWorkspaceSettingsView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // Logo Upload
                     HStack {
-                        if let primaryColor = workspace.settings.primaryColor {
-                            Circle()
-                                .fill(Color(hex: primaryColor) ?? .blue)
-                                .frame(width: 60, height: 60)
-                                .overlay(
-                                    Text(String(workspace.name.prefix(1)))
-                                        .foregroundColor(.white)
-                                        .font(.title)
-                                        .fontWeight(.bold)
-                                )
-                        }
+                        Circle()
+                            .fill(Color(hex: workspace.primaryColor))
+                            .frame(width: 60, height: 60)
+                            .overlay(
+                                Text(String(workspace.name.prefix(1)))
+                                    .foregroundColor(.white)
+                                    .font(.title)
+                                    .fontWeight(.bold)
+                            )
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Workspace Logo")
@@ -102,28 +100,24 @@ struct EnhancedWorkspaceSettingsView: View {
                     .cornerRadius(8)
 
                     SettingsRow(label: "Primary Color") {
-                        if let color = workspace.settings.primaryColor {
-                            HStack {
-                                Circle()
-                                    .fill(Color(hex: color) ?? .blue)
-                                    .frame(width: 24, height: 24)
-                                Text(color)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
+                        HStack {
+                            Circle()
+                                .fill(Color(hex: workspace.primaryColor))
+                                .frame(width: 24, height: 24)
+                            Text(workspace.primaryColor)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
 
                     SettingsRow(label: "Secondary Color") {
-                        if let color = workspace.settings.secondaryColor {
-                            HStack {
-                                Circle()
-                                    .fill(Color(hex: color) ?? .gray)
-                                    .frame(width: 24, height: 24)
-                                Text(color)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
+                        HStack {
+                            Circle()
+                                .fill(Color(hex: workspace.secondaryColor))
+                                .frame(width: 24, height: 24)
+                            Text(workspace.secondaryColor)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
                 }
@@ -132,17 +126,17 @@ struct EnhancedWorkspaceSettingsView: View {
             SettingsSection(title: "Preferences") {
                 VStack(alignment: .leading, spacing: 12) {
                     SettingsRow(label: "Timezone") {
-                        Text(workspace.settings.timezone)
+                        Text(workspace.timezone)
                             .foregroundColor(.secondary)
                     }
 
                     SettingsRow(label: "Date Format") {
-                        Text(workspace.settings.dateFormat)
+                        Text(workspace.dateFormat)
                             .foregroundColor(.secondary)
                     }
 
                     SettingsRow(label: "Language") {
-                        Text(workspace.settings.language)
+                        Text(workspace.language)
                             .foregroundColor(.secondary)
                     }
                 }
@@ -167,12 +161,12 @@ struct EnhancedWorkspaceSettingsView: View {
                 .controlSize(.small)
             }
 
-            Text("\(workspace.members.count) / \(workspace.settings.maxSeats) seats used")
+            Text("\(MockUsers.teamMembers.count) / 10 seats used")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
             VStack(spacing: 12) {
-                ForEach(workspace.members) { member in
+                ForEach(MockUsers.teamMembers) { member in
                     WorkspaceMemberRow(member: member)
                 }
             }
@@ -188,11 +182,11 @@ struct EnhancedWorkspaceSettingsView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(workspace.plan.rawValue.capitalized)
+                            Text("Professional")
                                 .font(.title2)
                                 .fontWeight(.bold)
 
-                            Text("$\(planPrice(workspace.plan)) / month")
+                            Text("$\(planPrice(.professional)) / month")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
@@ -213,20 +207,20 @@ struct EnhancedWorkspaceSettingsView: View {
                     VStack(spacing: 12) {
                         UsageBar(
                             label: "Seats",
-                            current: workspace.members.count,
-                            maximum: workspace.settings.maxSeats
+                            current: MockUsers.teamMembers.count,
+                            maximum: 10
                         )
 
                         UsageBar(
                             label: "Social Accounts",
                             current: 12,
-                            maximum: planSocialAccounts(workspace.plan)
+                            maximum: planSocialAccounts(.professional)
                         )
 
                         UsageBar(
                             label: "Messages This Month",
                             current: 4567,
-                            maximum: planMessages(workspace.plan)
+                            maximum: planMessages(.professional)
                         )
                     }
                 }
@@ -244,7 +238,7 @@ struct EnhancedWorkspaceSettingsView: View {
                             "Basic analytics",
                             "1 team member"
                         ],
-                        isCurrent: workspace.plan == .free
+                        isCurrent: false
                     )
 
                     PlanCard(
@@ -256,7 +250,7 @@ struct EnhancedWorkspaceSettingsView: View {
                             "Advanced analytics",
                             "5 team members"
                         ],
-                        isCurrent: workspace.plan == .starter
+                        isCurrent: false
                     )
 
                     PlanCard(
@@ -269,7 +263,7 @@ struct EnhancedWorkspaceSettingsView: View {
                             "10 team members",
                             "Priority support"
                         ],
-                        isCurrent: workspace.plan == .professional
+                        isCurrent: true
                     )
 
                     PlanCard(
@@ -282,7 +276,7 @@ struct EnhancedWorkspaceSettingsView: View {
                             "Custom SLA",
                             "Dedicated support"
                         ],
-                        isCurrent: workspace.plan == .enterprise
+                        isCurrent: false
                     )
                 }
             }
@@ -321,7 +315,7 @@ struct EnhancedWorkspaceSettingsView: View {
         return formatter.string(from: date)
     }
 
-    private func planPrice(_ plan: WorkspacePlan) -> Int {
+    private func planPrice(_ plan: SubscriptionPlan) -> Int {
         switch plan {
         case .free: return 0
         case .starter: return 19
@@ -330,7 +324,7 @@ struct EnhancedWorkspaceSettingsView: View {
         }
     }
 
-    private func planSocialAccounts(_ plan: WorkspacePlan) -> Int {
+    private func planSocialAccounts(_ plan: SubscriptionPlan) -> Int {
         switch plan {
         case .free: return 1
         case .starter: return 5
@@ -339,7 +333,7 @@ struct EnhancedWorkspaceSettingsView: View {
         }
     }
 
-    private func planMessages(_ plan: WorkspacePlan) -> Int {
+    private func planMessages(_ plan: SubscriptionPlan) -> Int {
         switch plan {
         case .free: return 100
         case .starter: return 1000
@@ -352,7 +346,7 @@ struct EnhancedWorkspaceSettingsView: View {
 // MARK: - Workspace Member Row
 
 struct WorkspaceMemberRow: View {
-    let member: WorkspaceMember
+    let member: UserWithMemberInfo
 
     var body: some View {
         HStack(spacing: 12) {
@@ -360,42 +354,26 @@ struct WorkspaceMemberRow: View {
                 .fill(Color.blue)
                 .frame(width: 44, height: 44)
                 .overlay(
-                    Text(String(member.user.name.prefix(1)))
+                    Text(String(member.name.prefix(1)))
                         .foregroundColor(.white)
                         .fontWeight(.bold)
                 )
 
             VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(member.user.name)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
+                Text(member.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
 
-                    if member.isCurrent {
-                        Text("(You)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                Text(member.user.email)
+                Text(member.email)
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                HStack {
-                    RoleBadge(role: member.role)
-
-                    if let lastActive = member.lastActive {
-                        Text("• Last active \(formatRelativeTime(lastActive))")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                }
+                RoleBadge(role: member.role)
             }
 
             Spacer()
 
-            if !member.isCurrent && member.role != .owner {
+            if member.role != .owner {
                 Menu {
                     Button("Change Role") {
                         // Change role
@@ -560,35 +538,6 @@ struct PlanCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isCurrent ? Color.blue : Color.clear, lineWidth: 2)
-        )
-    }
-}
-
-// MARK: - Color Extension
-
-extension Color {
-    init?(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            return nil
-        }
-
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
         )
     }
 }

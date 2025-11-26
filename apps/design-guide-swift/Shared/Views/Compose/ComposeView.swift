@@ -426,7 +426,7 @@ class ComposeViewModel: ObservableObject {
         }
     }
 
-    func removeMedia(_ media: PostMedia) {
+    func removeMedia(_ media: ComposeMedia) {
         draft.media.removeAll { $0.id == media.id }
     }
 
@@ -497,7 +497,7 @@ struct PlatformAccountButton: View {
 }
 
 struct MediaThumbnail: View {
-    let media: PostMedia
+    let media: ComposeMedia
     let onRemove: () -> Void
 
     var body: some View {
@@ -595,7 +595,7 @@ struct PlatformCustomizationRow: View {
 struct PlatformPreviewCard: View {
     let platform: SocialPlatform
     let content: String
-    let media: [PostMedia]
+    let media: [ComposeMedia]
     let account: SocialAccount?
 
     var body: some View {

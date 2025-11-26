@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Compose Enums
 
-enum MediaType: String, Codable {
+enum ComposeMediaType: String, Codable {
     case image = "image"
     case video = "video"
     case gif = "gif"
@@ -77,15 +77,15 @@ enum AIAction: String, Codable, CaseIterable {
 
 // MARK: - Compose Models
 
-struct PostMedia: Codable, Identifiable {
+struct ComposeMedia: Codable, Identifiable {
     let id: String
-    let type: MediaType
+    let type: ComposeMediaType
     let url: String
     let thumbnailUrl: String?
     let altText: String?
     let duration: Int? // for videos, in seconds
 
-    init(id: String = UUID().uuidString, type: MediaType, url: String, thumbnailUrl: String? = nil, altText: String? = nil, duration: Int? = nil) {
+    init(id: String = UUID().uuidString, type: ComposeMediaType, url: String, thumbnailUrl: String? = nil, altText: String? = nil, duration: Int? = nil) {
         self.id = id
         self.type = type
         self.url = url
@@ -182,12 +182,12 @@ struct ComposeDraft: Codable {
     var id: String
     var content: String
     var selectedPlatforms: [SocialPlatform]
-    var media: [PostMedia]
+    var media: [ComposeMedia]
     var platformCustomizations: [SocialPlatform: PlatformCustomization]
     var schedulingOptions: SchedulingOptions
     var lastUpdated: Date
 
-    init(id: String = UUID().uuidString, content: String = "", selectedPlatforms: [SocialPlatform] = [], media: [PostMedia] = [], platformCustomizations: [SocialPlatform: PlatformCustomization] = [:], schedulingOptions: SchedulingOptions = SchedulingOptions(), lastUpdated: Date = Date()) {
+    init(id: String = UUID().uuidString, content: String = "", selectedPlatforms: [SocialPlatform] = [], media: [ComposeMedia] = [], platformCustomizations: [SocialPlatform: PlatformCustomization] = [:], schedulingOptions: SchedulingOptions = SchedulingOptions(), lastUpdated: Date = Date()) {
         self.id = id
         self.content = content
         self.selectedPlatforms = selectedPlatforms

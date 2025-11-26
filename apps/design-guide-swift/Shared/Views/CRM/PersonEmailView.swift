@@ -588,5 +588,5 @@ struct ComposeEmailView: View {
 // MARK: - Preview
 
 #Preview {
-    PersonEmailView(person: MockPeople.people[0])
+    PersonEmailView(person: MockPeople.shared.people[0])
 }

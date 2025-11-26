@@ -1,106 +1,114 @@
 import Foundation
 
 class MockPeople {
-    static let people: [Person] = [
+    static let shared = MockPeople()
+
+    let people: [Person] = [
         Person(
             id: "person-1",
+            workspaceId: "workspace-1",
             email: "alex.kumar@techcorp.com",
-            name: "Alex Kumar",
-            company: "TechCorp Inc.",
+            fullName: "Alex Kumar",
+            displayName: "Alex Kumar",
             avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+            company: "TechCorp Inc.",
             tags: ["customer", "enterprise"],
-            isVIP: true,
             customFields: ["Account Value": "$50,000", "Region": "North America"],
             createdAt: Date().addingTimeInterval(-90 * 24 * 60 * 60),
             updatedAt: Date().addingTimeInterval(-2 * 60 * 60)
         ),
         Person(
             id: "person-2",
+            workspaceId: "workspace-1",
             email: "jessica.lee@startup.io",
-            name: "Jessica Lee",
-            company: "Startup.io",
+            fullName: "Jessica Lee",
+            displayName: "Jessica Lee",
             avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jessica",
+            company: "Startup.io",
             tags: ["prospect", "startup"],
-            isVIP: false,
             customFields: ["Industry": "SaaS", "Team Size": "25"],
             createdAt: Date().addingTimeInterval(-30 * 24 * 60 * 60),
             updatedAt: Date().addingTimeInterval(-5 * 60 * 60)
         ),
         Person(
             id: "person-3",
+            workspaceId: "workspace-1",
             email: "david.park@example.com",
-            name: "David Park",
-            company: nil,
+            fullName: "David Park",
+            displayName: "David Park",
             avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-            tags: ["influencer", "tech"],
             isVIP: true,
+            tags: ["influencer", "tech"],
             customFields: ["Followers": "150K", "Platform": "Twitter"],
             createdAt: Date().addingTimeInterval(-60 * 24 * 60 * 60),
             updatedAt: Date().addingTimeInterval(-24 * 60 * 60)
         ),
         Person(
             id: "person-4",
+            workspaceId: "workspace-1",
             email: "maria.garcia@agency.com",
-            name: "Maria Garcia",
-            company: "Creative Agency",
+            fullName: "Maria Garcia",
+            displayName: "Maria Garcia",
             avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
+            company: "Creative Agency",
             tags: ["partner", "agency"],
-            isVIP: false,
             customFields: ["Partnership Type": "Referral", "Commission": "15%"],
             createdAt: Date().addingTimeInterval(-120 * 24 * 60 * 60),
             updatedAt: Date().addingTimeInterval(-3 * 24 * 60 * 60)
         ),
         Person(
             id: "person-5",
+            workspaceId: "workspace-1",
             email: "robert.smith@enterprise.com",
-            name: "Robert Smith",
-            company: "Enterprise Solutions",
+            fullName: "Robert Smith",
+            displayName: "Robert Smith",
             avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Robert",
-            tags: ["customer", "vip"],
+            company: "Enterprise Solutions",
             isVIP: true,
+            tags: ["customer", "vip"],
             customFields: ["Contract End": "2025-12-31", "Support Level": "Premium"],
             createdAt: Date().addingTimeInterval(-180 * 24 * 60 * 60),
             updatedAt: Date().addingTimeInterval(-1 * 60 * 60)
         ),
         Person(
             id: "person-6",
+            workspaceId: "workspace-1",
             email: "spammer@example.com",
-            name: "Spam Account",
-            company: nil,
-            avatar: nil,
+            fullName: "Spam Account",
+            displayName: "Spam Account",
             tags: ["spam"],
-            isVIP: false,
             customFields: [:],
             createdAt: Date().addingTimeInterval(-7 * 24 * 60 * 60),
             updatedAt: Date().addingTimeInterval(-7 * 24 * 60 * 60)
         ),
         Person(
             id: "person-7",
+            workspaceId: "workspace-1",
             email: "lisa.anderson@smallbiz.com",
-            name: "Lisa Anderson",
-            company: "Small Business Co.",
+            fullName: "Lisa Anderson",
+            displayName: "Lisa Anderson",
             avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa",
+            company: "Small Business Co.",
             tags: ["customer", "smb"],
-            isVIP: false,
             customFields: ["Plan": "Starter", "Renewal Date": "2025-06-15"],
             createdAt: Date().addingTimeInterval(-45 * 24 * 60 * 60),
             updatedAt: Date().addingTimeInterval(-12 * 60 * 60)
         ),
         Person(
             id: "person-8",
+            workspaceId: "workspace-1",
             email: "chris.taylor@freelance.com",
-            name: "Chris Taylor",
-            company: nil,
+            fullName: "Chris Taylor",
+            displayName: "Chris Taylor",
             avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chris",
             tags: ["prospect", "freelancer"],
-            isVIP: false,
             customFields: ["Specialty": "Design", "Rate": "$75/hr"],
             createdAt: Date().addingTimeInterval(-15 * 24 * 60 * 60),
             updatedAt: Date().addingTimeInterval(-6 * 60 * 60)
         )
     ]
 
-    static func getPersonById(_ id: String) -> Person? {
+    func getPersonById(_ id: String) -> Person? {
         people.first { $0.id == id }
     }
 }

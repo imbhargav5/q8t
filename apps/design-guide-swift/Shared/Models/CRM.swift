@@ -104,8 +104,8 @@ struct CRMSegment: Codable, Identifiable {
     }
 }
 
-// MARK: - Conversation Note
-struct ConversationNote: Codable, Identifiable {
+// MARK: - CRM Conversation Note
+struct CRMConversationNote: Codable, Identifiable {
     let id: String
     let workspaceId: String
     let conversationId: String?

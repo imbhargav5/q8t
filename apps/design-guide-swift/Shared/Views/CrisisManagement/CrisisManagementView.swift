@@ -210,7 +210,14 @@ struct IncidentCard: View {
 
             // Footer
             HStack {
-                StatusBadge(status: incident.status.displayName)
+                Text(incident.status.displayName)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.orange.opacity(0.1))
+                    .foregroundColor(.orange)
+                    .cornerRadius(4)
 
                 Text(formatRelativeTime(incident.detectedAt))
                     .font(.caption2)
