@@ -47,6 +47,7 @@ enum NavigationItem: String, CaseIterable, Identifiable {
     case workspace = "Workspace"
     case workspaceSettings = "Workspace Settings"
     case userSettings = "User Settings"
+    case screenCapture = "Screen Capture"
 
     var id: String { rawValue }
 
@@ -76,12 +77,14 @@ enum NavigationItem: String, CaseIterable, Identifiable {
             return "gearshape.fill"
         case .userSettings:
             return "person.circle.fill"
+        case .screenCapture:
+            return "record.circle"
         }
     }
 
     var isImplemented: Bool {
         switch self {
-        case .landing, .socialInbox, .contentCalendar, .feeds, .listening, .crm, .integrations, .workspace, .workspaceSettings, .userSettings:
+        case .landing, .socialInbox, .contentCalendar, .feeds, .listening, .crm, .integrations, .workspace, .workspaceSettings, .userSettings, .screenCapture:
             return true
         default:
             return false
@@ -119,6 +122,12 @@ struct SidebarView: View {
                     Label(NavigationItem.userSettings.rawValue, systemImage: NavigationItem.userSettings.icon)
                 }
             }
+
+            Section("Tools") {
+                NavigationLink(value: NavigationItem.screenCapture) {
+                    Label(NavigationItem.screenCapture.rawValue, systemImage: NavigationItem.screenCapture.icon)
+                }
+            }
         }
         .navigationTitle("Chatsian")
         .listStyle(.sidebar)
@@ -151,6 +160,8 @@ struct DetailView: View {
                 WorkspaceSettingsView()
             case .userSettings:
                 UserSettingsView()
+            case .screenCapture:
+                ScreenCaptureView()
             case .analytics, .automations:
                 ComingSoonView(feature: selectedView.rawValue)
             }
