@@ -8,6 +8,7 @@ enum CaptureMode: String, Codable, CaseIterable, Identifiable {
     case singleDisplay = "single_display"
     case window
     case region
+    case application
 
     var id: String { rawValue }
 
@@ -17,6 +18,7 @@ enum CaptureMode: String, Codable, CaseIterable, Identifiable {
         case .singleDisplay: return "Single Display"
         case .window: return "Window"
         case .region: return "Region"
+        case .application: return "Application"
         }
     }
 
@@ -26,6 +28,7 @@ enum CaptureMode: String, Codable, CaseIterable, Identifiable {
         case .singleDisplay: return "display"
         case .window: return "macwindow"
         case .region: return "crop"
+        case .application: return "app.badge"
         }
     }
 
@@ -35,6 +38,7 @@ enum CaptureMode: String, Codable, CaseIterable, Identifiable {
         case .singleDisplay: return "Capture a single display"
         case .window: return "Capture a specific window"
         case .region: return "Capture a custom region"
+        case .application: return "Capture all windows of an app"
         }
     }
 }
@@ -499,6 +503,7 @@ enum CaptureTarget: Equatable {
     case display(SCDisplay)
     case window(SCWindow)
     case region(CGRect)
+    case application(SCRunningApplication)
 
     static func == (lhs: CaptureTarget, rhs: CaptureTarget) -> Bool {
         switch (lhs, rhs) {
@@ -506,6 +511,7 @@ enum CaptureTarget: Equatable {
         case (.display(let a), .display(let b)): return a.displayID == b.displayID
         case (.window(let a), .window(let b)): return a.windowID == b.windowID
         case (.region(let a), .region(let b)): return a == b
+        case (.application(let a), .application(let b)): return a.processID == b.processID
         default: return false
         }
     }

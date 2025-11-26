@@ -8,6 +8,9 @@ enum ScreenCaptureState {
 }
 
 struct ScreenCaptureView: View {
+    // Optional initial content passed from menu bar recording
+    var initialContent: CapturedContent?
+
     @StateObject private var permissionManager = PermissionManager.shared
     @StateObject private var recorder = ScreenRecorder()
     @StateObject private var screenshotCapture = ScreenshotCapture()
@@ -19,6 +22,11 @@ struct ScreenCaptureView: View {
 
     @State private var regionSelectorController: RegionSelectorWindowController?
     @State private var showingRecordingOverlay = false
+    @State private var hasProcessedInitialContent = false
+
+    init(initialContent: CapturedContent? = nil) {
+        self.initialContent = initialContent
+    }
 
     var body: some View {
         Group {
@@ -56,6 +64,20 @@ struct ScreenCaptureView: View {
         }
         .onChange(of: permissionManager.screenRecordingPermission) { _, _ in
             updateStateBasedOnPermissions()
+        }
+        .onChange(of: initialContent?.id) { _, _ in
+            // Handle initial content from menu bar recording
+            if let content = initialContent, !hasProcessedInitialContent {
+                hasProcessedInitialContent = true
+                state = .editor(content)
+            }
+        }
+        .task {
+            // Handle initial content on first appear
+            if let content = initialContent, !hasProcessedInitialContent {
+                hasProcessedInitialContent = true
+                state = .editor(content)
+            }
         }
     }
 
@@ -281,6 +303,8 @@ struct RecordingView: View {
             return window.title ?? "Window"
         case .region:
             return "Custom Region"
+        case .application(let app):
+            return app.applicationName ?? "Application"
         }
     }
 
@@ -294,6 +318,8 @@ struct RecordingView: View {
             return "macwindow"
         case .region:
             return "crop"
+        case .application:
+            return "app.badge"
         }
     }
 }

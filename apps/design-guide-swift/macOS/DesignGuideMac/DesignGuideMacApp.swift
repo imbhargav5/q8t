@@ -2,15 +2,34 @@ import SwiftUI
 
 @main
 struct DesignGuideMacApp: App {
+    @StateObject private var recordingManager = MenuBarRecordingManager()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .frame(minWidth: 1200, minHeight: 800)
+                .environmentObject(recordingManager)
         }
         .windowStyle(.hiddenTitleBar)
         .commands {
             CommandGroup(replacing: .newItem) {}
         }
+
+        // Configuration Panel Window (floating)
+        Window("Configure Recording", id: "recording-config") {
+            RecordingConfigurationView(manager: recordingManager)
+        }
+        .windowStyle(.hiddenTitleBar)
+        .defaultSize(width: 400, height: 500)
+        .windowResizability(.contentSize)
+
+        // Menu Bar (always visible, menu style)
+        MenuBarExtra {
+            MenuBarMenuView(manager: recordingManager)
+        } label: {
+            MenuBarRecordingIcon(manager: recordingManager)
+        }
+        .menuBarExtraStyle(.menu)
 
         Settings {
             UserSettingsView()
@@ -20,7 +39,9 @@ struct DesignGuideMacApp: App {
 }
 
 struct ContentView: View {
+    @EnvironmentObject var recordingManager: MenuBarRecordingManager
     @State private var selectedView: NavigationItem = .landing
+    @State private var capturedContent: CapturedContent?
 
     var body: some View {
         NavigationSplitView {
@@ -29,7 +50,17 @@ struct ContentView: View {
                 .navigationSplitViewColumnWidth(min: 200, ideal: 250, max: 300)
         } detail: {
             // Main Content
-            DetailView(selectedView: selectedView)
+            DetailView(selectedView: selectedView, capturedContent: capturedContent)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .recordingCompleted)) { notification in
+            if let content = notification.object as? CapturedContent {
+                // Navigate to screen capture view with the recorded content
+                capturedContent = content
+                selectedView = .screenCapture
+
+                // Bring app to front
+                NSApplication.shared.activate(ignoringOtherApps: true)
+            }
         }
     }
 }
@@ -136,6 +167,7 @@ struct SidebarView: View {
 
 struct DetailView: View {
     let selectedView: NavigationItem
+    var capturedContent: CapturedContent?
 
     var body: some View {
         Group {
@@ -161,7 +193,7 @@ struct DetailView: View {
             case .userSettings:
                 UserSettingsView()
             case .screenCapture:
-                ScreenCaptureView()
+                ScreenCaptureView(initialContent: capturedContent)
             case .analytics, .automations:
                 ComingSoonView(feature: selectedView.rawValue)
             }
