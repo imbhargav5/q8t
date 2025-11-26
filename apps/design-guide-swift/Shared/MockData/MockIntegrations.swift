@@ -7,7 +7,7 @@ class MockIntegrations {
         Integration(
             id: "int-1",
             workspaceId: "workspace-1",
-            provider: .twitter,
+            provider: .x,
             providerName: "X (Twitter)",
             category: .socialMedia,
             accountName: "@chatsian",

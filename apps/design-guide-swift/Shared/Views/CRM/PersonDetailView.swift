@@ -231,7 +231,7 @@ struct MetricBox: View {
 // MARK: - Conversations Tab
 struct PersonConversationsTab: View {
     let person: Person
-    private let conversations = MockConversations.shared.conversations.prefix(3)
+    private let conversations = MockConversations.conversations.prefix(3)
 
     var body: some View {
         VStack(spacing: 12) {
@@ -376,22 +376,5 @@ extension Date {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
         return formatter.localizedString(for: self, relativeTo: Date())
-    }
-}
-
-// MARK: - Color Extension
-extension Color {
-    init?(hex: String) {
-        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
-
-        var rgb: UInt64 = 0
-        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
-
-        let r = Double((rgb & 0xFF0000) >> 16) / 255.0
-        let g = Double((rgb & 0x00FF00) >> 8) / 255.0
-        let b = Double(rgb & 0x0000FF) / 255.0
-
-        self.init(red: r, green: g, blue: b)
     }
 }

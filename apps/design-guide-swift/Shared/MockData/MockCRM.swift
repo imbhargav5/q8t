@@ -122,8 +122,8 @@ class MockCRM {
         )
     ]
 
-    let notes: [ConversationNote] = [
-        ConversationNote(
+    let notes: [CRMConversationNote] = [
+        CRMConversationNote(
             id: "note-1",
             workspaceId: "workspace-1",
             conversationId: "conv-1",
@@ -137,7 +137,7 @@ class MockCRM {
             createdAt: Date().addingTimeInterval(-7200),
             updatedAt: Date().addingTimeInterval(-7200)
         ),
-        ConversationNote(
+        CRMConversationNote(
             id: "note-2",
             workspaceId: "workspace-1",
             conversationId: "conv-1",
@@ -150,7 +150,7 @@ class MockCRM {
             createdAt: Date().addingTimeInterval(-86400),
             updatedAt: Date().addingTimeInterval(-86400)
         ),
-        ConversationNote(
+        CRMConversationNote(
             id: "note-3",
             workspaceId: "workspace-1",
             conversationId: "conv-2",

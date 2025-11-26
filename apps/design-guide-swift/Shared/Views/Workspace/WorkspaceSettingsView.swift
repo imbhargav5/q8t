@@ -266,7 +266,7 @@ struct WorkspacePlanView: View {
             // Available Plans
             SettingsSection(title: "Available Plans") {
                 ForEach(allPlans) { plan in
-                    PlanCard(
+                    WorkspacePlanCard(
                         plan: plan,
                         isCurrentPlan: plan.id == subscription.plan
                     )
@@ -276,7 +276,7 @@ struct WorkspacePlanView: View {
     }
 }
 
-struct PlanCard: View {
+struct WorkspacePlanCard: View {
     let plan: PlanDetails
     let isCurrentPlan: Bool
 
@@ -346,7 +346,7 @@ struct PlanCard: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color(.controlBackgroundColor))
         .cornerRadius(12)
     }
 }

@@ -126,11 +126,11 @@ class MockConversations {
 
     static func getConversationsWithRelations() -> [ConversationWithRelations] {
         conversations.map { conversation in
-            let person = MockPeople.getPersonById(conversation.personId)
+            let person = MockPeople.shared.getPersonById(conversation.personId)
             let assignedUser = conversation.assignedToUserId.flatMap { MockUsers.getUserById($0) }
             return ConversationWithRelations(
                 conversation: conversation,
-                person: person ?? MockPeople.people[0],
+                person: person ?? MockPeople.shared.people[0],
                 assignedUser: assignedUser
             )
         }

@@ -383,13 +383,13 @@ struct CalendarOverviewSidebar: View {
 
                 // Stats
                 HStack(spacing: 12) {
-                    StatCard(title: "Scheduled", value: "\(scheduledPosts.count)")
-                    StatCard(title: "Drafts", value: "\(draftPosts.count)")
+                    CalendarStatCard(title: "Scheduled", value: "\(scheduledPosts.count)")
+                    CalendarStatCard(title: "Drafts", value: "\(draftPosts.count)")
                 }
 
                 HStack(spacing: 12) {
-                    StatCard(title: "Published", value: "\(publishedPosts.count)")
-                    StatCard(title: "This Month", value: "\(posts.count)")
+                    CalendarStatCard(title: "Published", value: "\(publishedPosts.count)")
+                    CalendarStatCard(title: "This Month", value: "\(posts.count)")
                 }
 
                 Divider()
@@ -421,7 +421,7 @@ struct CalendarOverviewSidebar: View {
     }
 }
 
-struct StatCard: View {
+struct CalendarStatCard: View {
     let title: String
     let value: String
 

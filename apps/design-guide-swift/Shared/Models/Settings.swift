@@ -2,11 +2,11 @@ import Foundation
 
 // MARK: - General Settings
 struct GeneralSettings: Codable {
-    let theme: Theme
-    let language: String
-    let timezone: String
-    let dateFormat: String
-    let timeFormat: String
+    var theme: Theme
+    var language: String
+    var timezone: String
+    var dateFormat: String
+    var timeFormat: String
 
     init(
         theme: Theme,

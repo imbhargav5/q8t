@@ -180,7 +180,14 @@ struct RSSFeedCard: View {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     Spacer()
-                    StatusBadge(status: feed.status.displayName)
+                    Text(feed.status.displayName)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.blue.opacity(0.1))
+                        .foregroundColor(.blue)
+                        .cornerRadius(4)
                 }
 
                 Text(feed.url)
@@ -243,7 +250,14 @@ struct ContentQueueCard: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 Spacer()
-                StatusBadge(status: queue.status.displayName)
+                Text(queue.status.displayName)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.blue.opacity(0.1))
+                    .foregroundColor(.blue)
+                    .cornerRadius(4)
             }
 
             Text(queue.description)

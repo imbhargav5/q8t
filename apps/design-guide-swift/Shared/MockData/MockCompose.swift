@@ -100,20 +100,20 @@ class MockCompose {
 
     // MARK: - Sample Media
 
-    static let sampleMedia: [PostMedia] = [
-        PostMedia(
+    static let sampleMedia: [ComposeMedia] = [
+        ComposeMedia(
             type: .image,
             url: "https://picsum.photos/1200/800?random=1",
             thumbnailUrl: "https://picsum.photos/300/200?random=1",
             altText: "Product launch event"
         ),
-        PostMedia(
+        ComposeMedia(
             type: .image,
             url: "https://picsum.photos/1200/800?random=2",
             thumbnailUrl: "https://picsum.photos/300/200?random=2",
             altText: "Team celebration"
         ),
-        PostMedia(
+        ComposeMedia(
             type: .video,
             url: "https://example.com/video1.mp4",
             thumbnailUrl: "https://picsum.photos/300/200?random=3",
