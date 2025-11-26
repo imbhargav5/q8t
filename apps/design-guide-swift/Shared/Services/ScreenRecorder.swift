@@ -22,6 +22,9 @@ class ScreenRecorder: NSObject, ObservableObject {
     private var recordingStartTime: Date?
     private var durationTimer: Timer?
     private var tempVideoURL: URL?
+    private var pausedElapsedTime: TimeInterval = 0
+    private var streamFilter: SCContentFilter?
+    private var streamConfig: SCStreamConfiguration?
 
     // MARK: - Initialization
 
@@ -139,7 +142,7 @@ class ScreenRecorder: NSObject, ObservableObject {
     }
 
     func stopRecording() async -> CapturedContent? {
-        guard state.isRecording else { return nil }
+        guard state.isRecording || state.isPaused else { return nil }
 
         state = .processing
         stopDurationTimer()
@@ -201,6 +204,31 @@ class ScreenRecorder: NSObject, ObservableObject {
         recordingDuration = 0
     }
 
+    // MARK: - Pause/Resume
+
+    func pauseRecording() {
+        guard state.isRecording else { return }
+
+        // Store elapsed time
+        pausedElapsedTime = recordingDuration
+        stopDurationTimer()
+
+        // Note: SCStream doesn't have a native pause method, so we just stop updating
+        // the timer and keep the stream running. For a true pause, we would need to
+        // stop the stream, but that creates gaps in the video.
+        // A more sophisticated implementation would involve video editing to remove paused sections.
+        state = .paused(elapsed: pausedElapsedTime)
+    }
+
+    func resumeRecording() async throws {
+        guard state.isPaused else { return }
+
+        // Adjust the start time to account for the pause
+        recordingStartTime = Date().addingTimeInterval(-pausedElapsedTime)
+        startDurationTimer()
+        state = .recording(startTime: recordingStartTime!)
+    }
+
     // MARK: - Private Methods
 
     private func createStreamConfiguration() async throws -> (SCContentFilter, SCStreamConfiguration) {
@@ -240,6 +268,16 @@ class ScreenRecorder: NSObject, ObservableObject {
             config.sourceRect = rect
             config.width = Int(rect.width) * 2
             config.height = Int(rect.height) * 2
+
+        case .application(let app):
+            guard let primaryDisplay = availableDisplays.first else {
+                throw RecordingError.noDisplayAvailable
+            }
+            // Filter windows belonging to this application
+            let appWindows = availableWindows.filter { $0.owningApplication?.processID == app.processID }
+            filter = SCContentFilter(display: primaryDisplay, including: appWindows)
+            config.width = primaryDisplay.width * 2
+            config.height = primaryDisplay.height * 2
         }
 
         return (filter, config)
@@ -289,6 +327,7 @@ class ScreenRecorder: NSObject, ObservableObject {
         case .display: return .singleDisplay
         case .window: return .window
         case .region: return .region
+        case .application: return .application
         }
     }
 }
