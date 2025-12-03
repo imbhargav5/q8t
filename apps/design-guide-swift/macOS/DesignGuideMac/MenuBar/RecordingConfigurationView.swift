@@ -116,6 +116,9 @@ struct RecordingConfigurationView: View {
 
             case .region:
                 regionSelection
+
+            case .application:
+                allDisplaysPreview // Fallback to all displays preview for application mode
             }
         }
     }
@@ -297,6 +300,8 @@ struct RecordingConfigurationView: View {
             } else {
                 // Will need to select
             }
+        case .application:
+            selectedTarget = .allDisplays // Default fallback for application mode
         }
     }
 
@@ -339,6 +344,8 @@ struct RecordingConfigurationView: View {
         case .region:
             if case .region = selectedTarget { return true }
             return false
+        case .application:
+            return true
         }
     }
 
