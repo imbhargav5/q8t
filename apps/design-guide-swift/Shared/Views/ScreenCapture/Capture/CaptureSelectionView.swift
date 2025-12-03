@@ -83,14 +83,15 @@ struct CaptureSelectionView: View {
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            ForEach(recorder.availableDisplays, id: \.displayID) { display in
+                            ForEach(Array(recorder.availableDisplays.enumerated()), id: \.element.displayID) { index, display in
                                 DisplayCard(
                                     display: display,
-                                    isSelected: isDisplaySelected(display),
-                                    action: {
-                                        selectedTarget = .display(display)
-                                    }
+                                    displayNumber: index + 1,
+                                    isSelected: isDisplaySelected(display)
                                 )
+                                .onTapGesture {
+                                    selectedTarget = .display(display)
+                                }
                             }
                         }
                     }
@@ -108,11 +109,11 @@ struct CaptureSelectionView: View {
                             ForEach(recorder.availableWindows, id: \.windowID) { window in
                                 WindowCard(
                                     window: window,
-                                    isSelected: isWindowSelected(window),
-                                    action: {
-                                        selectedTarget = .window(window)
-                                    }
+                                    isSelected: isWindowSelected(window)
                                 )
+                                .onTapGesture {
+                                    selectedTarget = .window(window)
+                                }
                             }
                         }
                     }
@@ -170,6 +171,8 @@ struct CaptureSelectionView: View {
             return false
         case .region:
             return true // Region will be selected interactively
+        case .application:
+            return true
         }
     }
 
@@ -187,6 +190,8 @@ struct CaptureSelectionView: View {
             }
         case .region:
             selectedTarget = .region(.zero) // Will be set when user selects
+        case .application:
+            selectedTarget = .allDisplays // Default fallback for application mode
         }
     }
 
@@ -231,134 +236,6 @@ struct CaptureTypeCard: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(isSelected ? Color.accentColor : Color.gray.opacity(0.3), lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Capture Mode Card
-
-struct CaptureModeCard: View {
-    let mode: CaptureMode
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: mode.icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(isSelected ? .white : .primary)
-
-                Text(mode.displayName)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundColor(isSelected ? .white : .primary)
-
-                Text(mode.description)
-                    .font(.caption)
-                    .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color.accentColor : Color(.controlBackgroundColor))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(isSelected ? Color.accentColor : Color.gray.opacity(0.3), lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Display Card
-
-struct DisplayCard: View {
-    let display: SCDisplay
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: "display")
-                    .font(.system(size: 32))
-                    .foregroundColor(isSelected ? .white : .primary)
-
-                Text("Display \(display.displayID)")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundColor(isSelected ? .white : .primary)
-
-                Text("\(display.width) × \(display.height)")
-                    .font(.caption)
-                    .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
-            }
-            .frame(width: 120)
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color.accentColor : Color(.controlBackgroundColor))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(isSelected ? Color.accentColor : Color.gray.opacity(0.3), lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Window Card
-
-struct WindowCard: View {
-    let window: SCWindow
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: "macwindow")
-                    .font(.system(size: 20))
-                    .foregroundColor(isSelected ? .white : .secondary)
-                    .frame(width: 32)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(window.title ?? "Untitled Window")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(isSelected ? .white : .primary)
-                        .lineLimit(1)
-
-                    if let appName = window.owningApplication?.applicationName {
-                        Text(appName)
-                            .font(.caption)
-                            .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
-                    }
-                }
-
-                Spacer()
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.white)
-                }
-            }
-            .padding(12)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected ? Color.accentColor : Color(.controlBackgroundColor))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isSelected ? Color.accentColor : Color.gray.opacity(0.3), lineWidth: 1)
             )
         }

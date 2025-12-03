@@ -91,6 +91,9 @@ class ScreenshotCapture: ObservableObject {
             return try await captureWindow(window)
         case .region(let rect):
             return try await captureRegion(rect)
+        case .application:
+            // For application mode, fall back to all displays
+            return try await captureAllDisplays()
         }
     }
 
