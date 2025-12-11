@@ -3,6 +3,7 @@ info:
   title: X (Twitter) API
   version: "2"
   description: X API v2 endpoints
+  # API Reference: https://docs.x.com/x-api/introduction
 
 servers:
   - url: https://api.twitter.com/2
@@ -12,6 +13,10 @@ paths:
     post:
       operationId: createTweet
       summary: Create a tweet
+      # Docs: https://docs.x.com/x-api/posts/create-post
+      externalDocs:
+        description: X API Documentation - Create Post
+        url: https://docs.x.com/x-api/posts/create-post
       requestBody:
         required: true
         content:
@@ -30,6 +35,10 @@ paths:
     get:
       operationId: getTweet
       summary: Get a tweet by ID
+      # Docs: https://docs.x.com/x-api/posts/get-post-by-id
+      externalDocs:
+        description: X API Documentation - Get Post by ID
+        url: https://docs.x.com/x-api/posts/get-post-by-id
       parameters:
         - name: id
           in: path
@@ -40,10 +49,32 @@ paths:
           in: query
           schema:
             type: string
+          description: Comma-separated list of Tweet fields to display
         - name: expansions
           in: query
           schema:
             type: string
+          description: Comma-separated list of expansions
+        - name: media.fields
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of media fields
+        - name: poll.fields
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of poll fields
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of user fields
+        - name: place.fields
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of place fields
       responses:
         "200":
           description: Tweet retrieved successfully
@@ -54,6 +85,10 @@ paths:
     delete:
       operationId: deleteTweet
       summary: Delete a tweet
+      # Docs: https://docs.x.com/x-api/posts/delete-post
+      externalDocs:
+        description: X API Documentation - Delete Post
+        url: https://docs.x.com/x-api/posts/delete-post
       parameters:
         - name: id
           in: path
@@ -72,11 +107,26 @@ paths:
     get:
       operationId: getMe
       summary: Get authenticated user
+      # Docs: https://docs.x.com/x-api/users/get-my-user
+      externalDocs:
+        description: X API Documentation - Get My User
+        url: https://docs.x.com/x-api/users/get-my-user
       parameters:
         - name: user.fields
           in: query
           schema:
             type: string
+          description: Comma-separated list of user fields
+        - name: expansions
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of expansions
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of tweet fields
       responses:
         "200":
           description: User retrieved successfully
@@ -89,6 +139,10 @@ paths:
     get:
       operationId: getUser
       summary: Get user by ID
+      # Docs: https://docs.x.com/x-api/users/get-user-by-id
+      externalDocs:
+        description: X API Documentation - Get User by ID
+        url: https://docs.x.com/x-api/users/get-user-by-id
       parameters:
         - name: id
           in: path
@@ -99,6 +153,17 @@ paths:
           in: query
           schema:
             type: string
+          description: Comma-separated list of user fields
+        - name: expansions
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of expansions
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of tweet fields
       responses:
         "200":
           description: User retrieved successfully
@@ -111,6 +176,10 @@ paths:
     get:
       operationId: getUserByUsername
       summary: Get user by username
+      # Docs: https://docs.x.com/x-api/users/get-user-by-username
+      externalDocs:
+        description: X API Documentation - Get User by Username
+        url: https://docs.x.com/x-api/users/get-user-by-username
       parameters:
         - name: username
           in: path
@@ -121,6 +190,17 @@ paths:
           in: query
           schema:
             type: string
+          description: Comma-separated list of user fields
+        - name: expansions
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of expansions
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of tweet fields
       responses:
         "200":
           description: User retrieved successfully
@@ -133,6 +213,10 @@ paths:
     get:
       operationId: getUserTweets
       summary: Get tweets by user ID
+      # Docs: https://docs.x.com/x-api/posts/user-posts-timeline-by-user-id
+      externalDocs:
+        description: X API Documentation - User Posts Timeline
+        url: https://docs.x.com/x-api/posts/user-posts-timeline-by-user-id
       parameters:
         - name: id
           in: path
@@ -149,7 +233,49 @@ paths:
           in: query
           schema:
             type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+          description: Returns results with a Tweet ID greater than this ID
+        - name: until_id
+          in: query
+          schema:
+            type: string
+          description: Returns results with a Tweet ID less than this ID
+        - name: start_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: YYYY-MM-DDTHH:mm:ssZ format
+        - name: end_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: YYYY-MM-DDTHH:mm:ssZ format
         - name: tweet.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: media.fields
+          in: query
+          schema:
+            type: string
+        - name: poll.fields
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: place.fields
           in: query
           schema:
             type: string
@@ -165,6 +291,10 @@ paths:
     get:
       operationId: getFollowers
       summary: Get followers of a user
+      # Docs: https://docs.x.com/x-api/users/followers-by-user-id
+      externalDocs:
+        description: X API Documentation - Get Followers
+        url: https://docs.x.com/x-api/users/followers-by-user-id
       parameters:
         - name: id
           in: path
@@ -178,6 +308,18 @@ paths:
             minimum: 1
             maximum: 1000
         - name: pagination_token
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
           in: query
           schema:
             type: string
@@ -193,6 +335,10 @@ paths:
     get:
       operationId: getFollowing
       summary: Get users that a user is following
+      # Docs: https://docs.x.com/x-api/users/following-by-user-id
+      externalDocs:
+        description: X API Documentation - Get Following
+        url: https://docs.x.com/x-api/users/following-by-user-id
       parameters:
         - name: id
           in: path
@@ -209,6 +355,18 @@ paths:
           in: query
           schema:
             type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: Following retrieved successfully
@@ -219,12 +377,17 @@ paths:
     post:
       operationId: followUser
       summary: Follow a user
+      # Docs: https://docs.x.com/x-api/users/follow-user
+      externalDocs:
+        description: X API Documentation - Follow User
+        url: https://docs.x.com/x-api/users/follow-user
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated source user
       requestBody:
         required: true
         content:
@@ -243,6 +406,10 @@ paths:
     get:
       operationId: getLikedTweets
       summary: Get tweets liked by a user
+      # Docs: https://docs.x.com/x-api/users/get-liked-posts
+      externalDocs:
+        description: X API Documentation - Get Liked Posts
+        url: https://docs.x.com/x-api/users/get-liked-posts
       parameters:
         - name: id
           in: path
@@ -253,9 +420,34 @@ paths:
           in: query
           schema:
             type: integer
-            minimum: 1
+            minimum: 5
             maximum: 100
+          description: Range is 5-100, not 1-100
         - name: pagination_token
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: media.fields
+          in: query
+          schema:
+            type: string
+        - name: poll.fields
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: place.fields
           in: query
           schema:
             type: string
@@ -271,12 +463,17 @@ paths:
     post:
       operationId: likeTweet
       summary: Like a tweet
+      # Docs: https://docs.x.com/x-api/posts/like-post
+      externalDocs:
+        description: X API Documentation - Like Post
+        url: https://docs.x.com/x-api/posts/like-post
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
       requestBody:
         required: true
         content:
@@ -295,12 +492,17 @@ paths:
     post:
       operationId: retweet
       summary: Retweet a tweet
+      # Docs: https://docs.x.com/x-api/posts/repost-post
+      externalDocs:
+        description: X API Documentation - Repost Post
+        url: https://docs.x.com/x-api/posts/repost-post
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
       requestBody:
         required: true
         content:
@@ -315,21 +517,27 @@ paths:
               schema:
                 $ref: "#/components/schemas/RetweetResponse"
 
-  /users/{source_user_id}/likes/{tweet_id}:
+  /users/{id}/likes/{tweet_id}:
     delete:
       operationId: unlikeTweet
       summary: Unlike a tweet
+      # Docs: https://docs.x.com/x-api/posts/unlike-post
+      externalDocs:
+        description: X API Documentation - Unlike Post
+        url: https://docs.x.com/x-api/posts/unlike-post
       parameters:
-        - name: source_user_id
+        - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
         - name: tweet_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the tweet to unlike
       responses:
         "200":
           description: Tweet unliked successfully
@@ -338,21 +546,27 @@ paths:
               schema:
                 $ref: "#/components/schemas/UnlikeResponse"
 
-  /users/{source_user_id}/retweets/{tweet_id}:
+  /users/{id}/retweets/{source_tweet_id}:
     delete:
       operationId: unretweet
       summary: Remove a retweet
+      # Docs: https://docs.x.com/x-api/users/unrepost-post
+      externalDocs:
+        description: X API Documentation - Unrepost Post
+        url: https://docs.x.com/x-api/users/unrepost-post
       parameters:
-        - name: source_user_id
+        - name: id
           in: path
           required: true
           schema:
             type: string
-        - name: tweet_id
+          description: The ID of the authenticated user
+        - name: source_tweet_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the tweet to unretweet
       responses:
         "200":
           description: Retweet removed successfully
@@ -365,17 +579,23 @@ paths:
     delete:
       operationId: unfollowUser
       summary: Unfollow a user
+      # Docs: https://docs.x.com/x-api/users/unfollow-user
+      externalDocs:
+        description: X API Documentation - Unfollow User
+        url: https://docs.x.com/x-api/users/unfollow-user
       parameters:
         - name: source_user_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
         - name: target_user_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the user to unfollow
       responses:
         "200":
           description: User unfollowed successfully
@@ -388,6 +608,10 @@ paths:
     get:
       operationId: getBookmarks
       summary: Get bookmarked tweets
+      # Docs: https://docs.x.com/x-api/bookmarks/bookmarks-by-user
+      externalDocs:
+        description: X API Documentation - Get Bookmarks
+        url: https://docs.x.com/x-api/bookmarks/bookmarks-by-user
       parameters:
         - name: id
           in: path
@@ -404,6 +628,30 @@ paths:
           in: query
           schema:
             type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: media.fields
+          in: query
+          schema:
+            type: string
+        - name: poll.fields
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: place.fields
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: Bookmarks retrieved successfully
@@ -414,12 +662,17 @@ paths:
     post:
       operationId: bookmarkTweet
       summary: Bookmark a tweet
+      # Docs: https://docs.x.com/x-api/bookmarks/add-post-to-bookmarks
+      externalDocs:
+        description: X API Documentation - Add Bookmark
+        url: https://docs.x.com/x-api/bookmarks/add-post-to-bookmarks
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
       requestBody:
         required: true
         content:
@@ -438,17 +691,23 @@ paths:
     delete:
       operationId: removeBookmark
       summary: Remove a bookmark
+      # Docs: https://docs.x.com/x-api/bookmarks/remove-a-bookmarked-post
+      externalDocs:
+        description: X API Documentation - Remove Bookmark
+        url: https://docs.x.com/x-api/bookmarks/remove-a-bookmarked-post
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
         - name: tweet_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the tweet to remove from bookmarks
       responses:
         "200":
           description: Bookmark removed successfully
@@ -461,6 +720,10 @@ paths:
     get:
       operationId: getBlockedUsers
       summary: Get blocked users
+      # Docs: https://docs.x.com/x-api/users/get-blocked-users
+      externalDocs:
+        description: X API Documentation - Get Blocked Users
+        url: https://docs.x.com/x-api/users/get-blocked-users
       parameters:
         - name: id
           in: path
@@ -477,6 +740,18 @@ paths:
           in: query
           schema:
             type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: Blocked users retrieved successfully
@@ -487,12 +762,17 @@ paths:
     post:
       operationId: blockUser
       summary: Block a user
+      # Docs: https://docs.x.com/x-api/users/block-user
+      externalDocs:
+        description: X API Documentation - Block User
+        url: https://docs.x.com/x-api/users/block-user
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
       requestBody:
         required: true
         content:
@@ -511,17 +791,23 @@ paths:
     delete:
       operationId: unblockUser
       summary: Unblock a user
+      # Docs: https://docs.x.com/x-api/users/unblock-user
+      externalDocs:
+        description: X API Documentation - Unblock User
+        url: https://docs.x.com/x-api/users/unblock-user
       parameters:
         - name: source_user_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
         - name: target_user_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the user to unblock
       responses:
         "200":
           description: User unblocked successfully
@@ -534,6 +820,10 @@ paths:
     get:
       operationId: getMutedUsers
       summary: Get muted users
+      # Docs: https://docs.x.com/x-api/users/get-muted-users
+      externalDocs:
+        description: X API Documentation - Get Muted Users
+        url: https://docs.x.com/x-api/users/get-muted-users
       parameters:
         - name: id
           in: path
@@ -550,6 +840,18 @@ paths:
           in: query
           schema:
             type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: Muted users retrieved successfully
@@ -560,12 +862,17 @@ paths:
     post:
       operationId: muteUser
       summary: Mute a user
+      # Docs: https://docs.x.com/x-api/users/mute-user-by-user-id
+      externalDocs:
+        description: X API Documentation - Mute User
+        url: https://docs.x.com/x-api/users/mute-user-by-user-id
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
       requestBody:
         required: true
         content:
@@ -584,17 +891,23 @@ paths:
     delete:
       operationId: unmuteUser
       summary: Unmute a user
+      # Docs: https://docs.x.com/x-api/users/unmute-user
+      externalDocs:
+        description: X API Documentation - Unmute User
+        url: https://docs.x.com/x-api/users/unmute-user
       parameters:
         - name: source_user_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
         - name: target_user_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the user to unmute
       responses:
         "200":
           description: User unmuted successfully
@@ -607,6 +920,10 @@ paths:
     get:
       operationId: getUserMentions
       summary: Get tweets mentioning a user
+      # Docs: https://docs.x.com/x-api/posts/user-mention-timeline-by-user-id
+      externalDocs:
+        description: X API Documentation - User Mention Timeline
+        url: https://docs.x.com/x-api/posts/user-mention-timeline-by-user-id
       parameters:
         - name: id
           in: path
@@ -623,7 +940,47 @@ paths:
           in: query
           schema:
             type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+          description: Returns results with a Tweet ID greater than this ID
+        - name: until_id
+          in: query
+          schema:
+            type: string
+          description: Returns results with a Tweet ID less than this ID
+        - name: start_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          schema:
+            type: string
+            format: date-time
         - name: tweet.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: media.fields
+          in: query
+          schema:
+            type: string
+        - name: poll.fields
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: place.fields
           in: query
           schema:
             type: string
@@ -639,6 +996,10 @@ paths:
     get:
       operationId: getHomeTimeline
       summary: Get reverse chronological home timeline
+      # Docs: https://docs.x.com/x-api/posts/timelines/reverse-chronological-timeline
+      externalDocs:
+        description: X API Documentation - Reverse Chronological Timeline
+        url: https://docs.x.com/x-api/posts/timelines/reverse-chronological-timeline
       parameters:
         - name: id
           in: path
@@ -655,7 +1016,47 @@ paths:
           in: query
           schema:
             type: string
+        - name: since_id
+          in: query
+          schema:
+            type: string
+          description: Returns results with a Tweet ID greater than this ID
+        - name: until_id
+          in: query
+          schema:
+            type: string
+          description: Returns results with a Tweet ID less than this ID
+        - name: start_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          schema:
+            type: string
+            format: date-time
         - name: tweet.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: media.fields
+          in: query
+          schema:
+            type: string
+        - name: poll.fields
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: place.fields
           in: query
           schema:
             type: string
@@ -671,18 +1072,46 @@ paths:
     get:
       operationId: searchRecentTweets
       summary: Search for recent tweets
+      # Docs: https://docs.x.com/x-api/posts/search-recent-posts
+      externalDocs:
+        description: X API Documentation - Search Recent Posts
+        url: https://docs.x.com/x-api/posts/search-recent-posts
       parameters:
         - name: query
           in: query
           required: true
           schema:
             type: string
+            minLength: 1
+            maxLength: 4096
+          description: Query string (1-4096 characters)
         - name: max_results
           in: query
           schema:
             type: integer
             minimum: 10
             maximum: 100
+            default: 10
+        - name: next_token
+          in: query
+          schema:
+            type: string
+          description: Token for retrieving the next page
+        - name: pagination_token
+          in: query
+          schema:
+            type: string
+          description: Alias for next_token
+        - name: since_id
+          in: query
+          schema:
+            type: string
+          description: Returns results with a Tweet ID greater than this ID
+        - name: until_id
+          in: query
+          schema:
+            type: string
+          description: Returns results with a Tweet ID less than this ID
         - name: start_time
           in: query
           schema:
@@ -693,7 +1122,33 @@ paths:
           schema:
             type: string
             format: date-time
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum: [recency, relevancy]
+          description: Sort order for results
         - name: tweet.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: media.fields
+          in: query
+          schema:
+            type: string
+        - name: poll.fields
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: place.fields
           in: query
           schema:
             type: string
@@ -709,6 +1164,10 @@ paths:
     post:
       operationId: createList
       summary: Create a new list
+      # Docs: https://docs.x.com/x-api/lists/create-list
+      externalDocs:
+        description: X API Documentation - Create List
+        url: https://docs.x.com/x-api/lists/create-list
       requestBody:
         required: true
         content:
@@ -727,6 +1186,10 @@ paths:
     get:
       operationId: getList
       summary: Get a list by ID
+      # Docs: https://docs.x.com/x-api/lists/get-list-by-id
+      externalDocs:
+        description: X API Documentation - Get List by ID
+        url: https://docs.x.com/x-api/lists/get-list-by-id
       parameters:
         - name: id
           in: path
@@ -734,6 +1197,16 @@ paths:
           schema:
             type: string
         - name: list.fields
+          in: query
+          schema:
+            type: string
+          description: "Options: created_at, description, follower_count, id, member_count, name, owner_id, private"
+        - name: expansions
+          in: query
+          schema:
+            type: string
+          description: "Options: owner_id"
+        - name: user.fields
           in: query
           schema:
             type: string
@@ -747,6 +1220,10 @@ paths:
     put:
       operationId: updateList
       summary: Update a list
+      # Docs: https://docs.x.com/x-api/lists/update-list
+      externalDocs:
+        description: X API Documentation - Update List
+        url: https://docs.x.com/x-api/lists/update-list
       parameters:
         - name: id
           in: path
@@ -769,6 +1246,10 @@ paths:
     delete:
       operationId: deleteList
       summary: Delete a list
+      # Docs: https://docs.x.com/x-api/lists/delete-list
+      externalDocs:
+        description: X API Documentation - Delete List
+        url: https://docs.x.com/x-api/lists/delete-list
       parameters:
         - name: id
           in: path
@@ -787,6 +1268,10 @@ paths:
     get:
       operationId: getListTweets
       summary: Get tweets from a list
+      # Docs: https://docs.x.com/x-api/lists/get-list-tweets
+      externalDocs:
+        description: X API Documentation - Get List Tweets
+        url: https://docs.x.com/x-api/lists/get-list-tweets
       parameters:
         - name: id
           in: path
@@ -800,6 +1285,30 @@ paths:
             minimum: 1
             maximum: 100
         - name: pagination_token
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: media.fields
+          in: query
+          schema:
+            type: string
+        - name: poll.fields
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: place.fields
           in: query
           schema:
             type: string
@@ -815,6 +1324,10 @@ paths:
     get:
       operationId: getListMembers
       summary: Get members of a list
+      # Docs: https://docs.x.com/x-api/lists/get-list-members
+      externalDocs:
+        description: X API Documentation - Get List Members
+        url: https://docs.x.com/x-api/lists/get-list-members
       parameters:
         - name: id
           in: path
@@ -831,6 +1344,18 @@ paths:
           in: query
           schema:
             type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: List members retrieved successfully
@@ -841,12 +1366,17 @@ paths:
     post:
       operationId: addListMember
       summary: Add a member to a list
+      # Docs: https://docs.x.com/x-api/lists/add-list-member
+      externalDocs:
+        description: X API Documentation - Add List Member
+        url: https://docs.x.com/x-api/lists/add-list-member
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the list
       requestBody:
         required: true
         content:
@@ -865,17 +1395,23 @@ paths:
     delete:
       operationId: removeListMember
       summary: Remove a member from a list
+      # Docs: https://docs.x.com/x-api/lists/remove-list-member
+      externalDocs:
+        description: X API Documentation - Remove List Member
+        url: https://docs.x.com/x-api/lists/remove-list-member
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the list
         - name: user_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the user to remove
       responses:
         "200":
           description: Member removed successfully
@@ -888,6 +1424,10 @@ paths:
     get:
       operationId: getFollowedLists
       summary: Get lists followed by a user
+      # Docs: https://docs.x.com/x-api/users/get-followed-lists
+      externalDocs:
+        description: X API Documentation - Get Followed Lists
+        url: https://docs.x.com/x-api/users/get-followed-lists
       parameters:
         - name: id
           in: path
@@ -904,6 +1444,18 @@ paths:
           in: query
           schema:
             type: string
+        - name: list.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: Followed lists retrieved successfully
@@ -914,12 +1466,17 @@ paths:
     post:
       operationId: followList
       summary: Follow a list
+      # Docs: https://docs.x.com/x-api/users/follow-list
+      externalDocs:
+        description: X API Documentation - Follow List
+        url: https://docs.x.com/x-api/users/follow-list
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
       requestBody:
         required: true
         content:
@@ -938,17 +1495,23 @@ paths:
     delete:
       operationId: unfollowList
       summary: Unfollow a list
+      # Docs: https://docs.x.com/x-api/users/unfollow-list
+      externalDocs:
+        description: X API Documentation - Unfollow List
+        url: https://docs.x.com/x-api/users/unfollow-list
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
         - name: list_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the list to unfollow
       responses:
         "200":
           description: List unfollowed successfully
@@ -961,6 +1524,10 @@ paths:
     get:
       operationId: getOwnedLists
       summary: Get lists owned by a user
+      # Docs: https://docs.x.com/x-api/users/get-owned-lists
+      externalDocs:
+        description: X API Documentation - Get Owned Lists
+        url: https://docs.x.com/x-api/users/get-owned-lists
       parameters:
         - name: id
           in: path
@@ -977,6 +1544,18 @@ paths:
           in: query
           schema:
             type: string
+        - name: list.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: Owned lists retrieved successfully
@@ -989,10 +1568,26 @@ paths:
     get:
       operationId: getPinnedLists
       summary: Get pinned lists
+      # Docs: https://docs.x.com/x-api/users/get-pinned-lists
+      externalDocs:
+        description: X API Documentation - Get Pinned Lists
+        url: https://docs.x.com/x-api/users/get-pinned-lists
       parameters:
         - name: id
           in: path
           required: true
+          schema:
+            type: string
+        - name: list.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: user.fields
+          in: query
           schema:
             type: string
       responses:
@@ -1005,12 +1600,17 @@ paths:
     post:
       operationId: pinList
       summary: Pin a list
+      # Docs: https://docs.x.com/x-api/lists/pin-list
+      externalDocs:
+        description: X API Documentation - Pin List
+        url: https://docs.x.com/x-api/lists/pin-list
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
       requestBody:
         required: true
         content:
@@ -1029,17 +1629,23 @@ paths:
     delete:
       operationId: unpinList
       summary: Unpin a list
+      # Docs: https://docs.x.com/x-api/lists/unpin-list
+      externalDocs:
+        description: X API Documentation - Unpin List
+        url: https://docs.x.com/x-api/lists/unpin-list
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the authenticated user
         - name: list_id
           in: path
           required: true
           schema:
             type: string
+          description: The ID of the list to unpin
       responses:
         "200":
           description: List unpinned successfully
@@ -1052,16 +1658,36 @@ paths:
     get:
       operationId: getSpaces
       summary: Get multiple spaces by IDs
+      # Docs: https://docs.x.com/x-api/spaces/space-lookup-up-space-ids
+      externalDocs:
+        description: X API Documentation - Space Lookup by IDs
+        url: https://docs.x.com/x-api/spaces/space-lookup-up-space-ids
       parameters:
         - name: ids
           in: query
           required: true
           schema:
             type: string
+          description: Comma-separated list of Space IDs
         - name: space.fields
           in: query
           schema:
             type: string
+          description: "Options: created_at, creator_id, ended_at, host_ids, id, invited_user_ids, is_ticketed, lang, participant_count, scheduled_start, speaker_ids, started_at, state, subscriber_count, title, topic_ids, updated_at"
+        - name: expansions
+          in: query
+          schema:
+            type: string
+          description: "Options: creator_id, host_ids, invited_user_ids, speaker_ids, topic_ids"
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: topic.fields
+          in: query
+          schema:
+            type: string
+          description: "Options: description, id, name"
       responses:
         "200":
           description: Spaces retrieved successfully
@@ -1074,6 +1700,10 @@ paths:
     get:
       operationId: getSpace
       summary: Get a space by ID
+      # Docs: https://docs.x.com/x-api/spaces/space-lookup-by-space-id
+      externalDocs:
+        description: X API Documentation - Space Lookup by ID
+        url: https://docs.x.com/x-api/spaces/space-lookup-by-space-id
       parameters:
         - name: id
           in: path
@@ -1084,6 +1714,21 @@ paths:
           in: query
           schema:
             type: string
+          description: "Options: created_at, creator_id, ended_at, host_ids, id, invited_user_ids, is_ticketed, lang, participant_count, scheduled_start, speaker_ids, started_at, state, subscriber_count, title, topic_ids, updated_at"
+        - name: expansions
+          in: query
+          schema:
+            type: string
+          description: "Options: creator_id, host_ids, invited_user_ids, speaker_ids, topic_ids"
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: topic.fields
+          in: query
+          schema:
+            type: string
+          description: "Options: description, id, name"
       responses:
         "200":
           description: Space retrieved successfully
@@ -1096,10 +1741,26 @@ paths:
     get:
       operationId: getSpaceBuyers
       summary: Get buyers of a space
+      # Docs: https://docs.x.com/x-api/spaces/get-space-buyers
+      externalDocs:
+        description: X API Documentation - Get Space Buyers
+        url: https://docs.x.com/x-api/spaces/get-space-buyers
       parameters:
         - name: id
           in: path
           required: true
+          schema:
+            type: string
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: expansions
+          in: query
+          schema:
+            type: string
+        - name: tweet.fields
+          in: query
           schema:
             type: string
       responses:
@@ -1114,23 +1775,52 @@ paths:
     get:
       operationId: searchSpaces
       summary: Search for spaces
+      # Docs: https://docs.x.com/x-api/spaces/search-spaces
+      externalDocs:
+        description: X API Documentation - Search Spaces
+        url: https://docs.x.com/x-api/spaces/search-spaces
       parameters:
         - name: query
           in: query
           required: true
           schema:
             type: string
+            minLength: 1
+            maxLength: 2048
+          description: Query string (1-2048 characters)
         - name: state
           in: query
           schema:
             type: string
-            enum: [live, scheduled]
+            enum: [live, scheduled, all]
+            default: all
+          description: Filter by Space state
         - name: max_results
           in: query
           schema:
             type: integer
             minimum: 1
             maximum: 100
+            default: 100
+        - name: space.fields
+          in: query
+          schema:
+            type: string
+          description: "Options: created_at, creator_id, ended_at, host_ids, id, invited_user_ids, is_ticketed, lang, participant_count, scheduled_start, speaker_ids, started_at, state, subscriber_count, title, topic_ids, updated_at"
+        - name: expansions
+          in: query
+          schema:
+            type: string
+          description: "Options: creator_id, host_ids, invited_user_ids, speaker_ids, topic_ids"
+        - name: user.fields
+          in: query
+          schema:
+            type: string
+        - name: topic.fields
+          in: query
+          schema:
+            type: string
+          description: "Options: description, id, name"
       responses:
         "200":
           description: Spaces retrieved successfully
@@ -1156,10 +1846,53 @@ components:
         created_at:
           type: string
           format: date-time
+        edit_history_tweet_ids:
+          type: array
+          items:
+            type: string
+          description: Array of Tweet IDs representing the edit history
+        conversation_id:
+          type: string
+        in_reply_to_user_id:
+          type: string
+        referenced_tweets:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [retweeted, quoted, replied_to]
+              id:
+                type: string
+        attachments:
+          type: object
+          properties:
+            media_keys:
+              type: array
+              items:
+                type: string
+            poll_ids:
+              type: array
+              items:
+                type: string
         public_metrics:
           $ref: "#/components/schemas/TweetPublicMetrics"
         entities:
           $ref: "#/components/schemas/TweetEntities"
+        context_annotations:
+          type: array
+          items:
+            type: object
+        lang:
+          type: string
+        source:
+          type: string
+        possibly_sensitive:
+          type: boolean
+        reply_settings:
+          type: string
+          enum: [everyone, mentionedUsers, following, other]
 
     TweetPublicMetrics:
       type: object
@@ -1171,6 +1904,10 @@ components:
         like_count:
           type: integer
         quote_count:
+          type: integer
+        bookmark_count:
+          type: integer
+        impression_count:
           type: integer
 
     TweetEntities:
@@ -1188,6 +1925,32 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UrlEntity"
+        cashtags:
+          type: array
+          items:
+            type: object
+            properties:
+              start:
+                type: integer
+              end:
+                type: integer
+              tag:
+                type: string
+        annotations:
+          type: array
+          items:
+            type: object
+            properties:
+              start:
+                type: integer
+              end:
+                type: integer
+              probability:
+                type: number
+              type:
+                type: string
+              normalized_text:
+                type: string
 
     Hashtag:
       type: object
@@ -1208,6 +1971,8 @@ components:
           type: integer
         username:
           type: string
+        id:
+          type: string
 
     UrlEntity:
       type: object
@@ -1222,6 +1987,23 @@ components:
           type: string
         display_url:
           type: string
+        title:
+          type: string
+        description:
+          type: string
+        unwound_url:
+          type: string
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              width:
+                type: integer
+              height:
+                type: integer
 
     User:
       type: object
@@ -1240,6 +2022,8 @@ components:
           type: string
         profile_image_url:
           type: string
+        profile_banner_url:
+          type: string
         created_at:
           type: string
           format: date-time
@@ -1247,6 +2031,46 @@ components:
           $ref: "#/components/schemas/UserPublicMetrics"
         verified:
           type: boolean
+        verified_type:
+          type: string
+          enum: [blue, business, government, none]
+        location:
+          type: string
+        url:
+          type: string
+        protected:
+          type: boolean
+        pinned_tweet_id:
+          type: string
+        entities:
+          type: object
+          properties:
+            url:
+              type: object
+              properties:
+                urls:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/UrlEntity"
+            description:
+              type: object
+              properties:
+                hashtags:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Hashtag"
+                mentions:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Mention"
+                urls:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/UrlEntity"
+        most_recent_tweet_id:
+          type: string
+        subscription_type:
+          type: string
 
     UserPublicMetrics:
       type: object
@@ -1259,20 +2083,25 @@ components:
           type: integer
         listed_count:
           type: integer
+        like_count:
+          type: integer
 
     CreateTweetRequest:
       type: object
-      required:
-        - text
       properties:
         text:
           type: string
-          maxLength: 280
+          maxLength: 25000
+          description: Text content (up to 25,000 characters for long-form posts)
         reply:
           type: object
           properties:
             in_reply_to_tweet_id:
               type: string
+            exclude_reply_user_ids:
+              type: array
+              items:
+                type: string
         quote_tweet_id:
           type: string
         poll:
@@ -1282,14 +2111,47 @@ components:
               type: array
               items:
                 type: string
+              minItems: 2
+              maxItems: 4
             duration_minutes:
               type: integer
+              minimum: 5
+              maximum: 10080
+        media:
+          type: object
+          properties:
+            media_ids:
+              type: array
+              items:
+                type: string
+              minItems: 1
+              maxItems: 4
+            tagged_user_ids:
+              type: array
+              items:
+                type: string
+              maxItems: 10
+        direct_message_deep_link:
+          type: string
+        for_super_followers_only:
+          type: boolean
+          default: false
+        geo:
+          type: object
+          properties:
+            place_id:
+              type: string
+        reply_settings:
+          type: string
+          enum: [following, mentionedUsers, subscribers, verified]
 
     TweetResponse:
       type: object
       properties:
         data:
           $ref: "#/components/schemas/Tweet"
+        includes:
+          $ref: "#/components/schemas/Expansions"
 
     TweetsResponse:
       type: object
@@ -1298,14 +2160,117 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Tweet"
+        includes:
+          $ref: "#/components/schemas/Expansions"
         meta:
           $ref: "#/components/schemas/PaginationMeta"
+
+    Expansions:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        tweets:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tweet"
+        media:
+          type: array
+          items:
+            $ref: "#/components/schemas/Media"
+        polls:
+          type: array
+          items:
+            $ref: "#/components/schemas/Poll"
+        places:
+          type: array
+          items:
+            $ref: "#/components/schemas/Place"
+
+    Media:
+      type: object
+      properties:
+        media_key:
+          type: string
+        type:
+          type: string
+          enum: [photo, video, animated_gif]
+        url:
+          type: string
+        preview_image_url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+        duration_ms:
+          type: integer
+        alt_text:
+          type: string
+        variants:
+          type: array
+          items:
+            type: object
+            properties:
+              bit_rate:
+                type: integer
+              content_type:
+                type: string
+              url:
+                type: string
+
+    Poll:
+      type: object
+      properties:
+        id:
+          type: string
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              position:
+                type: integer
+              label:
+                type: string
+              votes:
+                type: integer
+        duration_minutes:
+          type: integer
+        end_datetime:
+          type: string
+          format: date-time
+        voting_status:
+          type: string
+          enum: [open, closed]
+
+    Place:
+      type: object
+      properties:
+        id:
+          type: string
+        full_name:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        country_code:
+          type: string
+        place_type:
+          type: string
+        geo:
+          type: object
 
     UserResponse:
       type: object
       properties:
         data:
           $ref: "#/components/schemas/User"
+        includes:
+          $ref: "#/components/schemas/Expansions"
 
     UsersResponse:
       type: object
@@ -1314,6 +2279,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/User"
+        includes:
+          $ref: "#/components/schemas/Expansions"
         meta:
           $ref: "#/components/schemas/PaginationMeta"
 
@@ -1368,6 +2335,10 @@ components:
         next_token:
           type: string
         previous_token:
+          type: string
+        newest_id:
+          type: string
+        oldest_id:
           type: string
 
     UnlikeResponse:
@@ -1525,18 +2496,23 @@ components:
       properties:
         name:
           type: string
+          maxLength: 25
         description:
           type: string
+          maxLength: 100
         private:
           type: boolean
+          default: false
 
     UpdateListRequest:
       type: object
       properties:
         name:
           type: string
+          maxLength: 25
         description:
           type: string
+          maxLength: 100
         private:
           type: boolean
 
@@ -1545,6 +2521,8 @@ components:
       properties:
         data:
           $ref: "#/components/schemas/List"
+        includes:
+          $ref: "#/components/schemas/Expansions"
 
     ListsResponse:
       type: object
@@ -1553,6 +2531,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/List"
+        includes:
+          $ref: "#/components/schemas/Expansions"
         meta:
           $ref: "#/components/schemas/PaginationMeta"
 
@@ -1659,33 +2639,52 @@ components:
         created_at:
           type: string
           format: date-time
+        updated_at:
+          type: string
+          format: date-time
         started_at:
           type: string
           format: date-time
         ended_at:
           type: string
           format: date-time
+        scheduled_start:
+          type: string
+          format: date-time
         host_ids:
           type: array
           items:
             type: string
+        creator_id:
+          type: string
         speaker_ids:
+          type: array
+          items:
+            type: string
+        invited_user_ids:
           type: array
           items:
             type: string
         participant_count:
           type: integer
+        subscriber_count:
+          type: integer
         is_ticketed:
           type: boolean
-        scheduled_start:
+        lang:
           type: string
-          format: date-time
+        topic_ids:
+          type: array
+          items:
+            type: string
 
     SpaceResponse:
       type: object
       properties:
         data:
           $ref: "#/components/schemas/Space"
+        includes:
+          $ref: "#/components/schemas/Expansions"
 
     SpacesResponse:
       type: object
@@ -1694,5 +2693,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Space"
+        includes:
+          $ref: "#/components/schemas/Expansions"
         meta:
           $ref: "#/components/schemas/PaginationMeta"
