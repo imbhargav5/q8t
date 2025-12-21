@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import ScreenCaptureKit
 
@@ -128,7 +129,7 @@ struct CaptureSelectionView: View {
                     Label("Capture Microphone Audio", systemImage: "mic.fill")
                 }
                 .toggleStyle(.switch)
-                .disabled(!PermissionManager.shared.hasOptionalMicrophonePermission)
+                .disabled(!PermissionManager.shared.hasMicrophonePermission)
                 .frame(maxWidth: 500)
             }
 
@@ -254,3 +255,4 @@ struct CaptureTypeCard: View {
     )
     .frame(width: 800, height: 700)
 }
+#endif

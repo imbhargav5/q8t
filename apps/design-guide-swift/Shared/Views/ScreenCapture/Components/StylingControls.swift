@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 
 struct StylingControls: View {
@@ -366,3 +367,4 @@ struct CollapsibleSection<Content: View>: View {
         .frame(width: 280, height: 700)
         .background(Color(.windowBackgroundColor))
 }
+#endif

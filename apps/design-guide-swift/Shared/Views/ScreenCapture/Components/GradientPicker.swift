@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 
 struct GradientPicker: View {
@@ -125,3 +126,4 @@ struct GradientThumbnail: View {
         .padding()
         .background(Color(.windowBackgroundColor))
 }
+#endif

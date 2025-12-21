@@ -1,5 +1,7 @@
+#if os(macOS)
 import Foundation
 import SwiftUI
+import Combine
 import ScreenCaptureKit
 
 // MARK: - Menu Bar Recording State
@@ -196,3 +198,4 @@ class MenuBarRecordingManager: ObservableObject {
         await recorder.refreshAvailableContent()
     }
 }
+#endif

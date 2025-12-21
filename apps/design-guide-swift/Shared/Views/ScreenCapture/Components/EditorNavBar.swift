@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 
 struct EditorNavBar: View {
@@ -131,3 +132,4 @@ struct EditorNavBar: View {
     .frame(width: 900, height: 600)
     .background(Color(.windowBackgroundColor))
 }
+#endif

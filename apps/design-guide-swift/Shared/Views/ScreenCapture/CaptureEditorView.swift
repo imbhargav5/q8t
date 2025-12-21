@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 
 struct CaptureEditorView: View {
@@ -54,3 +55,4 @@ struct CaptureEditorView: View {
     )
     .frame(width: 1000, height: 700)
 }
+#endif

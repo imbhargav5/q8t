@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import AVKit
 
@@ -164,3 +165,4 @@ extension Comparable {
     )
     .frame(width: 800, height: 600)
 }
+#endif

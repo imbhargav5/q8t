@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -398,3 +399,4 @@ struct ResolutionButton: View {
         isPresented: .constant(true)
     )
 }
+#endif

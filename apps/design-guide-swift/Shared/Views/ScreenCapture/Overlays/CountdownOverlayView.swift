@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 
 struct CountdownOverlayView: View {
@@ -106,3 +107,4 @@ struct CountdownOverlayView: View {
     )
     .frame(width: 800, height: 600)
 }
+#endif

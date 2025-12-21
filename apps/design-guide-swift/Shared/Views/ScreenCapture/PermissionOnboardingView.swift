@@ -1,8 +1,10 @@
+#if os(macOS)
 import SwiftUI
 
 struct PermissionOnboardingView: View {
     @ObservedObject var permissionManager: PermissionManager
     @State private var isAnimating = false
+    @State private var microphonePromptTask: Task<Void, Never>?
 
     var body: some View {
         VStack(spacing: 40) {
@@ -52,18 +54,6 @@ struct PermissionOnboardingView: View {
             }
             .padding(.horizontal, 40)
 
-            // Skip microphone option
-            if permissionManager.screenRecordingPermission == .authorized &&
-               permissionManager.microphonePermission == .notDetermined {
-                Button("Skip Microphone Permission") {
-                    // User chose to skip - this will still allow them to use the app
-                    // The permission state will remain .notDetermined but we'll treat it as declined
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(.secondary)
-                .font(.footnote)
-            }
-
             Spacer()
         }
         .padding(.top, 60)
@@ -71,6 +61,37 @@ struct PermissionOnboardingView: View {
         .background(Color(.windowBackgroundColor))
         .onAppear {
             isAnimating = true
+            // Start polling to detect permission changes from System Settings
+            permissionManager.startPermissionPolling()
+        }
+        .onDisappear {
+            permissionManager.stopPermissionPolling()
+            // Cancel any pending microphone prompt when view disappears
+            microphonePromptTask?.cancel()
+            microphonePromptTask = nil
+        }
+        .onChange(of: permissionManager.currentPermissionStep) { _, newStep in
+            // Cancel any existing microphone prompt task
+            microphonePromptTask?.cancel()
+            microphonePromptTask = nil
+            
+            // Auto-trigger microphone permission request when it becomes the current step
+            // Add a delay to avoid jarring immediate prompts after screen recording is granted
+            if newStep == .microphone {
+                microphonePromptTask = Task {
+                    // Wait 1 second before showing microphone prompt
+                    // This gives user time to see the updated UI and prevents
+                    // immediate popup if they're still interacting with System Settings
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    
+                    // Check if task was cancelled or if we should still show the prompt
+                    guard !Task.isCancelled else { return }
+                    guard permissionManager.currentPermissionStep == .microphone else { return }
+                    guard permissionManager.microphonePermission == .notDetermined else { return }
+                    
+                    await permissionManager.requestMicrophonePermission()
+                }
+            }
         }
     }
 }
@@ -190,3 +211,4 @@ struct PermissionStepView: View {
     PermissionOnboardingView(permissionManager: PermissionManager.shared)
         .frame(width: 600, height: 600)
 }
+#endif

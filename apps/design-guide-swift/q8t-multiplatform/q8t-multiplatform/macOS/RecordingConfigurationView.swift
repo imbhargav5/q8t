@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import ScreenCaptureKit
 
@@ -236,9 +237,9 @@ struct RecordingConfigurationView: View {
                 }
             }
             .toggleStyle(.switch)
-            .disabled(!PermissionManager.shared.hasOptionalMicrophonePermission)
+            .disabled(!PermissionManager.shared.hasMicrophonePermission)
 
-            if !PermissionManager.shared.hasOptionalMicrophonePermission {
+            if !PermissionManager.shared.hasMicrophonePermission {
                 Text("Microphone permission required")
                     .font(.caption)
                     .foregroundColor(.orange)
@@ -473,3 +474,4 @@ struct WindowCard: View {
 #Preview {
     RecordingConfigurationView(manager: MenuBarRecordingManager())
 }
+#endif

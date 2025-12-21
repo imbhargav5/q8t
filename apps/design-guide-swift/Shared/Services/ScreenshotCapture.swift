@@ -1,4 +1,6 @@
+#if os(macOS)
 import Foundation
+import Combine
 import ScreenCaptureKit
 import AppKit
 import CoreGraphics
@@ -171,3 +173,4 @@ extension NSImage {
         self.init(cgImage: cgImage, size: size)
     }
 }
+#endif

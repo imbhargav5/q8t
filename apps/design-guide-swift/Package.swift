@@ -19,7 +19,8 @@ let package = Package(
                 "README.md",
                 "QUICKSTART.md",
                 ".gitignore",
-                "macOS/DesignGuideMac/Info.plist"
+                "macOS/DesignGuideMac/Info.plist",
+                "scripts"
             ],
             sources: [
                 "macOS/DesignGuideMac",

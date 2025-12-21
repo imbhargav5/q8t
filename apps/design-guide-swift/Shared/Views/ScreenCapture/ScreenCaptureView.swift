@@ -1,4 +1,6 @@
+#if os(macOS)
 import SwiftUI
+import ScreenCaptureKit
 
 enum ScreenCaptureState {
     case permissionOnboarding
@@ -11,7 +13,7 @@ struct ScreenCaptureView: View {
     // Optional initial content passed from menu bar recording
     var initialContent: CapturedContent?
 
-    @StateObject private var permissionManager = PermissionManager.shared
+    @ObservedObject private var permissionManager = PermissionManager.shared
     @StateObject private var recorder = ScreenRecorder()
     @StateObject private var screenshotCapture = ScreenshotCapture()
 
@@ -337,3 +339,4 @@ struct RecordingView: View {
     )
     .frame(width: 600, height: 500)
 }
+#endif

@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 
 struct MenuBarRecordingIcon: View {
@@ -63,3 +64,4 @@ struct MenuBarRecordingIcon: View {
     }
     .padding()
 }
+#endif

@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import AppKit
 
@@ -160,6 +161,7 @@ struct RegionSelectorView: View {
 class RegionSelectorWindowController: NSObject {
     private var window: NSWindow?
     private var completion: ((CGRect?) -> Void)?
+    private var eventMonitor: Any?
 
     func showRegionSelector(completion: @escaping (CGRect?) -> Void) {
         self.completion = completion
@@ -198,7 +200,7 @@ class RegionSelectorWindowController: NSObject {
         window?.makeKeyAndOrderFront(nil)
 
         // Monitor for escape key globally
-        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             if event.keyCode == 53 { // Escape key
                 self?.close(with: nil)
                 return nil
@@ -208,6 +210,12 @@ class RegionSelectorWindowController: NSObject {
     }
 
     private func close(with rect: CGRect?) {
+        // Clean up event monitor
+        if let monitor = eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            eventMonitor = nil
+        }
+
         window?.close()
         window = nil
         completion?(rect)
@@ -239,3 +247,4 @@ struct RegionSelectorContentView: View {
     )
     .frame(width: 800, height: 600)
 }
+#endif

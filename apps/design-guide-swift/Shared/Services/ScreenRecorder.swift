@@ -1,3 +1,4 @@
+#if os(macOS)
 import Foundation
 import ScreenCaptureKit
 import AVFoundation
@@ -14,17 +15,11 @@ class ScreenRecorder: NSObject, ObservableObject {
     @Published var captureAudio: Bool = true
 
     // MARK: - Private Properties
-    private var stream: SCStream?
-    private var streamOutput: CaptureStreamOutput?
-    private var assetWriter: AVAssetWriter?
-    private var videoInput: AVAssetWriterInput?
-    private var audioInput: AVAssetWriterInput?
+    private let engine = RecordingEngine()
     private var recordingStartTime: Date?
     private var durationTimer: Timer?
     private var tempVideoURL: URL?
     private var pausedElapsedTime: TimeInterval = 0
-    private var streamFilter: SCContentFilter?
-    private var streamConfig: SCStreamConfiguration?
 
     // MARK: - Initialization
 
@@ -67,77 +62,32 @@ class ScreenRecorder: NSObject, ObservableObject {
 
         // Create temp file for recording
         let tempDir = FileManager.default.temporaryDirectory
-        tempVideoURL = tempDir.appendingPathComponent("recording_\(UUID().uuidString).mp4")
-
-        guard let outputURL = tempVideoURL else {
-            state = .error("Failed to create temp file")
-            return
-        }
+        let outputURL = tempDir.appendingPathComponent("recording_\(UUID().uuidString).mp4")
+        tempVideoURL = outputURL
 
         do {
-            // Setup asset writer
-            assetWriter = try AVAssetWriter(url: outputURL, fileType: .mp4)
-
             // Get stream configuration
             let (filter, config) = try await createStreamConfiguration()
 
-            // Setup video input
-            let videoSettings: [String: Any] = [
-                AVVideoCodecKey: AVVideoCodecType.h264,
-                AVVideoWidthKey: config.width,
-                AVVideoHeightKey: config.height
-            ]
-            videoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
-            videoInput?.expectsMediaDataInRealTime = true
-
-            if let videoInput = videoInput {
-                assetWriter?.add(videoInput)
-            }
-
-            // Setup audio input if enabled
-            if captureAudio && PermissionManager.shared.hasOptionalMicrophonePermission {
-                let audioSettings: [String: Any] = [
-                    AVFormatIDKey: kAudioFormatMPEG4AAC,
-                    AVSampleRateKey: 44100,
-                    AVNumberOfChannelsKey: 2
-                ]
-                audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
-                audioInput?.expectsMediaDataInRealTime = true
-
-                if let audioInput = audioInput {
-                    assetWriter?.add(audioInput)
-                }
-            }
-
-            assetWriter?.startWriting()
-            assetWriter?.startSession(atSourceTime: .zero)
-
-            // Create and start stream
-            stream = SCStream(filter: filter, configuration: config, delegate: nil)
-
-            streamOutput = CaptureStreamOutput(
-                videoInput: videoInput,
-                audioInput: audioInput,
-                startTime: CMTime.zero
+            // Delegate to engine (runs off main thread)
+            try await engine.startRecording(
+                filter: filter,
+                config: config,
+                captureAudio: captureAudio && PermissionManager.shared.hasMicrophonePermission,
+                outputURL: outputURL
             )
 
-            if let streamOutput = streamOutput {
-                try stream?.addStreamOutput(streamOutput, type: .screen, sampleHandlerQueue: .global(qos: .userInteractive))
-
-                if captureAudio && PermissionManager.shared.hasOptionalMicrophonePermission {
-                    try stream?.addStreamOutput(streamOutput, type: .audio, sampleHandlerQueue: .global(qos: .userInteractive))
-                }
-            }
-
-            try await stream?.startCapture()
-
+            // Update UI state on success
             recordingStartTime = Date()
             state = .recording(startTime: recordingStartTime!)
             startDurationTimer()
 
+        } catch let error as RecordingEngine.EngineError {
+            handleEngineError(error)
+            throw RecordingError.from(error)
         } catch {
             state = .error("Failed to start recording: \(error.localizedDescription)")
-            cleanup()
+            throw error
         }
     }
 
@@ -148,54 +98,43 @@ class ScreenRecorder: NSObject, ObservableObject {
         stopDurationTimer()
 
         do {
-            try await stream?.stopCapture()
+            let outputURL = try await engine.stopRecording()
+
+            // Create captured content
+            let duration = recordingDuration
+            let size = await getVideoSize(from: outputURL)
+
+            let content = CapturedContent(
+                type: .recording,
+                mode: captureMode(for: selectedTarget),
+                originalSize: size,
+                videoURL: outputURL,
+                duration: duration,
+                hasAudio: captureAudio && PermissionManager.shared.hasMicrophonePermission
+            )
+
+            state = .completed(content)
+            return content
+
+        } catch let error as RecordingEngine.EngineError {
+            handleEngineError(error)
+            return nil
         } catch {
-            print("Error stopping capture: \(error)")
-        }
-
-        stream = nil
-        streamOutput = nil
-
-        // Finish writing
-        videoInput?.markAsFinished()
-        audioInput?.markAsFinished()
-
-        await withCheckedContinuation { continuation in
-            assetWriter?.finishWriting {
-                continuation.resume()
-            }
-        }
-
-        // Create captured content
-        guard let outputURL = tempVideoURL else {
-            state = .error("No output file")
+            state = .error("Failed to stop recording: \(error.localizedDescription)")
             return nil
         }
-
-        let duration = recordingDuration
-        let size = await getVideoSize(from: outputURL)
-
-        let content = CapturedContent(
-            type: .recording,
-            mode: captureMode(for: selectedTarget),
-            originalSize: size,
-            videoURL: outputURL,
-            duration: duration,
-            hasAudio: captureAudio && PermissionManager.shared.hasOptionalMicrophonePermission
-        )
-
-        state = .completed(content)
-        return content
     }
 
     func cancelRecording() async {
         stopDurationTimer()
+        await engine.cancelRecording()
 
-        if let stream = stream {
-            try? await stream.stopCapture()
+        // Clean up temp file
+        if let url = tempVideoURL {
+            try? FileManager.default.removeItem(at: url)
+            tempVideoURL = nil
         }
 
-        cleanup()
         state = .idle
     }
 
@@ -213,10 +152,6 @@ class ScreenRecorder: NSObject, ObservableObject {
         pausedElapsedTime = recordingDuration
         stopDurationTimer()
 
-        // Note: SCStream doesn't have a native pause method, so we just stop updating
-        // the timer and keep the stream running. For a true pause, we would need to
-        // stop the stream, but that creates gaps in the video.
-        // A more sophisticated implementation would involve video editing to remove paused sections.
         state = .paused(elapsed: pausedElapsedTime)
     }
 
@@ -283,6 +218,21 @@ class ScreenRecorder: NSObject, ObservableObject {
         return (filter, config)
     }
 
+    private func handleEngineError(_ error: RecordingEngine.EngineError) {
+        switch error {
+        case .timeout(let operation):
+            state = .error("Operation timed out: \(operation)")
+        case .writerSetupFailed(let msg):
+            state = .error("Writer setup failed: \(msg)")
+        case .streamSetupFailed(let msg):
+            state = .error("Stream setup failed: \(msg)")
+        case .writingFailed(let msg):
+            state = .error("Writing failed: \(msg)")
+        default:
+            state = .error(error.localizedDescription ?? "Unknown error")
+        }
+    }
+
     private func startDurationTimer() {
         durationTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
@@ -295,21 +245,6 @@ class ScreenRecorder: NSObject, ObservableObject {
     private func stopDurationTimer() {
         durationTimer?.invalidate()
         durationTimer = nil
-    }
-
-    private func cleanup() {
-        stream = nil
-        streamOutput = nil
-        assetWriter = nil
-        videoInput = nil
-        audioInput = nil
-        recordingStartTime = nil
-
-        // Clean up temp file if needed
-        if let url = tempVideoURL {
-            try? FileManager.default.removeItem(at: url)
-            tempVideoURL = nil
-        }
     }
 
     private func getVideoSize(from url: URL) async -> CGSize {
@@ -332,81 +267,13 @@ class ScreenRecorder: NSObject, ObservableObject {
     }
 }
 
-// MARK: - Stream Output Handler
-
-private class CaptureStreamOutput: NSObject, SCStreamOutput {
-    private let videoInput: AVAssetWriterInput?
-    private let audioInput: AVAssetWriterInput?
-    private var firstSampleTime: CMTime?
-    private let startTime: CMTime
-
-    init(videoInput: AVAssetWriterInput?, audioInput: AVAssetWriterInput?, startTime: CMTime) {
-        self.videoInput = videoInput
-        self.audioInput = audioInput
-        self.startTime = startTime
-        super.init()
-    }
-
-    func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
-        guard sampleBuffer.isValid else { return }
-
-        // Track first sample time for timing offset
-        if firstSampleTime == nil {
-            firstSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-        }
-
-        switch type {
-        case .screen:
-            guard let videoInput = videoInput, videoInput.isReadyForMoreMediaData else { return }
-
-            // Offset the timing
-            if let offsetBuffer = adjustTiming(of: sampleBuffer) {
-                videoInput.append(offsetBuffer)
-            }
-
-        case .audio:
-            guard let audioInput = audioInput, audioInput.isReadyForMoreMediaData else { return }
-
-            if let offsetBuffer = adjustTiming(of: sampleBuffer) {
-                audioInput.append(offsetBuffer)
-            }
-
-        @unknown default:
-            break
-        }
-    }
-
-    private func adjustTiming(of sampleBuffer: CMSampleBuffer) -> CMSampleBuffer? {
-        guard let firstTime = firstSampleTime else { return nil }
-
-        var timing = CMSampleTimingInfo()
-        guard CMSampleBufferGetSampleTimingInfo(sampleBuffer, at: 0, timingInfoOut: &timing) == noErr else {
-            return nil
-        }
-
-        timing.presentationTimeStamp = CMTimeSubtract(timing.presentationTimeStamp, firstTime)
-
-        var newBuffer: CMSampleBuffer?
-        guard CMSampleBufferCreateCopyWithNewTiming(
-            allocator: kCFAllocatorDefault,
-            sampleBuffer: sampleBuffer,
-            sampleTimingEntryCount: 1,
-            sampleTimingArray: &timing,
-            sampleBufferOut: &newBuffer
-        ) == noErr else {
-            return nil
-        }
-
-        return newBuffer
-    }
-}
-
 // MARK: - Recording Error
 
 enum RecordingError: LocalizedError {
     case noDisplayAvailable
     case streamCreationFailed
     case writingFailed
+    case timeout
 
     var errorDescription: String? {
         switch self {
@@ -416,6 +283,22 @@ enum RecordingError: LocalizedError {
             return "Failed to create capture stream"
         case .writingFailed:
             return "Failed to write recording to file"
+        case .timeout:
+            return "Operation timed out"
+        }
+    }
+
+    static func from(_ engineError: RecordingEngine.EngineError) -> RecordingError {
+        switch engineError {
+        case .writerSetupFailed, .writingFailed:
+            return .writingFailed
+        case .streamSetupFailed:
+            return .streamCreationFailed
+        case .timeout:
+            return .timeout
+        default:
+            return .streamCreationFailed
         }
     }
 }
+#endif

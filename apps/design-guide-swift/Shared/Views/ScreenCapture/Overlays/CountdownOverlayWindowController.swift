@@ -1,11 +1,20 @@
+#if os(macOS)
 import SwiftUI
 import AppKit
+
+// MARK: - Non-Key Overlay Window
+
+private class OverlayWindow: NSWindow {
+    override var canBecomeKey: Bool { false }
+    override var canBecomeMain: Bool { false }
+}
 
 // MARK: - Countdown Overlay Window Controller
 
 class CountdownOverlayWindowController: NSObject {
     private var window: NSWindow?
     private var completion: (() -> Void)?
+    private var eventMonitor: Any?
 
     func showCountdown(completion: @escaping () -> Void) {
         self.completion = completion
@@ -16,8 +25,8 @@ class CountdownOverlayWindowController: NSObject {
             return
         }
 
-        // Create a borderless window covering the entire screen
-        window = NSWindow(
+        // Create a borderless overlay window that can't become key
+        window = OverlayWindow(
             contentRect: screen.frame,
             styleMask: [.borderless],
             backing: .buffered,
@@ -27,8 +36,7 @@ class CountdownOverlayWindowController: NSObject {
         window?.level = .screenSaver
         window?.isOpaque = false
         window?.backgroundColor = .clear
-        window?.ignoresMouseEvents = false
-        window?.acceptsMouseMovedEvents = true
+        window?.ignoresMouseEvents = true  // Don't intercept mouse events
         window?.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 
         let hostingView = NSHostingView(rootView: CountdownOverlayView(
@@ -42,10 +50,10 @@ class CountdownOverlayWindowController: NSObject {
         ))
 
         window?.contentView = hostingView
-        window?.makeKeyAndOrderFront(nil)
+        window?.orderFrontRegardless()  // Show without becoming key
 
         // Monitor for escape key to cancel
-        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             if event.keyCode == 53 { // Escape key
                 self?.close()
                 return nil
@@ -55,7 +63,14 @@ class CountdownOverlayWindowController: NSObject {
     }
 
     private func close() {
+        // Clean up event monitor
+        if let monitor = eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            eventMonitor = nil
+        }
+
         window?.close()
         window = nil
     }
 }
+#endif

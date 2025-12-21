@@ -492,7 +492,7 @@ enum PermissionType: String, CaseIterable, Identifiable {
     var isRequired: Bool {
         switch self {
         case .screenRecording: return true
-        case .microphone: return false
+        case .microphone: return false // Microphone is optional
         }
     }
 }
