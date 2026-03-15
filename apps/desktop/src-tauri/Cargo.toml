@@ -1,0 +1,29 @@
+[package]
+name = "q8t-desktop"
+version = "0.0.1"
+description = "q8t Desktop Application"
+authors = ["q8t"]
+edition = "2021"
+
+[lib]
+name = "q8t_desktop_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-shell = "2"
+tauri-plugin-os = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-foundation = { version = "0.3", features = ["NSString", "NSArray", "NSThread"] }
+objc2-app-kit = { version = "0.3", features = ["NSImage", "NSScreen", "NSRunningApplication", "NSWorkspace"] }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]

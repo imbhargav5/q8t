@@ -26,7 +26,7 @@ struct ContentView: View {
             // Home Tab
             NavigationStack {
                 LandingPageView()
-                    .navigationTitle("Chatsian")
+                    .navigationTitle("q8t")
             }
             .tabItem {
                 Label("Home", systemImage: "house.fill")
@@ -229,6 +229,16 @@ struct ContentView: View {
                 NSApplication.shared.activate(ignoringOtherApps: true)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .screenshotCompleted)) { notification in
+            if let content = notification.object as? CapturedContent {
+                // Navigate to screen capture view with the screenshot
+                capturedContent = content
+                selectedView = .screenCapture
+
+                // Bring app to front
+                NSApplication.shared.activate(ignoringOtherApps: true)
+            }
+        }
     }
 }
 
@@ -269,7 +279,7 @@ struct SidebarView: View {
                 }
             }
         }
-        .navigationTitle("Chatsian")
+        .navigationTitle("q8t")
         .listStyle(.sidebar)
     }
 }

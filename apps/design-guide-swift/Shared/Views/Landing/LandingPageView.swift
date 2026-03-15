@@ -16,7 +16,7 @@ struct LandingPageView: View {
                             )
                         )
 
-                    Text("Chatsian")
+                    Text("q8t")
                         .font(.system(size: 48, weight: .bold))
 
                     Text("Modern Social Media Management Platform")
@@ -113,7 +113,7 @@ struct LandingPageView: View {
                         .font(.title2)
                         .fontWeight(.bold)
 
-                    Text("This is a design guide and preview application for Chatsian, a modern social media management platform. All data is mock data for demonstration purposes.")
+                    Text("This is a design guide and preview application for q8t, a modern social media management platform. All data is mock data for demonstration purposes.")
                         .font(.body)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -130,7 +130,7 @@ struct LandingPageView: View {
                 .padding()
 
                 // Footer
-                Text("© 2024 Chatsian. All rights reserved.")
+                Text("© 2024 q8t. All rights reserved.")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.bottom, 40)

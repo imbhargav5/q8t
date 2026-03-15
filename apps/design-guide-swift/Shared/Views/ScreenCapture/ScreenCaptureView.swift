@@ -302,11 +302,14 @@ struct RecordingView: View {
         case .display(let display):
             return "Display \(display.displayID)"
         case .window(let window):
-            return window.title ?? "Window"
+            if let title = window.title, !title.isEmpty {
+                return title
+            }
+            return "Window"
         case .region:
             return "Custom Region"
         case .application(let app):
-            return app.applicationName ?? "Application"
+            return app.applicationName.isEmpty ? "Application" : app.applicationName
         }
     }
 

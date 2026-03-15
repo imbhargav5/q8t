@@ -271,7 +271,7 @@ struct PersonConversationsTab: View {
     }
 
     func platformColor(_ platform: SocialPlatform) -> Color {
-        Color(hex: platform.color) ?? .blue
+        Color(hex: platform.color)
     }
 }
 

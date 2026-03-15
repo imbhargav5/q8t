@@ -281,7 +281,7 @@ struct PostSidebarView: View {
                         HStack {
                             Image(systemName: "circle.fill")
                                 .font(.system(size: 8))
-                                .foregroundColor(Color(hex: platform.color) ?? .blue)
+                                .foregroundColor(Color(hex: platform.color))
                             Text(platform.displayName)
                                 .font(.system(size: 13))
                         }

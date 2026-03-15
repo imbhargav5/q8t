@@ -3,6 +3,7 @@ import SwiftUI
 
 struct MenuBarMenuView: View {
     @ObservedObject var manager: MenuBarRecordingManager
+    @ObservedObject var screenshotManager: MenuBarScreenshotManager
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -78,6 +79,36 @@ struct MenuBarMenuView: View {
                         }
                     }
                 }
+            }
+
+            Divider()
+
+            // Quick Screenshot submenu
+            Menu("Quick Screenshot") {
+                Button("All Displays") {
+                    print("[MenuBar] Quick Screenshot - All Displays clicked")
+                    Task {
+                        await screenshotManager.captureAllDisplays()
+                    }
+                }
+
+                Button("Primary Display") {
+                    Task {
+                        await screenshotManager.capturePrimaryDisplay()
+                    }
+                }
+
+                Divider()
+
+                Button("Select Region...") {
+                    screenshotManager.captureRegion()
+                }
+            }
+
+            Divider()
+
+            Button("Open q8t") {
+                NSApplication.shared.activate(ignoringOtherApps: true)
             }
         }
     }
@@ -186,7 +217,7 @@ struct MenuBarMenuView: View {
 }
 
 #Preview {
-    MenuBarMenuView(manager: MenuBarRecordingManager())
+    MenuBarMenuView(manager: MenuBarRecordingManager(), screenshotManager: MenuBarScreenshotManager())
         .frame(width: 200)
 }
 #endif

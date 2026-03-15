@@ -4,18 +4,17 @@ import ScreenCaptureKit
 import AVFoundation
 import CoreMedia
 
-final class SampleBufferWriter: NSObject, SCStreamOutput {
-    // MARK: - Properties
+final class SampleBufferWriter: NSObject, SCStreamOutput, @unchecked Sendable {
+    // MARK: - Properties (nonisolated for cross-actor access)
 
     let processingQueue: DispatchQueue
-
-    private let videoInput: AVAssetWriterInput
-    private let audioInput: AVAssetWriterInput?
+    nonisolated(unsafe) private let videoInput: AVAssetWriterInput
+    nonisolated(unsafe) private let audioInput: AVAssetWriterInput?
 
     // Thread-safe state using lock
     private let lock = NSLock()
-    private var _firstSampleTime: CMTime?
-    private var _isFinished = false
+    nonisolated(unsafe) private var _firstSampleTime: CMTime?
+    nonisolated(unsafe) private var _isFinished = false
 
     // MARK: - Thread-Safe Accessors
 
@@ -47,35 +46,50 @@ final class SampleBufferWriter: NSObject, SCStreamOutput {
 
     // MARK: - Initialization
 
-    init(videoInput: AVAssetWriterInput, audioInput: AVAssetWriterInput?) {
-        self.videoInput = videoInput
-        self.audioInput = audioInput
+    nonisolated override init() {
+        fatalError("Use init(videoInput:audioInput:)")
+    }
+
+    nonisolated init(videoInput: AVAssetWriterInput, audioInput: AVAssetWriterInput?) {
         self.processingQueue = DispatchQueue(
-            label: "com.chatsian.designguide.samplebuffer",
+            label: "com.q8t.designguide.samplebuffer",
             qos: .userInteractive
         )
+        self.videoInput = videoInput
+        self.audioInput = audioInput
+        self._firstSampleTime = nil
+        self._isFinished = false
         super.init()
     }
 
-    func markAsFinished() {
-        isFinished = true
+    nonisolated func markAsFinished() {
+        lock.lock()
+        _isFinished = true
+        lock.unlock()
         videoInput.markAsFinished()
         audioInput?.markAsFinished()
     }
 
     // MARK: - SCStreamOutput
 
-    func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
+    nonisolated func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
         // Early exit if finished or invalid
-        guard !isFinished, sampleBuffer.isValid else { return }
+        lock.lock()
+        let finished = _isFinished
+        lock.unlock()
+
+        guard !finished, sampleBuffer.isValid else { return }
 
         // Initialize first sample time (thread-safe)
-        if firstSampleTime == nil {
-            firstSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        lock.lock()
+        if _firstSampleTime == nil {
+            _firstSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         }
+        let firstTime = _firstSampleTime
+        lock.unlock()
 
         // Adjust timing
-        guard let adjustedBuffer = adjustTiming(of: sampleBuffer) else { return }
+        guard let adjustedBuffer = adjustTiming(of: sampleBuffer, firstTime: firstTime) else { return }
 
         // Append based on type
         switch type {
@@ -86,7 +100,6 @@ final class SampleBufferWriter: NSObject, SCStreamOutput {
                 appendToInput(audioInput, buffer: adjustedBuffer)
             }
         case .microphone:
-            // Handle microphone same as audio if we have audio input
             if let audioInput = audioInput {
                 appendToInput(audioInput, buffer: adjustedBuffer)
             }
@@ -97,13 +110,13 @@ final class SampleBufferWriter: NSObject, SCStreamOutput {
 
     // MARK: - Private Helpers
 
-    private func appendToInput(_ input: AVAssetWriterInput, buffer: CMSampleBuffer) {
+    nonisolated private func appendToInput(_ input: AVAssetWriterInput, buffer: CMSampleBuffer) {
         guard input.isReadyForMoreMediaData else { return }
         input.append(buffer)
     }
 
-    private func adjustTiming(of sampleBuffer: CMSampleBuffer) -> CMSampleBuffer? {
-        guard let firstTime = firstSampleTime else { return nil }
+    nonisolated private func adjustTiming(of sampleBuffer: CMSampleBuffer, firstTime: CMTime?) -> CMSampleBuffer? {
+        guard let firstTime = firstTime else { return nil }
 
         var timing = CMSampleTimingInfo()
         guard CMSampleBufferGetSampleTimingInfo(sampleBuffer, at: 0, timingInfoOut: &timing) == noErr else {

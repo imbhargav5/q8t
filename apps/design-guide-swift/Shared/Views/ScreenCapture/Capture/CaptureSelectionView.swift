@@ -156,6 +156,18 @@ struct CaptureSelectionView: View {
             Task {
                 await recorder.refreshAvailableContent()
                 await screenshotCapture.refreshAvailableContent()
+                // Auto-select first display if in single display mode
+                if captureMode == .singleDisplay, let firstDisplay = recorder.availableDisplays.first {
+                    selectedTarget = .display(firstDisplay)
+                }
+            }
+        }
+        .onChange(of: recorder.availableDisplays) { _, newDisplays in
+            // Auto-select first display when displays become available
+            if captureMode == .singleDisplay, case .display = selectedTarget {} else {
+                if captureMode == .singleDisplay, let firstDisplay = newDisplays.first {
+                    selectedTarget = .display(firstDisplay)
+                }
             }
         }
     }

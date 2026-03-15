@@ -172,7 +172,20 @@ class RegionSelectorWindowController: NSObject {
             return
         }
 
-        // Create a borderless window covering the entire screen
+        print("[RegionSelector] Screen frame: \(screen.frame)")
+        print("[RegionSelector] Screen visibleFrame: \(screen.visibleFrame)")
+        print("[RegionSelector] Screen backingScaleFactor: \(screen.backingScaleFactor)")
+
+        // Get display bounds using CoreGraphics (ScreenCaptureKit uses this coordinate system)
+        let displayID = CGMainDisplayID()
+        let displayBounds = CGDisplayBounds(displayID)
+        print("[RegionSelector] CGDisplay bounds: \(displayBounds)")
+        print("[RegionSelector] CGDisplay pixel width: \(CGDisplayPixelsWide(displayID))")
+        print("[RegionSelector] CGDisplay pixel height: \(CGDisplayPixelsHigh(displayID))")
+
+        // Create window to cover the screen
+        // The window's internal coordinate system (SwiftUI) uses top-left origin
+        // which should match ScreenCaptureKit's sourceRect expectations
         window = NSWindow(
             contentRect: screen.frame,
             styleMask: [.borderless],
@@ -216,6 +229,13 @@ class RegionSelectorWindowController: NSObject {
             eventMonitor = nil
         }
 
+        if let rect = rect {
+            print("[RegionSelector] SwiftUI selected rect: \(rect)")
+            print("[RegionSelector] Window frame: \(window?.frame ?? .zero)")
+        }
+
+        // SwiftUI coordinates (top-left origin) match ScreenCaptureKit's sourceRect coordinate system
+        // No conversion needed - pass rect directly
         window?.close()
         window = nil
         completion?(rect)

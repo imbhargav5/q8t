@@ -237,7 +237,7 @@ struct PostCardView: View {
                     ForEach(post.platforms.prefix(3), id: \.self) { platform in
                         Image(systemName: platformIcon(platform))
                             .font(.system(size: 12))
-                            .foregroundColor(Color(hex: platform.color) ?? .blue)
+                            .foregroundColor(Color(hex: platform.color))
                     }
                     if post.platforms.count > 3 {
                         Text("+\(post.platforms.count - 3)")

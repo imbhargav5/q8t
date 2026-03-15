@@ -229,7 +229,7 @@ class ScreenRecorder: NSObject, ObservableObject {
         case .writingFailed(let msg):
             state = .error("Writing failed: \(msg)")
         default:
-            state = .error(error.localizedDescription ?? "Unknown error")
+            state = .error(error.localizedDescription)
         }
     }
 
@@ -248,7 +248,7 @@ class ScreenRecorder: NSObject, ObservableObject {
     }
 
     private func getVideoSize(from url: URL) async -> CGSize {
-        let asset = AVAsset(url: url)
+        let asset = AVURLAsset(url: url)
         guard let track = try? await asset.loadTracks(withMediaType: .video).first,
               let size = try? await track.load(.naturalSize) else {
             return .zero

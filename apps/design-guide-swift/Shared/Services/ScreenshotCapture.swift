@@ -36,8 +36,9 @@ class ScreenshotCapture: ObservableObject {
                 }
                 return true
             }
+            print("[ScreenshotCapture] Refreshed: \(availableDisplays.count) displays, \(availableWindows.count) windows")
         } catch {
-            print("Failed to get shareable content: \(error)")
+            print("[ScreenshotCapture] Failed to get shareable content: \(error)")
         }
     }
 
@@ -47,10 +48,13 @@ class ScreenshotCapture: ObservableObject {
         isCapturing = true
         defer { isCapturing = false }
 
+        print("[ScreenshotCapture] captureAllDisplays - availableDisplays: \(availableDisplays.count)")
         guard let primaryDisplay = availableDisplays.first else {
+            print("[ScreenshotCapture] ERROR: No display available")
             throw ScreenshotError.noDisplayAvailable
         }
 
+        print("[ScreenshotCapture] Using display: \(primaryDisplay.displayID), size: \(primaryDisplay.width)x\(primaryDisplay.height)")
         let filter = SCContentFilter(display: primaryDisplay, excludingWindows: [])
         return try await captureWithFilter(filter, mode: .allDisplays)
     }
@@ -75,11 +79,18 @@ class ScreenshotCapture: ObservableObject {
         isCapturing = true
         defer { isCapturing = false }
 
-        guard let primaryDisplay = availableDisplays.first else {
+        // Find the display that matches the main display (where region selector is shown)
+        let mainDisplayID = CGMainDisplayID()
+        let targetDisplay = availableDisplays.first { $0.displayID == mainDisplayID } ?? availableDisplays.first
+
+        guard let display = targetDisplay else {
             throw ScreenshotError.noDisplayAvailable
         }
 
-        let filter = SCContentFilter(display: primaryDisplay, excludingWindows: [])
+        print("[ScreenshotCapture] captureRegion - using display \(display.displayID), size: \(display.width)x\(display.height)")
+        print("[ScreenshotCapture] captureRegion - CGMainDisplayID: \(mainDisplayID)")
+
+        let filter = SCContentFilter(display: display, excludingWindows: [])
         return try await captureRegionWithFilter(filter, region: rect)
     }
 
@@ -127,12 +138,17 @@ class ScreenshotCapture: ObservableObject {
     }
 
     private func captureRegionWithFilter(_ filter: SCContentFilter, region: CGRect) async throws -> CapturedContent {
+        print("[ScreenshotCapture] captureRegion input rect: \(region)")
+        print("[ScreenshotCapture] filter contentRect: \(filter.contentRect)")
+
         let config = SCStreamConfiguration()
         config.scalesToFit = false
         config.showsCursor = true
         config.sourceRect = region
         config.width = Int(region.width * 2)
         config.height = Int(region.height * 2)
+
+        print("[ScreenshotCapture] sourceRect set to: \(config.sourceRect)")
 
         let cgImage = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config)
 
@@ -166,11 +182,4 @@ enum ScreenshotError: LocalizedError {
     }
 }
 
-// MARK: - CGImage to NSImage Extension
-
-extension NSImage {
-    convenience init(cgImage: CGImage, size: NSSize) {
-        self.init(cgImage: cgImage, size: size)
-    }
-}
 #endif

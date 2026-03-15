@@ -253,6 +253,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LLC6TV7P6M;
 				"ENABLE_APP_SANDBOX[sdk=iphoneos*]" = YES;
 				"ENABLE_APP_SANDBOX[sdk=iphonesimulator*]" = YES;
 				"ENABLE_APP_SANDBOX[sdk=macosx*]" = NO;
@@ -299,6 +300,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LLC6TV7P6M;
 				"ENABLE_APP_SANDBOX[sdk=iphoneos*]" = YES;
 				"ENABLE_APP_SANDBOX[sdk=iphonesimulator*]" = YES;
 				"ENABLE_APP_SANDBOX[sdk=macosx*]" = NO;

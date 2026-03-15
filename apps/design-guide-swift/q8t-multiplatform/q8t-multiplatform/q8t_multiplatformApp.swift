@@ -11,6 +11,7 @@ import SwiftUI
 struct q8t_multiplatformApp: App {
     #if os(macOS)
     @StateObject private var recordingManager = MenuBarRecordingManager()
+    @StateObject private var screenshotManager = MenuBarScreenshotManager()
     #endif
 
     var body: some Scene {
@@ -39,7 +40,7 @@ struct q8t_multiplatformApp: App {
 
         // Menu Bar (always visible, menu style)
         MenuBarExtra {
-            MenuBarMenuView(manager: recordingManager)
+            MenuBarMenuView(manager: recordingManager, screenshotManager: screenshotManager)
         } label: {
             MenuBarRecordingIcon(manager: recordingManager)
         }
