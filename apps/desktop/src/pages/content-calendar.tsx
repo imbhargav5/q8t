@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarGrid } from "@/components/content-calendar/calendar-grid";
@@ -8,6 +8,8 @@ import { RightSidebarContainer } from "@/components/layout/right-sidebar-contain
 import { CalendarOverviewSidebar } from "@/components/content-calendar/sidebars/calendar-overview-sidebar";
 import { PostDetailSidebar } from "@/components/content-calendar/sidebars/post-detail-sidebar";
 import { mockPosts } from "@/lib/mock-data";
+import * as postsApi from "@/lib/api/posts";
+import type { Post } from "@/lib/api/types";
 import type { PostWithAuthor } from "@/lib/zod-schemas";
 import {
   Plus,
@@ -17,6 +19,46 @@ import {
   Download,
 } from "lucide-react";
 
+/** Convert a backend Post to the PostWithAuthor shape the calendar components expect */
+function adaptPost(post: Post): PostWithAuthor {
+  return {
+    id: post.id,
+    workspace_id: "local",
+    author_id: "local",
+    content: post.content,
+    content_type: post.content_type,
+    status: post.status,
+    scheduled_for: post.scheduled_for ?? undefined,
+    published_at: post.published_at ?? undefined,
+    platforms: ["x"],
+    tags: post.tags ? JSON.parse(post.tags) : [],
+    media: [],
+    poll: null,
+    link_preview: null,
+    hashtags: post.hashtags ? JSON.parse(post.hashtags) : [],
+    mentions: post.mentions ? JSON.parse(post.mentions) : [],
+    first_comment: null,
+    location: null,
+    visibility: "public",
+    approval_status: "approved",
+    approved_by: null,
+    approved_at: null,
+    engagement: null,
+    platform_post_ids: {},
+    platform_errors: {},
+    metadata: post.metadata ? JSON.parse(post.metadata) : {},
+    author: {
+      id: "local",
+      full_name: "You",
+      email: "",
+      avatar_url: "",
+      role: "owner",
+    },
+    created_at: post.created_at,
+    updated_at: post.updated_at,
+  } as unknown as PostWithAuthor;
+}
+
 export function ContentCalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedPost, setSelectedPost] = useState<PostWithAuthor | null>(null);
@@ -24,6 +66,21 @@ export function ContentCalendarPage() {
   const [composerDate, setComposerDate] = useState<Date | undefined>();
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [view, setView] = useState<"calendar" | "list">("calendar");
+  const [posts, setPosts] = useState<PostWithAuthor[]>(mockPosts);
+
+  // Load real posts from backend, fall back to mock data
+  useEffect(() => {
+    postsApi
+      .listPosts({ limit: 100 })
+      .then((dbPosts) => {
+        if (dbPosts.length > 0) {
+          setPosts(dbPosts.map(adaptPost));
+        }
+      })
+      .catch(() => {
+        // Backend not available, keep mock data
+      });
+  }, [isComposerOpen]); // Refetch when composer closes
 
   const handleAddPost = (date: Date) => {
     setComposerDate(date);
@@ -91,7 +148,7 @@ export function ContentCalendarPage() {
         <div className="flex-1 overflow-hidden">
           {view === "calendar" ? (
             <CalendarGrid
-              posts={mockPosts}
+              posts={posts}
               currentDate={currentDate}
               onDateChange={setCurrentDate}
               onAddPost={handleAddPost}
@@ -101,7 +158,7 @@ export function ContentCalendarPage() {
             <div className="h-full overflow-auto p-4">
               <div className="max-w-4xl mx-auto space-y-4">
                 <h2 className="text-lg font-semibold">All Posts</h2>
-                {mockPosts.map((post) => (
+                {posts.map((post) => (
                   <div
                     key={post.id}
                     className="p-4 rounded-lg cursor-pointer hover:bg-accent transition-colors"

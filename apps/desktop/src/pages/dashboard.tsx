@@ -1,157 +1,230 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { mockWorkspace, mockSubscription, mockTeamMembers } from "@/lib/mock-data";
-import { Settings, Users, CreditCard, TrendingUp, MessageSquare, CheckCircle2 } from "lucide-react";
-import { Link } from "react-router";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { useEffect, useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import {
+  Settings,
+  Send,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Plus,
+  RefreshCw,
+  FileText,
+  Zap,
+} from "lucide-react"
+import { Link } from "react-router"
+import * as accountsApi from "@/lib/api/accounts"
+import * as postsApi from "@/lib/api/posts"
+import * as schedulerApi from "@/lib/api/scheduler"
+import type { Account, Post, SchedulerStatus } from "@/lib/api/types"
 
 export function DashboardPage() {
-  const workspace = mockWorkspace;
-  const subscription = mockSubscription;
-  const teamMembers = mockTeamMembers;
-  const seatsUsagePercent = (subscription.used_seats / subscription.seats) * 100;
+  const [accounts, setAccounts] = useState<Account[]>([])
+  const [recentPosts, setRecentPosts] = useState<Post[]>([])
+  const [schedulerStatus, setSchedulerStatus] = useState<SchedulerStatus | null>(null)
+  const [postCounts, setPostCounts] = useState({ draft: 0, scheduled: 0, published: 0, failed: 0 })
+  const [loading, setLoading] = useState(true)
+
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const [accts, drafts, scheduled, published, failed, sched] = await Promise.all([
+        accountsApi.listAccounts().catch(() => []),
+        postsApi.listPosts({ status: "draft", limit: 5 }).catch(() => []),
+        postsApi.listPosts({ status: "scheduled", limit: 5 }).catch(() => []),
+        postsApi.listPosts({ status: "published", limit: 5 }).catch(() => []),
+        postsApi.listPosts({ status: "failed", limit: 5 }).catch(() => []),
+        schedulerApi.getSchedulerStatus().catch(() => null),
+      ])
+      setAccounts(accts)
+      setRecentPosts([...published, ...scheduled, ...drafts].slice(0, 5))
+      setPostCounts({
+        draft: drafts.length,
+        scheduled: scheduled.length,
+        published: published.length,
+        failed: failed.length,
+      })
+      setSchedulerStatus(sched)
+    } catch {
+      // Backend not available
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">{workspace.name}</h1>
+          <h1 className="text-2xl font-semibold">Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Workspace overview and quick actions
+            Your q8t social media command center
           </p>
         </div>
-        <Link to="/settings">
-          <Button variant="outline">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={fetchData}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
           </Button>
-        </Link>
+          <Link to="/integrations">
+            <Button variant="outline" size="sm">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="space-y-6">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Team Members</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{teamMembers.length}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {subscription.used_seats} / {subscription.seats} seats used
-                  </p>
-                </CardContent>
-              </Card>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Drafts</CardTitle>
+              <FileText className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{postCounts.draft}</div>
+              <p className="text-xs text-muted-foreground">Awaiting review</p>
+            </CardContent>
+          </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Current Plan</CardTitle>
-                  <CreditCard className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold capitalize">{subscription.plan}</div>
-                  <p className="text-xs text-muted-foreground">
-                    ${subscription.total_price}/{subscription.billing_period === "monthly" ? "mo" : "yr"}
-                  </p>
-                </CardContent>
-              </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Scheduled</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{postCounts.scheduled}</div>
+              <p className="text-xs text-muted-foreground">Queued for publishing</p>
+            </CardContent>
+          </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Subscription Status</CardTitle>
-                  <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold capitalize">{subscription.status}</div>
-                  <p className="text-xs text-muted-foreground">
-                    Billing is up to date
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Published</CardTitle>
+              <CheckCircle2 className="h-4 w-4 text-green-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{postCounts.published}</div>
+              <p className="text-xs text-muted-foreground">Successfully posted</p>
+            </CardContent>
+          </Card>
 
-            {/* Seat Usage */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Seat Usage</CardTitle>
-                <CardDescription>
-                  Track your team seat utilization
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Seats Used</span>
-                    <span className="font-medium">
-                      {subscription.used_seats} / {subscription.seats}
-                    </span>
-                  </div>
-                  <Progress value={seatsUsagePercent} className="h-2" />
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Failed</CardTitle>
+              <XCircle className="h-4 w-4 text-destructive" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{postCounts.failed}</div>
+              <p className="text-xs text-muted-foreground">Need attention</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Connected Accounts */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Connected Accounts</CardTitle>
+                  <CardDescription>Your social media accounts</CardDescription>
                 </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    {subscription.seats - subscription.used_seats} seats available
-                  </p>
-                  <Link to="/settings?tab=plan">
-                    <Button variant="outline" size="sm">
-                      Upgrade Plan
+                <Link to="/integrations">
+                  <Button variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {accounts.length === 0 ? (
+                <div className="text-center py-6 text-muted-foreground">
+                  <p className="text-sm">No accounts connected yet.</p>
+                  <Link to="/integrations">
+                    <Button variant="link" className="mt-2">
+                      Connect your first account
                     </Button>
                   </Link>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Team Members */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Team Members</CardTitle>
-                    <CardDescription>
-                      Active members in your workspace
-                    </CardDescription>
-                  </div>
-                  <Link to="/settings?tab=members">
-                    <Button variant="outline" size="sm">
-                      Manage Team
-                    </Button>
-                  </Link>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {teamMembers.slice(0, 5).map((member) => (
+              ) : (
+                <div className="space-y-3">
+                  {accounts.map((account) => (
                     <div
-                      key={member.id}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
+                      key={account.id}
+                      className="flex items-center justify-between p-3 rounded-lg border"
                     >
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src={member.avatar_url || undefined} />
-                          <AvatarFallback>
-                            {member.full_name
-                              ? member.full_name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")
-                                  .toUpperCase()
-                              : member.email[0].toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-white text-sm font-bold">
+                          {account.platform === "x" ? "𝕏" : account.platform[0].toUpperCase()}
+                        </div>
                         <div>
-                          <div className="font-medium">{member.full_name || member.email}</div>
-                          <p className="text-sm text-muted-foreground">{member.email}</p>
+                          <p className="text-sm font-medium">
+                            {account.platform_username
+                              ? `@${account.platform_username}`
+                              : account.label || account.platform}
+                          </p>
+                          <p className="text-xs text-muted-foreground capitalize">
+                            {account.platform}
+                          </p>
                         </div>
                       </div>
-                      <Badge variant="outline">
-                        {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
-                      </Badge>
+                      {account.verified_at ? (
+                        <Badge variant="outline" className="text-green-600 border-green-200">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          Connected
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-yellow-600 border-yellow-200">
+                          Unverified
+                        </Badge>
+                      )}
                     </div>
                   ))}
                 </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Scheduler & Recent Activity */}
+          <div className="space-y-6">
+            {/* Scheduler Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  Scheduler
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {schedulerStatus ? (
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium">
+                        {schedulerStatus.running ? "Running" : "Paused"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {schedulerStatus.pending_jobs} job{schedulerStatus.pending_jobs !== 1 ? "s" : ""} in queue
+                      </p>
+                    </div>
+                    <Badge variant={schedulerStatus.running ? "default" : "secondary"}>
+                      {schedulerStatus.running ? "Active" : "Paused"}
+                    </Badge>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Scheduler status unavailable
+                  </p>
+                )}
               </CardContent>
             </Card>
 
@@ -159,40 +232,93 @@ export function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>
-                  Common workspace management tasks
-                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Link to="/settings?tab=members">
+                <div className="grid grid-cols-2 gap-3">
+                  <Link to="/compose">
                     <Button variant="outline" className="w-full justify-start">
-                      <Users className="h-4 w-4 mr-2" />
-                      Invite Team Members
+                      <Send className="h-4 w-4 mr-2" />
+                      New Post
                     </Button>
                   </Link>
-                  <Link to="/settings?tab=general">
+                  <Link to="/content-calendar">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Calendar
+                    </Button>
+                  </Link>
+                  <Link to="/integrations">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Account
+                    </Button>
+                  </Link>
+                  <Link to="/settings">
                     <Button variant="outline" className="w-full justify-start">
                       <Settings className="h-4 w-4 mr-2" />
-                      Workspace Settings
-                    </Button>
-                  </Link>
-                  <Link to="/settings?tab=plan">
-                    <Button variant="outline" className="w-full justify-start">
-                      <TrendingUp className="h-4 w-4 mr-2" />
-                      Upgrade Plan
-                    </Button>
-                  </Link>
-                  <Link to="/social-inbox">
-                    <Button variant="outline" className="w-full justify-start">
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      View Conversations
+                      Settings
                     </Button>
                   </Link>
                 </div>
               </CardContent>
             </Card>
+          </div>
+        </div>
+
+        {/* Recent Posts */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Recent Posts</CardTitle>
+                <CardDescription>Your latest social media posts</CardDescription>
+              </div>
+              <Link to="/content-calendar">
+                <Button variant="outline" size="sm">View All</Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {recentPosts.length === 0 ? (
+              <div className="text-center py-6 text-muted-foreground">
+                <p className="text-sm">No posts yet.</p>
+                <Link to="/compose">
+                  <Button variant="link" className="mt-2">
+                    Create your first post
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {recentPosts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm truncate">{post.content || "(empty draft)"}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {post.created_at && new Date(post.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <Badge
+                      variant={
+                        post.status === "published"
+                          ? "default"
+                          : post.status === "failed"
+                            ? "destructive"
+                            : "secondary"
+                      }
+                    >
+                      {post.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
-  );
+  )
 }

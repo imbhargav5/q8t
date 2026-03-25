@@ -1,284 +1,262 @@
-
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
+import { useApi, useMutation } from "@/hooks/use-api"
+import * as accountsApi from "@/lib/api/accounts"
+import type { Account } from "@/lib/api/types"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import type { Integration } from "@/lib/zod-schemas";
-import { format } from "date-fns";
-import { RefreshCw } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+  CheckCircle2,
+  XCircle,
+  RefreshCw,
+  Trash2,
+  Plus,
+  Shield,
+} from "lucide-react"
+import { useState } from "react"
+import { toast } from "sonner"
 
-interface XSettingsProps {
-  integration: Integration;
-}
+export function XSettings() {
+  const { data: accounts, loading, refetch } = useApi(
+    () => accountsApi.listAccounts(),
+    []
+  )
 
-export function XSettings({ integration }: XSettingsProps) {
-  const [isSaving, setIsSaving] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [settings, setSettings] = useState<{
-    default_visibility: string;
-    auto_retweet_mentions: boolean;
-    enable_webhooks: boolean;
-  }>(
-    (integration.settings as any) || {
-      default_visibility: "public",
-      auto_retweet_mentions: false,
-      enable_webhooks: false,
-    }
-  );
-
-  const handleSave = () => {
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      toast.success("Settings saved successfully");
-    }, 1000);
-  };
-
-  const handleRefreshToken = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setIsRefreshing(false);
-      toast.success("Token refreshed successfully");
-    }, 1500);
-  };
+  const xAccounts = accounts?.filter((a) => a.platform === "x") ?? []
 
   return (
     <div className="space-y-6">
-      {/* Authentication */}
+      <ConnectedAccounts accounts={xAccounts} loading={loading} onRefresh={refetch} />
+      <AddAccountCard onAdded={refetch} />
+    </div>
+  )
+}
+
+function ConnectedAccounts({
+  accounts,
+  loading,
+  onRefresh,
+}: {
+  accounts: Account[]
+  loading: boolean
+  onRefresh: () => void
+}) {
+  if (loading) {
+    return (
       <Card>
-        <CardHeader>
-          <CardTitle>Authentication</CardTitle>
-          <CardDescription>
-            Manage your X (Twitter) authentication credentials
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Token Status</Label>
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <div>
-                <p className="text-sm font-medium">
-                  {integration.status === "connected"
-                    ? "Active"
-                    : integration.status === "error"
-                      ? "Expired"
-                      : "Pending"}
-                </p>
-                {integration.token_expires_at && (
-                  <p className="text-xs text-muted-foreground">
-                    Expires on{" "}
-                    {format(new Date(integration.token_expires_at), "PPP")}
-                  </p>
-                )}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRefreshToken}
-                disabled={isRefreshing}
-              >
-                <RefreshCw
-                  className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
-                />
-                Refresh Token
-              </Button>
-            </div>
-          </div>
-          <Separator />
-          <div className="space-y-2">
-            <Label>Account Information</Label>
-            <div className="rounded-lg border p-3 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Username</span>
-                <span className="font-medium">{integration.account_name}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Account ID</span>
-                <span className="font-mono text-xs">
-                  {integration.account_identifier}
-                </span>
-              </div>
-            </div>
-          </div>
+        <CardContent className="py-8 text-center text-muted-foreground">
+          Loading accounts...
         </CardContent>
       </Card>
+    )
+  }
 
-      {/* Permissions */}
+  if (accounts.length === 0) {
+    return (
       <Card>
         <CardHeader>
-          <CardTitle>Permissions</CardTitle>
+          <CardTitle>X (Twitter) Accounts</CardTitle>
           <CardDescription>
-            Scopes granted to this integration
+            No X accounts connected. Add your Bearer Token below to get started.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {integration.permissions.map((permission) => (
-              <div
-                key={permission}
-                className="flex items-center justify-between rounded-lg border p-3"
-              >
-                <div>
-                  <p className="text-sm font-medium">
-                    {permission.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {permission === "read_tweets" &&
-                      "Read your tweets and timeline"}
-                    {permission === "write_tweets" &&
-                      "Post tweets on your behalf"}
-                    {permission === "manage_dms" &&
-                      "Send and receive direct messages"}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
       </Card>
+    )
+  }
 
-      {/* Posting Preferences */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Posting Preferences</CardTitle>
-          <CardDescription>
-            Configure default settings for posting to X
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="default-visibility">Default Visibility</Label>
-            <Select
-              value={settings.default_visibility}
-              onValueChange={(value) =>
-                setSettings({ ...settings, default_visibility: value })
-              }
-            >
-              <SelectTrigger id="default-visibility">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="public">Public</SelectItem>
-                <SelectItem value="private">Private</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Default visibility for new tweets
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Connected X Accounts</CardTitle>
+        <CardDescription>
+          Manage your X (Twitter) account connections
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {accounts.map((account) => (
+          <AccountRow key={account.id} account={account} onUpdate={onRefresh} />
+        ))}
+      </CardContent>
+    </Card>
+  )
+}
+
+function AccountRow({
+  account,
+  onUpdate,
+}: {
+  account: Account
+  onUpdate: () => void
+}) {
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [isRemoving, setIsRemoving] = useState(false)
+
+  const handleVerify = async () => {
+    setIsVerifying(true)
+    try {
+      const result = await accountsApi.verifyAccount(account.id)
+      if (result.valid) {
+        toast.success(`Verified as @${result.username}`)
+      } else {
+        toast.error(`Verification failed: ${result.error}`)
+      }
+      onUpdate()
+    } catch (e) {
+      toast.error(`Error: ${e}`)
+    } finally {
+      setIsVerifying(false)
+    }
+  }
+
+  const handleRemove = async () => {
+    setIsRemoving(true)
+    try {
+      await accountsApi.removeAccount(account.id)
+      toast.success("Account removed")
+      onUpdate()
+    } catch (e) {
+      toast.error(`Error: ${e}`)
+    } finally {
+      setIsRemoving(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center justify-between rounded-lg border p-4">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white text-lg font-bold">
+          𝕏
+        </div>
+        <div>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-medium">
+              {account.platform_username
+                ? `@${account.platform_username}`
+                : account.label || "X Account"}
             </p>
+            {account.verified_at ? (
+              <Badge variant="outline" className="gap-1 text-green-600 border-green-200">
+                <CheckCircle2 className="h-3 w-3" />
+                Verified
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="gap-1 text-yellow-600 border-yellow-200">
+                <Shield className="h-3 w-3" />
+                Unverified
+              </Badge>
+            )}
           </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="auto-retweet">Auto-retweet Mentions</Label>
-              <p className="text-xs text-muted-foreground">
-                Automatically retweet when mentioned
-              </p>
-            </div>
-            <Switch
-              id="auto-retweet"
-              checked={settings.auto_retweet_mentions}
-              onCheckedChange={(checked) =>
-                setSettings({ ...settings, auto_retweet_mentions: checked })
-              }
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Rate Limits */}
-      {integration.stats && (
-        <Card>
-          <CardHeader>
-            <CardTitle>API Rate Limits</CardTitle>
-            <CardDescription>Current API usage and limits</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">Daily API Calls</span>
-                <span className="text-muted-foreground">
-                  {integration.stats.api_calls_today?.toLocaleString() || 0} /{" "}
-                  {integration.stats.api_calls_limit?.toLocaleString() || 0}
-                </span>
-              </div>
-              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary"
-                  style={{
-                    width: `${((integration.stats.api_calls_today || 0) / (integration.stats.api_calls_limit || 1)) * 100}%`,
-                  }}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Rate limit resets daily at midnight UTC
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Advanced */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Advanced Settings</CardTitle>
-          <CardDescription>Advanced configuration options</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="webhooks">Enable Webhooks</Label>
-              <p className="text-xs text-muted-foreground">
-                Receive real-time updates via webhooks
-              </p>
-            </div>
-            <Switch
-              id="webhooks"
-              checked={settings.enable_webhooks}
-              onCheckedChange={(checked) =>
-                setSettings({ ...settings, enable_webhooks: checked })
-              }
-            />
-          </div>
-          {settings.enable_webhooks && (
-            <div className="space-y-2">
-              <Label htmlFor="webhook-url">Webhook URL</Label>
-              <Input
-                id="webhook-url"
-                placeholder="https://your-domain.com/webhooks/x"
-                type="url"
-              />
-              <p className="text-xs text-muted-foreground">
-                Endpoint to receive webhook events
-              </p>
-            </div>
+          {account.platform_user_id && (
+            <p className="text-xs text-muted-foreground">
+              ID: {account.platform_user_id}
+            </p>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Save Actions */}
-      <div className="flex items-center justify-end gap-3">
-        <Button variant="outline">Cancel</Button>
-        <Button onClick={handleSave} disabled={isSaving}>
-          {isSaving ? "Saving..." : "Save Changes"}
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleVerify}
+          disabled={isVerifying}
+        >
+          <RefreshCw className={`h-4 w-4 mr-1 ${isVerifying ? "animate-spin" : ""}`} />
+          Verify
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRemove}
+          disabled={isRemoving}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
         </Button>
       </div>
     </div>
-  );
+  )
+}
+
+function AddAccountCard({ onAdded }: { onAdded: () => void }) {
+  const [token, setToken] = useState("")
+  const [label, setLabel] = useState("")
+  const [isAdding, setIsAdding] = useState(false)
+
+  const handleAdd = async () => {
+    if (!token.trim()) {
+      toast.error("Bearer token is required")
+      return
+    }
+
+    setIsAdding(true)
+    try {
+      const account = await accountsApi.addAccount({
+        platform: "x",
+        bearer_token: token.trim(),
+        label: label.trim() || undefined,
+      })
+      toast.success(
+        account.platform_username
+          ? `Connected as @${account.platform_username}`
+          : "Account added successfully"
+      )
+      setToken("")
+      setLabel("")
+      onAdded()
+    } catch (e) {
+      toast.error(`Failed to add account: ${e}`)
+    } finally {
+      setIsAdding(false)
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Plus className="h-5 w-5" />
+          Add X Account
+        </CardTitle>
+        <CardDescription>
+          Enter your X API Bearer Token. You can get one from the{" "}
+          <span className="font-medium">X Developer Portal</span>. Your token is
+          encrypted and stored locally.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="bearer-token">Bearer Token</Label>
+          <Input
+            id="bearer-token"
+            type="password"
+            placeholder="Enter your X API Bearer Token"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="account-label">Label (optional)</Label>
+          <Input
+            id="account-label"
+            placeholder="e.g., Personal, Business"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+          />
+        </div>
+        <Separator />
+        <Button onClick={handleAdd} disabled={isAdding || !token.trim()}>
+          {isAdding ? "Connecting..." : "Connect Account"}
+        </Button>
+      </CardContent>
+    </Card>
+  )
 }

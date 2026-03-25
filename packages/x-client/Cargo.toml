@@ -1,0 +1,13 @@
+[package]
+name = "x-client"
+version = "0.1.0"
+edition = "2021"
+description = "X (Twitter) API v2 client for q8t"
+
+[dependencies]
+q8t-core = { path = "../q8t-core" }
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true

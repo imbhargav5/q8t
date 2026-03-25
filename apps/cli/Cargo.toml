@@ -1,0 +1,18 @@
+[package]
+name = "q8t-cli"
+version = "0.1.0"
+edition = "2021"
+description = "q8t CLI and MCP server"
+
+[[bin]]
+name = "q8t"
+path = "src/main.rs"
+
+[dependencies]
+q8t-core = { path = "../../packages/q8t-core" }
+# Note: CLI is at apps/cli/ (2 levels deep), so ../../packages is correct
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+clap = { version = "4", features = ["derive"] }

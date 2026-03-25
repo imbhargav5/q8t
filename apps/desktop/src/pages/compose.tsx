@@ -20,6 +20,7 @@ import { PlatformCustomizationTabs } from "@/components/compose/platform-customi
 import { useComposeDraft } from "@/lib/hooks/use-compose-draft";
 import type { SocialPlatform, PostMedia } from "@/lib/zod-schemas";
 import { PLATFORM_CHARACTER_LIMITS } from "@/lib/compose/constants";
+import * as postsApi from "@/lib/api/posts";
 import { toast } from "sonner";
 
 export function ComposePage() {
@@ -61,7 +62,9 @@ export function ComposePage() {
     });
   };
 
-  const handlePublishNow = () => {
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  const handlePublishNow = async () => {
     if (composeState.platforms.length === 0) {
       toast.error("Please select at least one platform");
       return;
@@ -72,12 +75,28 @@ export function ComposePage() {
       return;
     }
 
-    toast.success("Post published successfully! (Demo)");
-    clearDraft();
-    navigate("/content-calendar");
+    setIsPublishing(true);
+    try {
+      const post = await postsApi.createPost({
+        content: composeState.content,
+        platforms: composeState.platforms,
+      });
+      const result = await postsApi.publishPost(post.id);
+      toast.success(
+        result.platform_url
+          ? `Published! ${result.platform_url}`
+          : "Post published successfully!"
+      );
+      clearDraft();
+      navigate("/content-calendar");
+    } catch (e) {
+      toast.error(`Publish failed: ${e}`);
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
     if (composeState.platforms.length === 0) {
       toast.error("Please select at least one platform");
       return;
@@ -93,15 +112,39 @@ export function ComposePage() {
       return;
     }
 
-    toast.success("Post scheduled successfully! (Demo)");
-    clearDraft();
-    navigate("/content-calendar");
+    setIsPublishing(true);
+    try {
+      const scheduledFor = `${composeState.scheduledDate}T${composeState.scheduledTime}:00`;
+      await postsApi.createPost({
+        content: composeState.content,
+        platforms: composeState.platforms,
+        scheduled_for: scheduledFor,
+      });
+      toast.success("Post scheduled successfully!");
+      clearDraft();
+      navigate("/content-calendar");
+    } catch (e) {
+      toast.error(`Schedule failed: ${e}`);
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
-  const handleSaveDraft = () => {
-    saveDraft();
-    toast.success("Draft saved!");
-    navigate("/content-calendar");
+  const handleSaveDraft = async () => {
+    try {
+      await postsApi.createPost({
+        content: composeState.content,
+        platforms: composeState.platforms,
+      });
+      clearDraft();
+      toast.success("Draft saved!");
+      navigate("/content-calendar");
+    } catch (e) {
+      // Fallback to local draft if backend is unavailable
+      saveDraft();
+      toast.success("Draft saved locally!");
+      navigate("/content-calendar");
+    }
   };
 
   // Calculate character limit based on selected platforms
@@ -141,7 +184,7 @@ export function ComposePage() {
             <Button
               variant="default"
               onClick={handleSchedule}
-              disabled={!canPublish}
+              disabled={!canPublish || isPublishing}
             >
               <CalendarIcon className="h-4 w-4 mr-2" />
               Schedule
@@ -149,10 +192,10 @@ export function ComposePage() {
             <Button
               variant="default"
               onClick={handlePublishNow}
-              disabled={!canPublish}
+              disabled={!canPublish || isPublishing}
             >
               <Send className="h-4 w-4 mr-2" />
-              Publish
+              {isPublishing ? "Publishing..." : "Publish"}
             </Button>
           </div>
         </div>

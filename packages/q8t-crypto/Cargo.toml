@@ -1,0 +1,11 @@
+[package]
+name = "q8t-crypto"
+version = "0.1.0"
+edition = "2021"
+description = "Credential encryption for q8t"
+
+[dependencies]
+aes-gcm = "0.10"
+rand = "0.8"
+base64 = "0.22"
+thiserror.workspace = true

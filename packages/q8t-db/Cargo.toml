@@ -1,0 +1,15 @@
+[package]
+name = "q8t-db"
+version = "0.1.0"
+edition = "2021"
+description = "SQLite database layer for q8t"
+
+[dependencies]
+q8t-core = { path = "../q8t-core" }
+sqlx.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+uuid.workspace = true
+tracing.workspace = true
+thiserror.workspace = true
