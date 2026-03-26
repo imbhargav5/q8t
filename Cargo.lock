@@ -2334,6 +2334,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "linkedin-client"
+version = "0.1.0"
+dependencies = [
+ "q8t-core",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
 name = "linux-raw-sys"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

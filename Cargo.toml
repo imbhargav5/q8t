@@ -6,6 +6,7 @@ members = [
     "packages/q8t-core",
     "packages/q8t-db",
     "packages/q8t-crypto",
+    "packages/linkedin-client",
     "packages/x-client",
 ]
 
