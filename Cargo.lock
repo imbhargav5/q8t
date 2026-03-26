@@ -5226,6 +5226,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "threads-client"
+version = "0.1.0"
+dependencies = [
+ "q8t-core",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
 name = "time"
 version = "0.3.47"
 source = "registry+https://github.com/rust-lang/crates.io-index"
