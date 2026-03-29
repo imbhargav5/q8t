@@ -13,10 +13,20 @@ import {
   Briefcase,
   Home,
   Shield,
+  Bell,
+  History,
+  FolderOpen,
+  FileText,
+  Hash,
+  Link2,
+  Sparkles,
+  TrendingUp,
+  Upload,
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 
 import { NavUser } from "@/components/nav-user"
+import { WorkspaceSwitcher } from "@/components/workspace/workspace-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -58,9 +68,33 @@ const navItems = [
     isActive: false,
   },
   {
+    title: "Bulk Upload",
+    url: "/publishing/bulk",
+    icon: Upload,
+    isActive: false,
+  },
+  {
+    title: "Content Library",
+    url: "/content-library",
+    icon: FolderOpen,
+    isActive: false,
+  },
+  {
+    title: "Templates",
+    url: "/templates",
+    icon: FileText,
+    isActive: false,
+  },
+  {
     title: "Analytics",
     url: "/analytics",
     icon: BarChart3,
+    isActive: false,
+  },
+  {
+    title: "Insights",
+    url: "/insights",
+    icon: TrendingUp,
     isActive: false,
   },
   {
@@ -79,6 +113,42 @@ const navItems = [
     title: "Crisis Management",
     url: "/crisis-management",
     icon: Shield,
+    isActive: false,
+  },
+  {
+    title: "Listening",
+    url: "/listening",
+    icon: LayoutGrid,
+    isActive: false,
+  },
+  {
+    title: "Hashtags",
+    url: "/hashtags",
+    icon: Hash,
+    isActive: false,
+  },
+  {
+    title: "Links",
+    url: "/links",
+    icon: Link2,
+    isActive: false,
+  },
+  {
+    title: "AI Studio",
+    url: "/ai-studio",
+    icon: Sparkles,
+    isActive: false,
+  },
+  {
+    title: "Notifications",
+    url: "/notifications",
+    icon: Bell,
+    isActive: false,
+  },
+  {
+    title: "Activity",
+    url: "/activity",
+    icon: History,
     isActive: false,
   },
   {
@@ -118,17 +188,7 @@ export function AppSidebar({ onOpenNotifications, ...props }: AppSidebarProps) {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                <a href="/">
-                  <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                    <Briefcase className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">Workspace</span>
-                    <span className="truncate text-xs">Pro</span>
-                  </div>
-                </a>
-              </SidebarMenuButton>
+              <WorkspaceSwitcher />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>

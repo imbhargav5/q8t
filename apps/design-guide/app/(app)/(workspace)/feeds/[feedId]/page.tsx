@@ -3,7 +3,7 @@
 import { use } from "react";
 import { Button } from "@/components/ui/button";
 import { getFeedById, mockPosts } from "@/lib/mock-data";
-import { ArrowLeft, Plus, RefreshCw, Edit3, MoreVertical } from "lucide-react";
+import { ArrowLeft, Plus, RefreshCw, Edit3, MoreVertical, Play } from "lucide-react";
 import Link from "next/link";
 import { PostCard } from "@/components/feeds/post-card";
 import { StreamColumn } from "@/components/feeds/stream-column";
@@ -14,6 +14,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { mockStories, mockReels } from "@/lib/mock-data/stories-reels";
 import type { PostWithAuthor, StreamConfig } from "@/lib/zod-schemas";
 
 interface FeedViewPageProps {
@@ -210,6 +215,102 @@ export default function FeedViewPage({ params }: FeedViewPageProps) {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Stories Section */}
+      <div className="border-b bg-background p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">Stories</h2>
+          <Button variant="ghost" size="sm">
+            View All
+          </Button>
+        </div>
+        <ScrollArea className="w-full whitespace-nowrap">
+          <div className="flex gap-3">
+            {mockStories.map((story) => (
+              <button
+                key={story.id}
+                className="flex flex-col items-center gap-2 transition-transform hover:scale-105"
+              >
+                <div
+                  className={`relative rounded-full p-[2px] ${
+                    story.seen
+                      ? "bg-muted"
+                      : "bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500"
+                  }`}
+                >
+                  <Avatar className="h-14 w-14 border-2 border-background">
+                    <AvatarImage src={story.user.avatar} alt={story.user.name} />
+                    <AvatarFallback>{story.user.name[0]}</AvatarFallback>
+                  </Avatar>
+                </div>
+                <span className="max-w-[60px] truncate text-xs">{story.user.name}</span>
+              </button>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* Reels Section */}
+      <div className="border-b bg-background p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">Reels</h2>
+          <Button variant="ghost" size="sm">
+            View All
+          </Button>
+        </div>
+        <ScrollArea className="w-full whitespace-nowrap">
+          <div className="flex gap-3">
+            {mockReels.map((reel) => (
+              <Card
+                key={reel.id}
+                className="relative w-[140px] cursor-pointer overflow-hidden transition-transform hover:scale-105"
+              >
+                <div className="aspect-[9/16] overflow-hidden">
+                  <img
+                    src={reel.video.thumbnail}
+                    alt={reel.caption}
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <div className="rounded-full bg-white/90 p-2">
+                      <Play className="h-6 w-6 fill-black text-black" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6 border border-white">
+                        <AvatarImage src={reel.user.avatar} alt={reel.user.name} />
+                        <AvatarFallback>{reel.user.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-xs font-medium text-white">{reel.user.name}</span>
+                      {reel.user.verified && (
+                        <Badge variant="default" className="h-4 bg-blue-500 px-1 text-[10px]">
+                          ✓
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-xs text-white">{reel.caption}</p>
+                    <div className="mt-1 flex gap-3 text-xs text-white">
+                      <span>
+                        {reel.likes >= 1000
+                          ? `${(reel.likes / 1000).toFixed(1)}K`
+                          : reel.likes}{" "}
+                        likes
+                      </span>
+                      <span>
+                        {reel.comments >= 1000
+                          ? `${(reel.comments / 1000).toFixed(1)}K`
+                          : reel.comments}{" "}
+                        comments
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </ScrollArea>
       </div>
 
       {/* Streams Container - Horizontal Scroll */}
